@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Configuration>
+  
+  <Minimum_Event_Duration_In_ms>50</Minimum_Event_Duration_In_ms>
+  <Number_Of_Fixations_In_AOI_For_Exception>1</Number_Of_Fixations_In_AOI_For_Exception>
+  <Number_Of_Fixations_Out_Of_AOI_For_Exception>5</Number_Of_Fixations_Out_Of_AOI_For_Exception>
+  
+  <OutputFiles>
+    <First_Excel_File_Name>First.xlsx</First_Excel_File_Name>
+    <Second_Excel_File_Name>Second.xlsx</Second_Excel_File_Name>
+    <Third_Excel_File_Name>Third.xlsx</Third_Excel_File_Name>
+  </OutputFiles>
+  
+  <DealingWithExceptions>
+    <Dealing_With_Exceptions_Limit_In_Pixels>20</Dealing_With_Exceptions_Limit_In_Pixels>
+    <!--
+        Dealing_With_Exceptions_Inside_The_Limit:
+        
+        Do_Nothing = 1,
+        Change_AOI_Group = 2,
+        Skip_In_First_Pass = 3
+    -->
+    <Dealing_With_Exceptions_Inside_The_Limit>1</Dealing_With_Exceptions_Inside_The_Limit>
+    
+    
+    
+    <!--
+        Dealing_With_Exceptions_Outside_The_Limit:
+        
+        Do_Nothing = 1,
+        Skip_In_First_Pass = 2
+    -->
+    <Dealing_With_Exceptions_Outside_The_Limit>1</Dealing_With_Exceptions_Outside_The_Limit>  
+  </DealingWithExceptions>
+  
+</Configuration>
