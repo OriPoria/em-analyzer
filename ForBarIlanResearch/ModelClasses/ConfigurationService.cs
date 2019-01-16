@@ -31,5 +31,15 @@ namespace ForBarIlanResearch.ModelClasses
         {
             return doc.GetElementsByTagName(TagName)[0].InnerText.Trim();
         }
+
+        public static string FirstExcelFileName { get { return getValue(First_Excel_File_Name); } }
+        public static string SecondExcelFileName { get { return getValue(Second_Excel_File_Name); } }
+        public static string ThirdExcelFileName { get { return getValue(Third_Excel_File_Name); } }
+        public static string MinimumEventDurationInms { get { return getValue(Minimum_Event_Duration_In_ms); } }
+        public static string NumberOfFixationsInAOIForException { get { return getValue(Number_Of_Fixations_In_AOI_For_Exception); } }
+        public static string NumberOfFixationsOutOfAOIForException { get { return getValue(Number_Of_Fixations_Out_Of_AOI_For_Exception); } }
+        public static string DealingWithExceptionsLimitInPixels { get { return getValue(Dealing_With_Exceptions_Limit_In_Pixels); } }
+        public static string DealingWithExceptionsInsideTheLimit { get { return getValue(Dealing_With_Exceptions_Inside_The_Limit); } }
+        public static string DealingWithExceptionsOutsideTheLimit { get { return getValue(Dealing_With_Exceptions_Outside_The_Limit); } }
     }
 }

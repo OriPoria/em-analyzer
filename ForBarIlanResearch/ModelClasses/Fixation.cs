@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace ForBarIlanResearch.ModelClasses
 {
@@ -27,8 +28,8 @@ namespace ForBarIlanResearch.ModelClasses
         public int AOI_Group_Before_Change { get; set; }
         [XLColumn(Header = "AOI Group After Change")]
         public int AOI_Group_After_Change { get; set; }
-        // [XLColumn(Ignore = true)]
-        // public long AOI_Size { get; set; }
+        [XLColumn(Ignore = true)]
+        public long AOI_Size { get; set; }
         [XLColumn(Header = "AOI Coverage In Percents")]
         public double AOI_Coverage_In_Percents { get; set; }
         [XLColumn(Header = "Index")]
@@ -43,6 +44,8 @@ namespace ForBarIlanResearch.ModelClasses
         public double Fixation_Average_Pupil_Diameter { get; set; }
         [XLColumn(Header = "Is Exception")]
         public bool IsException { get; set; }
+        [XLColumn(Ignore = true)]
+        public AOIDetails AOI_Details { get; private set; }
 
         [XLColumn(Ignore = true)]
         public bool IsInExceptionBounds { get; set; }
@@ -51,47 +54,61 @@ namespace ForBarIlanResearch.ModelClasses
 
         public static Fixation CreateFixationFromStringArray(string[] arr)
         {
-            
+
             Fixation newFixation = new Fixation();
-            newFixation.Event_Duration = double.Parse(arr[(int)TextFileColumnIndexes.Event_Duration]);
+            newFixation.Event_Duration = double.Parse(arr[(int)TableColumnsEnum.Event_Duration]);
 
             if (newFixation.Event_Duration < minimumDuration)
                 return null;
+
             try
             {
-                newFixation.Fixation_Position_X = double.Parse(arr[(int)TextFileColumnIndexes.Fixation_Position_X]);
-                newFixation.Fixation_Position_Y = double.Parse(arr[(int)TextFileColumnIndexes.Fixation_Position_Y]);
-                newFixation.Fixation_Average_Pupil_Diameter = double.Parse(arr[(int)TextFileColumnIndexes.Fixation_Average_Pupil_Diameter]);
-                newFixation.AOI_Group_After_Change = newFixation.AOI_Group_Before_Change = int.Parse(arr[(int)TextFileColumnIndexes.AOI_Group]);
-                newFixation.AOI_Name = int.Parse(arr[(int)TextFileColumnIndexes.AOI_Name]);
-                //newFixation.AOI_Size = long.Parse(arr[(int)TextFileColumnIndexes.AOI_Size]);
+                newFixation.AOI_Group_After_Change = newFixation.AOI_Group_Before_Change = int.Parse(arr[(int)TableColumnsEnum.AOI_Group]);
+                newFixation.AOI_Name = int.Parse(arr[(int)TableColumnsEnum.AOI_Name]);
+                newFixation.AOI_Size = long.Parse(arr[(int)TableColumnsEnum.AOI_Size]);
+            }
+            catch
+            {
+                newFixation.AOI_Group_After_Change = newFixation.AOI_Group_Before_Change = -1;
+                newFixation.AOI_Name = -1;
+                newFixation.AOI_Size = -1;
+            }
+
+            try
+            {
+                newFixation.Fixation_Position_X = double.Parse(arr[(int)TableColumnsEnum.Fixation_Position_X]);
+                newFixation.Fixation_Position_Y = double.Parse(arr[(int)TableColumnsEnum.Fixation_Position_Y]);
+                newFixation.Fixation_Average_Pupil_Diameter = double.Parse(arr[(int)TableColumnsEnum.Fixation_Average_Pupil_Diameter]);
             }
             catch
             {
                 return null;
             }
 
-            newFixation.Trial = arr[(int)TextFileColumnIndexes.Trial].Trim();
-            newFixation.Stimulus = arr[(int)TextFileColumnIndexes.Stimulus].Trim();
-            newFixation.Participant = arr[(int)TextFileColumnIndexes.Participant].Trim();
-            string dictionatyKey = newFixation.GetDictionaryKey();
+            newFixation.Trial = arr[(int)TableColumnsEnum.Trial].Trim();
+            newFixation.Stimulus = arr[(int)TableColumnsEnum.Stimulus].Trim();
+            newFixation.Participant = arr[(int)TableColumnsEnum.Participant].Trim();
 
+            string dictionatyKey = newFixation.GetDictionaryKey();
             if (!FixationsService.fixationSetToFixationListDictionary.ContainsKey(dictionatyKey))
                 FixationsService.fixationSetToFixationListDictionary[dictionatyKey] = new List<Fixation>();
-            //if(!FixationsService.fixationSetToFixationListDictionary[dictionatyKey].Any() && )
-            newFixation.AOI_Coverage_In_Percents = double.Parse(arr[(int)TextFileColumnIndexes.AOI_Coverage]);
 
-            //newFixation.AOI_Order = long.Parse(arr[(int)TextFileColumnIndexes.AOI_Order]);
-            newFixation.Index = long.Parse(arr[(int)TextFileColumnIndexes.Index]);
-            //newFixation.AOI_Size = long.Parse(arr[(int)TextFileColumnIndexes.AOI_Size]);
+            newFixation.AOI_Coverage_In_Percents = double.Parse(arr[(int)TableColumnsEnum.AOI_Coverage]);
+            newFixation.Index = long.Parse(arr[(int)TableColumnsEnum.Index]);
             newFixation.IsException = false;
-            //Console.WriteLine(newFixation.AOI_Order);
 
-            //newFixation.AOI_Scope = arr[(int)TextFileColumnIndexes.AOI_Scope];
+            if (newFixation.AOI_Name != -1)
+            {
+                if (AOIDetails.isAOIIncludeStimulus)
+                    newFixation.AOI_Details = AOIDetails.nameToAOIDetailsDictionary[newFixation.AOI_Name + newFixation.Stimulus];
+                else
+                    newFixation.AOI_Details = AOIDetails.nameToAOIDetailsDictionary[newFixation.AOI_Name + ""];
+            }
 
             FixationsService.fixationSetToFixationListDictionary[dictionatyKey].Add(newFixation);
 
             return newFixation;
+
         }
 
         public string GetDictionaryKey()

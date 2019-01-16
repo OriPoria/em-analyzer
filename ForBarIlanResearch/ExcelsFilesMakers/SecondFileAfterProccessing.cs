@@ -29,12 +29,11 @@ namespace ForBarIlanResearch.ExcelsFilesMakers
 
                 foreach (Fixation fixation in fixations)
                 {
-                    //if (fixation.AOI_Name == 7)
-                    //    Console.WriteLine(fixation.ToString());
                     if (fixation.AOI_Group_After_Change != last_AOIGroup)
                     {
                         // The dictionary key for the current AOI Group for the current Participant
                         dictionatyKey = participantKey + '\t' + last_AOIGroup;
+                        
                         List<Fixation> fixationRange = fixations.GetRange(lastChangeIndex, currentIndex - lastChangeIndex);
 
                         // If the current fixation is the first fixation of the current participant in the AOI so 
@@ -69,7 +68,7 @@ namespace ForBarIlanResearch.ExcelsFilesMakers
             // List<AOIClass> AOIClasses = AOIClass.instancesDictionary.Values.ToList();
             // AOIClasses.Sort((first, second) => first.dictionaryKey.CompareTo(second.dictionaryKey));
             // ExcelsService.CreateExcelFromStringTable(ConfigurationService.getValue(ConfigurationService.Second_Excel_File_Name), AOIClasses);
-            ExcelsService.CreateExcelFromStringTable(ConfigurationService.getValue(ConfigurationService.Second_Excel_File_Name), AOIClass.instancesDictionary.Values.ToList());
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.SecondExcelFileName, AOIClass.instancesDictionary.Values.ToList());
         }
 
 
@@ -332,7 +331,7 @@ namespace ForBarIlanResearch.ExcelsFilesMakers
                 {
                     if (this.m_Total_AOI_Size == -1)
                     {
-                        //this.m_Total_AOI_Size = this.Fixations.Sum(lst => lst.Sum(fix => fix.AOI_Size));
+                        this.m_Total_AOI_Size = this.Fixations.Sum(lst => lst.Sum(fix => fix.AOI_Size));
                     }
                     return this.m_Total_AOI_Size;
                 }

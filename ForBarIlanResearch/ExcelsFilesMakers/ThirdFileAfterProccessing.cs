@@ -13,19 +13,14 @@ namespace ForBarIlanResearch.ExcelsFilesMakers
     {
         public static void makeExcelFile()
         {
-            //List<string> participants = FixationsService.fixationSetToFixationListDictionary.Keys.ToList();
             List<Fixation>[] fixationsLists = FixationsService.fixationSetToFixationListDictionary.Values.ToArray();
             List<ParticipantTrial> table = new List<ParticipantTrial>();
             
-            //string dictionatyKey;
-            //foreach (string participantKey in participants)
             foreach(List<Fixation> fixations in fixationsLists)
             {
-                //List<Fixation> fixations = FixationsService.fixationSetToFixationListDictionary[participantKey];
                 table.Add(new ParticipantTrial(fixations[0].Trial, fixations[0].Stimulus, fixations[0].Participant));
             }
-            ExcelsService.CreateExcelFromStringTable(ConfigurationService.getValue(ConfigurationService.Third_Excel_File_Name), table);
-            //ExcelsService.CreateExcelFromStringTable("Third.xlsx", table);
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ThirdExcelFileName, table);
         }
 
 

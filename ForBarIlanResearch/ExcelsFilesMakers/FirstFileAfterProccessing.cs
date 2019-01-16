@@ -14,19 +14,13 @@ namespace ForBarIlanResearch.ExcelsFilesMakers
 {
     class FirstFileAfterProccessing
     {
-        //public static Thread makeExcelFile()
         public static void makeExcelFile()
         {
             List<Fixation> table = new List<Fixation>();
             List<Fixation>[] values = FixationsService.fixationSetToFixationListDictionary.Values.ToArray();
-            //Thread makeFirstFile = new Thread(() =>
-            //  {
-                  foreach (List<Fixation> fixations in values)
-                      table.AddRange(fixations);
-                  ExcelsService.CreateExcelFromStringTable(ConfigurationService.getValue(ConfigurationService.First_Excel_File_Name), table);
-            //  });
-            //makeFirstFile.Start();
-            //return makeFirstFile;
+            foreach (List<Fixation> fixations in values)
+                table.AddRange(fixations);
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.FirstExcelFileName, table);
         }
     }
 }

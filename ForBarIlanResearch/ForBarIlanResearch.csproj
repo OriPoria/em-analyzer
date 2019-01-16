@@ -70,7 +70,6 @@
     <Compile Include="ModelClasses\AOIDetails.cs" />
     <Compile Include="ModelClasses\ConfigurationService.cs" />
     <Compile Include="ModelClasses\Fixation.cs" />
-    <Compile Include="ModelClasses\FixationSet.cs" />
     <Compile Include="ModelClasses\FixationsService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

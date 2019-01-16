@@ -42,13 +42,7 @@ namespace ForBarIlanResearch.Enums
         Mouse_Position_Y, 
         Is_Exception
     }
-
-    enum EyeSide : byte
-    {
-        Right,
-        Left
-    }
-
+    
     enum ExcelAOITableEnum
     {
         Stimulus,
@@ -73,6 +67,7 @@ namespace ForBarIlanResearch.Enums
         Skip_In_First_Pass=2
     }
 
+    // For the text file with the bad headers (not relevant for now, maybe for the future).
     static class TextFileColumnIndexes
     {
         public static int Trial,

@@ -33,20 +33,21 @@ namespace ForBarIlanResearch.Services
             }
         }
 
-        public static List<T[]> ReadExcelFile<T>(string fileName)
+        public static List<IEnumerable<T>> ReadExcelFile<T>(string fileName)
         {
             XLWorkbook wb = new XLWorkbook(fileName);
             var ws = wb.Worksheets.First();
             var firstRowUsed = ws.FirstRowUsed();
             var categoryRow = firstRowUsed.RowUsed();
-            List<T[]> table = new List<T[]>();
+            List<IEnumerable<T>> table = new List<IEnumerable<T>>();
 
             // Move to the next row (it now has the titles)
             //string[] columnsHeaders = categoryRow.Cells().Select(cell => cell.GetValue<string>()).ToArray();
             categoryRow = categoryRow.RowBelow();
             while (!categoryRow.IsEmpty())
             {
-                table.Add(categoryRow.Cells().Select(cell => cell.GetValue<T>()).ToArray());
+                // table.Add(categoryRow.Cells().Select(cell => cell.GetValue<T>()).ToArray());
+                table.Add(categoryRow.Cells().Select(cell => cell.GetValue<T>()));
                 categoryRow = categoryRow.RowBelow();
             }
 
