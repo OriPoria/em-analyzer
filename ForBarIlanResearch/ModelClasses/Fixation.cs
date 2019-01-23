@@ -13,7 +13,6 @@ namespace ForBarIlanResearch.ModelClasses
 {
     class Fixation
     {
-
         [XLColumn(Header = "Trial")]
         public string Trial { get; set; }
         [XLColumn(Header = "Stimulus")]

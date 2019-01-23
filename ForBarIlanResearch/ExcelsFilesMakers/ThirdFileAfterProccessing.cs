@@ -210,6 +210,8 @@ namespace ForBarIlanResearch.ExcelsFilesMakers
                 this.Stimulus = Stimulus;
                 this.Participant = Participant;
                 this.Fixations = FixationsService.fixationSetToFixationListDictionary[this.Participant + '\t' + this.Trial + '\t' + this.Stimulus];
+                // Removes all the fixations with no AOI Group (after dealing with exceptions).
+                this.Fixations.RemoveAll(fix => fix.AOI_Group_After_Change == -1);
 
                 this.m_Total_Fixation_Number = -1;
                 this.m_Mean_Fixation_Duration = -1;

@@ -80,13 +80,13 @@ namespace ForBarIlanResearch.ModelClasses
                 IEnumerable<Fixation> exceptionsFixations = fixationList.Where(fix => fix.IsException);
                 foreach (Fixation fixation in exceptionsFixations)
                 {
-                    if(fixation.IsInExceptionBounds && dealingWithInsideExceptions!= DealingWithExceptionsEnum.Do_Nothing)
+                    if(fixation.IsInExceptionBounds && dealingWithInsideExceptions>= DealingWithExceptionsEnum.Do_Nothing)
                     {
-                        if(dealingWithInsideExceptions==DealingWithExceptionsEnum.Change_AOI_Group)
-                        {
+                        //if(dealingWithInsideExceptions==DealingWithExceptionsEnum.Change_AOI_Group)
+                        //{
                             fixation.AOI_Group_Before_Change = fixation.AOI_Group_After_Change;
                             fixation.IsException = false;
-                        }
+                        //}
                     }
                 }
             }

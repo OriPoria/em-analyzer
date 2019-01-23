@@ -24,6 +24,7 @@ namespace ForBarIlanResearch.ExcelsFilesMakers
             {
                 // Gets the current fixations list
                 List<Fixation> fixations = FixationsService.fixationSetToFixationListDictionary[participantKey];
+                fixations.Add(new Fixation() { AOI_Group_After_Change = -2 });
                 int lastChangeIndex = 0, currentIndex = 0, last_AOIGroup = fixations[0].AOI_Group_After_Change, maxAOIGroupUntilNow = -1;
                 Fixation prevFixationInAOI = null;
 
@@ -64,6 +65,7 @@ namespace ForBarIlanResearch.ExcelsFilesMakers
                     prevFixationInAOI = fixation;
                     currentIndex++;
                 }
+                fixations.RemoveAt(fixations.Count - 1);
             }
             // List<AOIClass> AOIClasses = AOIClass.instancesDictionary.Values.ToList();
             // AOIClasses.Sort((first, second) => first.dictionaryKey.CompareTo(second.dictionaryKey));
@@ -314,12 +316,12 @@ namespace ForBarIlanResearch.ExcelsFilesMakers
                     return this.Total_AOI_Size / this.Total_Fixation_Number;
                 }
             }
-            [XLColumn(Header = "AOI Converage [%]")]
-            public double Mean_AOI_Converage
+            [XLColumn(Header = "AOI Coverage [%]")]
+            public double Mean_AOI_Coverage
             {
                 get
                 {
-                    return this.Total_AOI_Converage / this.Total_Fixation_Number;
+                    return this.Total_AOI_Coverage / this.Total_Fixation_Number;
                 }
             }
 
@@ -337,17 +339,17 @@ namespace ForBarIlanResearch.ExcelsFilesMakers
                 }
             }
 
-            private double m_Total_AOI_Converage;
+            private double m_Total_AOI_Coverage;
             [XLColumn(Ignore = true)]
-            public double Total_AOI_Converage
+            public double Total_AOI_Coverage
             {
                 get
                 {
-                    if (this.m_Total_AOI_Converage == -1)
+                    if (this.m_Total_AOI_Coverage == -1)
                     {
-                        this.m_Total_AOI_Converage = this.Fixations.Sum(lst => lst.Sum(fix => fix.AOI_Coverage_In_Percents));
+                        this.m_Total_AOI_Coverage = this.Fixations.Sum(lst => lst.Sum(fix => fix.AOI_Coverage_In_Percents));
                     }
-                    return this.m_Total_AOI_Converage;
+                    return this.m_Total_AOI_Coverage;
                 }
             }
 
@@ -434,7 +436,7 @@ namespace ForBarIlanResearch.ExcelsFilesMakers
                                 this.m_Total_Fixations_Progressive_First_Pass.Add(first_Pass_Fixations[i]);
                         }
                     }
-                    return this.m_Fixations_Progressive_First_Pass;
+                    return this.m_Total_Fixations_Progressive_First_Pass;
                 }
             }
 
@@ -462,7 +464,7 @@ namespace ForBarIlanResearch.ExcelsFilesMakers
                 this.m_First_Regression_Duration = -1;
                 this.m_Total_Pupil_Diameter = -1;
                 this.m_Total_AOI_Size = -1;
-                this.m_Total_AOI_Converage = -1;
+                this.m_Total_AOI_Coverage = -1;
 
             }
             
