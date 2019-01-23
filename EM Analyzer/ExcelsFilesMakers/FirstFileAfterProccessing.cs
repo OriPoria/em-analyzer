@@ -5,12 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Windows.Forms;
-using ForBarIlanResearch.ModelClasses;
-using ForBarIlanResearch.Enums;
-using ForBarIlanResearch.Services;
+using EM_Analyzer.ModelClasses;
+using EM_Analyzer.Enums;
+using EM_Analyzer.Services;
 using System.Threading;
 
-namespace ForBarIlanResearch.ExcelsFilesMakers
+namespace EM_Analyzer.ExcelsFilesMakers
 {
     class FirstFileAfterProccessing
     {

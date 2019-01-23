@@ -1,5 +1,5 @@
 ﻿using ClosedXML.Attributes;
-using ForBarIlanResearch.Enums;
+using EM_Analyzer.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ForBarIlanResearch.ModelClasses
+namespace EM_Analyzer.ModelClasses
 {
     class Fixation
     {

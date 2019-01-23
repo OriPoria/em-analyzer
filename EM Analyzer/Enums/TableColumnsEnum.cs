@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ForBarIlanResearch.Enums
+namespace EM_Analyzer.Enums
 {
     enum TableColumnsEnum : int
     {

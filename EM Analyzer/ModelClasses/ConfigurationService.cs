@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace ForBarIlanResearch.ModelClasses
+namespace EM_Analyzer.ModelClasses
 {
     class ConfigurationService
     {

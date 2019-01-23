@@ -1,11 +1,11 @@
-﻿using ForBarIlanResearch.Enums;
+﻿using EM_Analyzer.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ForBarIlanResearch.ModelClasses
+namespace EM_Analyzer.ModelClasses
 {
     class FixationsService
     {

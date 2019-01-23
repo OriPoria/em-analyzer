@@ -1,17 +1,13 @@
-﻿using ForBarIlanResearch.Enums;
-using ForBarIlanResearch.ModelClasses;
+﻿using EM_Analyzer.Enums;
+using EM_Analyzer.ModelClasses;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using ForBarIlanResearch.Services;
-using Excel = Microsoft.Office.Interop.Excel;
 
-namespace ForBarIlanResearch
+namespace EM_Analyzer
 {
     class Program
     {

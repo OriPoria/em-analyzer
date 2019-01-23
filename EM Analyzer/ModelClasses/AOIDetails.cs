@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ForBarIlanResearch.Enums;
-using ForBarIlanResearch.Services;
+using EM_Analyzer.Enums;
+using EM_Analyzer.Services;
 
-namespace ForBarIlanResearch.ModelClasses
+namespace EM_Analyzer.ModelClasses
 {
     class AOIDetails
     {

@@ -6,10 +6,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Excel = Microsoft.Office.Interop.Excel;
 using ClosedXML.Excel;
-using ForBarIlanResearch.ModelClasses;
+using EM_Analyzer.ModelClasses;
 using System.Windows.Forms;
 
-namespace ForBarIlanResearch.Services
+namespace EM_Analyzer.Services
 {
     class ExcelsService
     {
