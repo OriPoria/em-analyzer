@@ -66,7 +66,8 @@ namespace EM_Analyzer
             FixationsService.outputPath = excelFilePath.Substring(0, excelFilePath.LastIndexOf(@"\"));
             readTextFile(textFilePath);
             FixationsService.SortDictionary();
-            FixationsService.CleanAllFixationBeforeFirstAOI();
+            if(int.Parse(ConfigurationService.RemoveFixationsAppearedBeforeFirstAOI)==1)
+                FixationsService.CleanAllFixationBeforeFirstAOI();
             FixationsService.SearchForExceptions();
 
             ExcelsFilesMakers.FirstFileAfterProccessing.makeExcelFile();

@@ -27,6 +27,8 @@ namespace EM_Analyzer.ModelClasses
         public int AOI_Group_Before_Change { get; set; }
         [XLColumn(Header = "AOI Group After Change")]
         public int AOI_Group_After_Change { get; set; }
+        [XLColumn(Header = "Exceptional Fixations")]
+        public bool IsException { get; set; }
         [XLColumn(Ignore = true)]
         public long AOI_Size { get; set; }
         [XLColumn(Header = "AOI Coverage In Percents")]
@@ -41,8 +43,6 @@ namespace EM_Analyzer.ModelClasses
         public double Fixation_Position_Y { get; set; }
         [XLColumn(Header = "Fixation Average Pupil Diameter")]
         public double Fixation_Average_Pupil_Diameter { get; set; }
-        [XLColumn(Header = "Is Exception")]
-        public bool IsException { get; set; }
         [XLColumn(Ignore = true)]
         public AOIDetails AOI_Details { get; private set; }
 
@@ -102,6 +102,12 @@ namespace EM_Analyzer.ModelClasses
                     newFixation.AOI_Details = AOIDetails.nameToAOIDetailsDictionary[newFixation.AOI_Name + newFixation.Stimulus];
                 else
                     newFixation.AOI_Details = AOIDetails.nameToAOIDetailsDictionary[newFixation.AOI_Name + ""];
+            }
+
+            if (newFixation.AOI_Details.isProper && newFixation.DistanceToAOI(newFixation.AOI_Details) != 0)
+            {
+                newFixation.AOI_Details.isProper = false;
+                new Task(() => MessageBox.Show("There is a problem with the AOI " + newFixation.AOI_Name + " In Stimulus " + newFixation.Stimulus)).Start();
             }
 
             FixationsService.fixationSetToFixationListDictionary[dictionatyKey].Add(newFixation);

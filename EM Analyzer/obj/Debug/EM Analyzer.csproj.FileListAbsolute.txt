@@ -17,3 +17,22 @@ D:\Documents\Projects\forbarilanresearch\EM Analyzer\obj\Debug\EM Analyzer.cspro
 D:\Documents\Projects\forbarilanresearch\EM Analyzer\obj\Debug\EM Analyzer.csproj.CopyComplete
 D:\Documents\Projects\forbarilanresearch\EM Analyzer\obj\Debug\ForBarIlanResearch.exe
 D:\Documents\Projects\forbarilanresearch\EM Analyzer\obj\Debug\ForBarIlanResearch.pdb
+D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Debug\ForBarIlanResearch.exe.config
+D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Debug\ForBarIlanResearch.exe
+D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Debug\ForBarIlanResearch.pdb
+D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Debug\ClosedXML.dll
+D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Debug\DocumentFormat.OpenXml.dll
+D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Debug\ExcelNumberFormat.dll
+D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Debug\FastMember.dll
+D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Debug\System.IO.FileSystem.Primitives.dll
+D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Debug\System.IO.Packaging.dll
+D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Debug\ClosedXML.pdb
+D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Debug\ClosedXML.xml
+D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Debug\DocumentFormat.OpenXml.xml
+D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Debug\ExcelNumberFormat.xml
+D:\Documents\Projects\EM Analyzer\EM Analyzer\obj\Debug\EM Analyzer.csprojAssemblyReference.cache
+D:\Documents\Projects\EM Analyzer\EM Analyzer\obj\Debug\EM Analyzer.csproj.ResolveComReference.cache
+D:\Documents\Projects\EM Analyzer\EM Analyzer\obj\Debug\EM Analyzer.csproj.CoreCompileInputs.cache
+D:\Documents\Projects\EM Analyzer\EM Analyzer\obj\Debug\EM Analyzer.csproj.CopyComplete
+D:\Documents\Projects\EM Analyzer\EM Analyzer\obj\Debug\ForBarIlanResearch.exe
+D:\Documents\Projects\EM Analyzer\EM Analyzer\obj\Debug\ForBarIlanResearch.pdb

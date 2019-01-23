@@ -20,9 +20,11 @@ namespace EM_Analyzer.ModelClasses
         public double Y { get; set; }
         public double H { get; set; }
         public double L { get; set; }
+        public bool isProper { get; set; }
 
         public AOIDetails(IEnumerable<string> details)
         {
+            this.isProper = true;
             IEnumerator<string> enumerator = details.GetEnumerator();
             string dictionaryKey="";
 

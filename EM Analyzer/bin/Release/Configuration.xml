@@ -4,6 +4,14 @@
   <Minimum_Event_Duration_In_ms>50</Minimum_Event_Duration_In_ms>
   <Number_Of_Fixations_In_AOI_For_Exception>1</Number_Of_Fixations_In_AOI_For_Exception>
   <Number_Of_Fixations_Out_Of_AOI_For_Exception>5</Number_Of_Fixations_Out_Of_AOI_For_Exception>
+
+
+  <!--
+    Remove_Fixations_Appeared_Before_First_AOI:
+      No = 0,
+      Yes = 1
+  -->
+  <Remove_Fixations_Appeared_Before_First_AOI>1</Remove_Fixations_Appeared_Before_First_AOI>
   
   <OutputFiles>
     <First_Excel_File_Name>First.xlsx</First_Excel_File_Name>
@@ -13,9 +21,10 @@
   
   <DealingWithExceptions>
     <Dealing_With_Exceptions_Limit_In_Pixels>20</Dealing_With_Exceptions_Limit_In_Pixels>
+
+
     <!--
-        Dealing_With_Exceptions_Inside_The_Limit:
-        
+      Dealing_With_Exceptions_Inside_The_Limit:
         Do_Nothing = 1,
         Change_AOI_Group = 2,
         Skip_In_First_Pass = 3
@@ -25,8 +34,7 @@
     
     
     <!--
-        Dealing_With_Exceptions_Outside_The_Limit:
-        
+      Dealing_With_Exceptions_Outside_The_Limit:  
         Do_Nothing = 1,
         Skip_In_First_Pass = 2
     -->

@@ -19,6 +19,7 @@ namespace EM_Analyzer.ModelClasses
         public const string Dealing_With_Exceptions_Limit_In_Pixels = "Dealing_With_Exceptions_Limit_In_Pixels";
         public const string Dealing_With_Exceptions_Inside_The_Limit = "Dealing_With_Exceptions_Inside_The_Limit";
         public const string Dealing_With_Exceptions_Outside_The_Limit = "Dealing_With_Exceptions_Outside_The_Limit";
+        public const string Remove_Fixations_Appeared_Before_First_AOI = "Remove_Fixations_Appeared_Before_First_AOI";
 
         static XmlDocument doc = new XmlDocument();
 
@@ -41,5 +42,6 @@ namespace EM_Analyzer.ModelClasses
         public static string DealingWithExceptionsLimitInPixels { get { return getValue(Dealing_With_Exceptions_Limit_In_Pixels); } }
         public static string DealingWithExceptionsInsideTheLimit { get { return getValue(Dealing_With_Exceptions_Inside_The_Limit); } }
         public static string DealingWithExceptionsOutsideTheLimit { get { return getValue(Dealing_With_Exceptions_Outside_The_Limit); } }
+        public static string RemoveFixationsAppearedBeforeFirstAOI { get { return getValue(Remove_Fixations_Appeared_Before_First_AOI); } }
     }
 }
