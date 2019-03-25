@@ -204,6 +204,34 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 }
             }
 
+            //private double m_StandardDeviation;
+            //private double StandardDeviation
+            //{
+            //    get
+            //    {
+            //        if(m_StandardDeviation==-1)
+            //        {
+            //            m_StandardDeviation=
+            //        }
+            //        return m_StandardDeviation;
+            //    }
+            //}
+
+            //private double m_Average;
+            //private double StandardDeviation
+            //{
+            //    get
+            //    {
+            //        if (m_StandardDeviation == -1)
+            //        {
+            //            m_StandardDeviation =
+            //        }
+            //        return m_StandardDeviation;
+            //    }
+            //}
+
+            //Average
+
             public ParticipantTrial(string Trial, string Stimulus, string Participant)//, List<Fixation> Fixations)//=null)
             {
                 this.Trial = Trial;
@@ -222,6 +250,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 this.m_Regressive_Fixation_Duration = -1;
                 this.m_Regressive_Saccade_Length = -1;
                 this.m_Regressive_Saccade_Length_X = -1;
+                //this.m_StandardDeviation = -1;
                 this.m_Regressive_Fixations = null;
             }
             

@@ -1,5 +1,6 @@
 ﻿using ClosedXML.Attributes;
 using EM_Analyzer.Enums;
+using EM_Analyzer.ExcelLogger;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -49,51 +50,139 @@ namespace EM_Analyzer.ModelClasses
         [XLColumn(Ignore = true)]
         public bool IsInExceptionBounds { get; set; }
 
-        static double minimumDuration = double.Parse(ConfigurationService.getValue(ConfigurationService.Minimum_Event_Duration_In_ms));
+        //static double minimumDuration = double.Parse(ConfigurationService.getValue(ConfigurationService.Minimum_Event_Duration_In_ms));
+        //static double maximumDuration = double.Parse(ConfigurationService.getValue(ConfigurationService.Maximum_Event_Duration_In_ms));
 
-        public static Fixation CreateFixationFromStringArray(string[] arr)
+        static double minimumDuration = double.Parse(ConfigurationService.MinimumEventDurationInms);
+        static double maximumDuration = double.Parse(ConfigurationService.MaximumEventDurationInms);
+
+
+        public static Fixation CreateFixationFromStringArray(string[] arr, uint lineNumber)
         {
-
+            bool isFixationValid = true;
+            bool isAOIValid = true;
             Fixation newFixation = new Fixation();
-            newFixation.Event_Duration = double.Parse(arr[(int)TableColumnsEnum.Event_Duration]);
+            try
+            {
+                newFixation.Event_Duration = double.Parse(arr[(int)TableColumnsEnum.Event_Duration]);
+                if (newFixation.Event_Duration < minimumDuration || newFixation.Event_Duration > maximumDuration)
+                    return null;
+            }
+            catch
+            {
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Event Duration", arr[(int)TableColumnsEnum.Event_Duration], lineNumber));
+                isFixationValid = false;
+            }
 
-            if (newFixation.Event_Duration < minimumDuration)
-                return null;
+
+            //try
+            //{
+            //    newFixation.AOI_Group_After_Change = newFixation.AOI_Group_Before_Change = int.Parse(arr[(int)TableColumnsEnum.AOI_Group]);
+            //    newFixation.AOI_Name = int.Parse(arr[(int)TableColumnsEnum.AOI_Name]);
+            //    newFixation.AOI_Size = long.Parse(arr[(int)TableColumnsEnum.AOI_Size]);
+            //}
+            //catch
+            //{
+            //    newFixation.AOI_Group_After_Change = newFixation.AOI_Group_Before_Change = -1;
+            //    newFixation.AOI_Name = -1;
+            //    newFixation.AOI_Size = -1;
+            //}
+
+
 
             try
             {
                 newFixation.AOI_Group_After_Change = newFixation.AOI_Group_Before_Change = int.Parse(arr[(int)TableColumnsEnum.AOI_Group]);
+            }
+            catch
+            {
+                isAOIValid = false;
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI Group", arr[(int)TableColumnsEnum.AOI_Group], lineNumber));
+            }
+
+            try
+            {
                 newFixation.AOI_Name = int.Parse(arr[(int)TableColumnsEnum.AOI_Name]);
+            }
+            catch
+            {
+                isAOIValid = false;
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI Name", arr[(int)TableColumnsEnum.AOI_Name], lineNumber));
+            }
+
+            try
+            {
                 newFixation.AOI_Size = long.Parse(arr[(int)TableColumnsEnum.AOI_Size]);
             }
             catch
+            {
+                isAOIValid = false;
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI Size", arr[(int)TableColumnsEnum.AOI_Size], lineNumber));
+            }
+
+            if (!isAOIValid)
             {
                 newFixation.AOI_Group_After_Change = newFixation.AOI_Group_Before_Change = -1;
                 newFixation.AOI_Name = -1;
                 newFixation.AOI_Size = -1;
             }
 
+
             try
             {
                 newFixation.Fixation_Position_X = double.Parse(arr[(int)TableColumnsEnum.Fixation_Position_X]);
+            }
+            catch
+            {
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Fixation Position X", arr[(int)TableColumnsEnum.Fixation_Position_X], lineNumber));
+                isFixationValid = false;
+            }
+
+            try
+            {
                 newFixation.Fixation_Position_Y = double.Parse(arr[(int)TableColumnsEnum.Fixation_Position_Y]);
+            }
+            catch
+            {
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Fixation Position Y", arr[(int)TableColumnsEnum.Fixation_Position_Y], lineNumber));
+                isFixationValid = false;
+            }
+
+            try
+            {
                 newFixation.Fixation_Average_Pupil_Diameter = double.Parse(arr[(int)TableColumnsEnum.Fixation_Average_Pupil_Diameter]);
             }
             catch
             {
-                return null;
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Fixation Average Pupil Diameter", arr[(int)TableColumnsEnum.Fixation_Average_Pupil_Diameter], lineNumber));
+                isFixationValid = false;
+            }
+
+            try
+            {
+                newFixation.AOI_Coverage_In_Percents = double.Parse(arr[(int)TableColumnsEnum.AOI_Coverage]);
+            }
+            catch
+            {
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI_Coverage", arr[(int)TableColumnsEnum.AOI_Coverage], lineNumber));
+                isFixationValid = false;
+            }
+
+            try
+            {
+                newFixation.Index = long.Parse(arr[(int)TableColumnsEnum.Index]);
+            }
+            catch
+            {
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Index", arr[(int)TableColumnsEnum.Index], lineNumber));
+                isFixationValid = false;
             }
 
             newFixation.Trial = arr[(int)TableColumnsEnum.Trial].Trim();
             newFixation.Stimulus = arr[(int)TableColumnsEnum.Stimulus].Trim();
             newFixation.Participant = arr[(int)TableColumnsEnum.Participant].Trim();
 
-            string dictionatyKey = newFixation.GetDictionaryKey();
-            if (!FixationsService.fixationSetToFixationListDictionary.ContainsKey(dictionatyKey))
-                FixationsService.fixationSetToFixationListDictionary[dictionatyKey] = new List<Fixation>();
 
-            newFixation.AOI_Coverage_In_Percents = double.Parse(arr[(int)TableColumnsEnum.AOI_Coverage]);
-            newFixation.Index = long.Parse(arr[(int)TableColumnsEnum.Index]);
             newFixation.IsException = false;
 
             if (newFixation.AOI_Name != -1)
@@ -102,14 +191,21 @@ namespace EM_Analyzer.ModelClasses
                     newFixation.AOI_Details = AOIDetails.nameToAOIDetailsDictionary[newFixation.AOI_Name + newFixation.Stimulus];
                 else
                     newFixation.AOI_Details = AOIDetails.nameToAOIDetailsDictionary[newFixation.AOI_Name + ""];
+
+                if (newFixation.AOI_Details.isProper && newFixation.DistanceToAOI(newFixation.AOI_Details) != 0)
+                {
+                    newFixation.AOI_Details.isProper = false;
+                    ExcelLoggerService.AddLog(new Log() { FileName = FixationsService.textFileName, LineNumber = lineNumber, Description = "The Fixation Is Not Inside The AOI " + newFixation.AOI_Name });
+                    //new Task(() => MessageBox.Show("There is a problem with the AOI " + newFixation.AOI_Name + " In Stimulus " + newFixation.Stimulus)).Start();
+                }
             }
 
-            if (newFixation.AOI_Details.isProper && newFixation.DistanceToAOI(newFixation.AOI_Details) != 0)
-            {
-                newFixation.AOI_Details.isProper = false;
-                new Task(() => MessageBox.Show("There is a problem with the AOI " + newFixation.AOI_Name + " In Stimulus " + newFixation.Stimulus)).Start();
-            }
+            if (!isFixationValid)
+                return null;
 
+            string dictionatyKey = newFixation.GetDictionaryKey();
+            if (!FixationsService.fixationSetToFixationListDictionary.ContainsKey(dictionatyKey))
+                FixationsService.fixationSetToFixationListDictionary[dictionatyKey] = new List<Fixation>();
             FixationsService.fixationSetToFixationListDictionary[dictionatyKey].Add(newFixation);
 
             return newFixation;
@@ -217,6 +313,11 @@ namespace EM_Analyzer.ModelClasses
                     return Math.Sqrt(Math.Pow(X_Distance, 2) + Math.Pow(Y_Distance, 2));
                 }
             }
+        }
+
+        private static Log CreateLogForFieldValidation(string fieldName, string valueFound, uint lineNumber)
+        {
+            return new Log() { FileName = FixationsService.textFileName, LineNumber = lineNumber, Description = "The Value Of Field " + fieldName + " Is Not Valid!!!" + Environment.NewLine + "The Value Found Is: " + valueFound };
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EM_Analyzer.Enums;
+using EM_Analyzer.ExcelLogger;
 using EM_Analyzer.Services;
 
 namespace EM_Analyzer.ModelClasses
@@ -22,7 +23,7 @@ namespace EM_Analyzer.ModelClasses
         public double L { get; set; }
         public bool isProper { get; set; }
 
-        public AOIDetails(IEnumerable<string> details)
+        public AOIDetails(IEnumerable<string> details, uint lineNumber)
         {
             this.isProper = true;
             IEnumerator<string> enumerator = details.GetEnumerator();
@@ -38,20 +39,77 @@ namespace EM_Analyzer.ModelClasses
             }
             if(count>=6)
             {
-                this.Name = int.Parse(enumerator.Current);
+                try
+                {
+                    this.Name = int.Parse(enumerator.Current);
+                }
+                catch
+                {
+                    ExcelLoggerService.AddLog(CreateLogForFieldValidation("Name", enumerator.Current, lineNumber));
+                    this.isProper = false;
+                }
                 enumerator.MoveNext();
-                this.Group = int.Parse(enumerator.Current);
+
+                try
+                {
+                    this.Group = int.Parse(enumerator.Current);
+                }
+                catch
+                {
+                    ExcelLoggerService.AddLog(CreateLogForFieldValidation("Group", enumerator.Current, lineNumber));
+                    this.isProper = false;
+                }
                 enumerator.MoveNext();
-                this.X = double.Parse(enumerator.Current);
+
+                try
+                {
+                    this.X = double.Parse(enumerator.Current);
+                }
+                catch
+                {
+                    ExcelLoggerService.AddLog(CreateLogForFieldValidation("X", enumerator.Current, lineNumber));
+                    this.isProper = false;
+                }
                 enumerator.MoveNext();
-                this.Y = double.Parse(enumerator.Current);
+
+                try
+                {
+                    this.Y = double.Parse(enumerator.Current);
+                }
+                catch
+                {
+                    ExcelLoggerService.AddLog(CreateLogForFieldValidation("Y", enumerator.Current, lineNumber));
+                    this.isProper = false;
+                }
                 enumerator.MoveNext();
-                this.H = double.Parse(enumerator.Current);
+
+                try
+                {
+                    this.H = double.Parse(enumerator.Current);
+                }
+                catch
+                {
+                    ExcelLoggerService.AddLog(CreateLogForFieldValidation("H", enumerator.Current, lineNumber));
+                    this.isProper = false;
+                }
                 enumerator.MoveNext();
-                this.L = double.Parse(enumerator.Current);
+
+                try
+                {
+                    this.L = double.Parse(enumerator.Current);
+                }
+                catch
+                {
+                    ExcelLoggerService.AddLog(CreateLogForFieldValidation("L", enumerator.Current, lineNumber));
+                    this.isProper = false;
+                }
                 enumerator.MoveNext();
-                dictionaryKey = this.Name+dictionaryKey;
-                nameToAOIDetailsDictionary[dictionaryKey] = this;
+
+                if (this.isProper)
+                {
+                    dictionaryKey = this.Name + dictionaryKey;
+                    nameToAOIDetailsDictionary[dictionaryKey] = this;
+                }
             }
             /*
             {
@@ -68,12 +126,22 @@ namespace EM_Analyzer.ModelClasses
 
         public static void LoadAllAOIFromFile(string fileName)
         {
-            // List<double[]> table= ExcelsService.ReadExcelFile<double>(fileName);
             List<IEnumerable<string>> table = ExcelsService.ReadExcelFile<string>(fileName);
             isAOIIncludeStimulus = false;
             if (table.FirstOrDefault()?.Count() >= 7)
                 isAOIIncludeStimulus = true;
-            table.ForEach(details => new AOIDetails(details));
+            //table.AsParallel().(details => new AOIDetails(details));
+            uint lineNumber = 1;
+            foreach(IEnumerable<string> details in table)
+            {
+                new AOIDetails(details, lineNumber);
+                lineNumber++;
+            }
+        }
+
+        private static Log CreateLogForFieldValidation(string fieldName, string valueFound, uint lineNumber)
+        {
+            return new Log() { FileName = FixationsService.excelFileName, LineNumber = lineNumber, Description = "The Value Of Field " + fieldName + " Is Not Valid!!!" + Environment.NewLine + "The Value Found Is: " + valueFound };
         }
     }
 }

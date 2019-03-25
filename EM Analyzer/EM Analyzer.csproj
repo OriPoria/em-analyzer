@@ -64,6 +64,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums\TableColumnsEnum.cs" />
+    <Compile Include="ExcelLoggerService\ExcelLoggerService.cs" />
+    <Compile Include="ExcelLoggerService\Log.cs" />
     <Compile Include="ExcelsFilesMakers\FirstFileAfterProccessing.cs" />
     <Compile Include="ExcelsFilesMakers\SecondFileAfterProccessing.cs" />
     <Compile Include="ExcelsFilesMakers\ThirdFileAfterProccessing.cs" />

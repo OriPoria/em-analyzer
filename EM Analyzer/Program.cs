@@ -62,20 +62,22 @@ namespace EM_Analyzer
             }
 
             readingExcelFile.Join();
-            FixationsService.textName = excelFilePath.Substring(excelFilePath.LastIndexOf(@"\") + 1);
+            FixationsService.excelFileName = excelFilePath.Substring(excelFilePath.LastIndexOf(@"\") + 1);
+            FixationsService.textFileName = textFilePath.Substring(textFilePath.LastIndexOf(@"\") + 1);
             FixationsService.outputPath = excelFilePath.Substring(0, excelFilePath.LastIndexOf(@"\"));
             readTextFile(textFilePath);
             FixationsService.SortDictionary();
             if(int.Parse(ConfigurationService.RemoveFixationsAppearedBeforeFirstAOI)==1)
                 FixationsService.CleanAllFixationBeforeFirstAOI();
             FixationsService.SearchForExceptions();
+            FixationsService.DealWithExceptions();
 
             ExcelsFilesMakers.FirstFileAfterProccessing.makeExcelFile();
-            Console.WriteLine("First File: " + ConfigurationService.getValue(ConfigurationService.First_Excel_File_Name) + " Finished!!! ");
+            Console.WriteLine("First File: " + ConfigurationService.FirstExcelFileName + " Finished!!! ");
             ExcelsFilesMakers.SecondFileAfterProccessing.makeExcelFile();
-            Console.WriteLine("Second File: " + ConfigurationService.getValue(ConfigurationService.Second_Excel_File_Name) + " Finished!!! ");
+            Console.WriteLine("Second File: " + ConfigurationService.SecondExcelFileName + " Finished!!! ");
             ExcelsFilesMakers.ThirdFileAfterProccessing.makeExcelFile();
-            Console.WriteLine("Third File: " + ConfigurationService.getValue(ConfigurationService.Third_Excel_File_Name) + " Finished!!! ");
+            Console.WriteLine("Third File: " + ConfigurationService.ThirdExcelFileName + " Finished!!! ");
 
 
         }
@@ -86,12 +88,12 @@ namespace EM_Analyzer
 
             FixationsService.tableColumns = lines[0].Split('\t').ToList();
 
-            for (int i = 1; i < lines.Length; i++)
+            for (uint i = 1; i < lines.Length; i++)
             {
                 string[] currentRow = lines[i].Split('\t');
                 try
                 {
-                    Fixation.CreateFixationFromStringArray(currentRow);
+                    Fixation.CreateFixationFromStringArray(currentRow, i);
                 }
                 catch
                 {

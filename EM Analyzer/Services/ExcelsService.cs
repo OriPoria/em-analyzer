@@ -29,7 +29,7 @@ namespace EM_Analyzer.Services
 
                 ws.Columns().AdjustToContents();
                 // wb.SaveAs(Application.StartupPath + "/" + fileName);
-                wb.SaveAs(FixationsService.outputPath + "/" + FixationsService.textName.Substring(0,FixationsService.textName.IndexOf('.')) +" - " + fileName);
+                wb.SaveAs(FixationsService.outputPath + "/" + FixationsService.textFileName.Substring(0,FixationsService.textFileName.IndexOf('.')) +" - " + fileName);
             }
         }
 
