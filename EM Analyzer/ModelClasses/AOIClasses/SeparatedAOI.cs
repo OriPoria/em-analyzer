@@ -9,6 +9,7 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
     public class SeparatedAOI : IAOI
     {
         public double AOI_Coverage_In_Percents { get; set; }
+        public double AOI_Size_X { get; set; }
         //public bool IsProper { get; set; }
         public int Group { get; set; }
 
@@ -19,9 +20,11 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
             this.AOIs.AddRange(AOIs);
             this.Group = AOIs.First().Group;
             this.AOI_Coverage_In_Percents = 0;
+            this.AOI_Size_X = 0;
             foreach(var aoi in AOIs)
             {
                 this.AOI_Coverage_In_Percents += aoi.AOI_Coverage_In_Percents;
+                this.AOI_Size_X += aoi.AOI_Size_X;
             }
         }
 

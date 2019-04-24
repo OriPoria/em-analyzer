@@ -11,6 +11,7 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
     {
         double DistanceToAOI(Fixation fixation);
         double AOI_Coverage_In_Percents { get; set; }
+        double AOI_Size_X { get; set; }
         //bool IsProper { get; set; }
         int Group { get; set; }
     }

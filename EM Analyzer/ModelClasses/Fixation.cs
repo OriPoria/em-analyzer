@@ -113,6 +113,10 @@ namespace EM_Analyzer.ModelClasses
             try
             {
                 newFixation.AOI_Size = long.Parse(arr[TextFileColumnIndexes.AOI_Size]);
+                if (newFixation.AOI_Name != -1 && newFixation.AOI_Details.AOI_Size_X < 0)
+                {
+                    newFixation.AOI_Details.AOI_Size_X = newFixation.AOI_Size;
+                }
             }
             catch
             {
@@ -164,7 +168,6 @@ namespace EM_Analyzer.ModelClasses
                 if (newFixation.AOI_Name != -1 && newFixation.AOI_Details.AOI_Coverage_In_Percents < 0)
                 {
                     newFixation.AOI_Details.AOI_Coverage_In_Percents = newFixation.AOI_Coverage_In_Percents;
-
                 }
             }
             catch

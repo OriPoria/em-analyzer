@@ -198,7 +198,14 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 get
                 {
                     if (m_First_Pass_Progressive_Duration == -1)
-                        m_First_Pass_Progressive_Duration = this.First_Pass_Progressive_Duration_Overall - this.First_Pass_Fixations[0].Event_Duration;
+                    {
+                        if (this.First_Pass_Fixations.Any())
+                            m_First_Pass_Progressive_Duration = this.First_Pass_Progressive_Duration_Overall - this.First_Pass_Fixations[0].Event_Duration;
+                        else
+                        {
+                            m_First_Pass_Progressive_Duration = 0;
+                        }
+                    }
                     return m_First_Pass_Progressive_Duration;
                 }
             }
@@ -246,7 +253,10 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 get
                 {
                     if (m_Total_First_Pass_Progressive_Duration == -1)
-                        m_Total_First_Pass_Progressive_Duration = this.Total_First_Pass_Progressive_Duration_Overall - this.First_Pass_Fixations[0].Event_Duration;
+                        if (this.First_Pass_Fixations.Any())
+                            m_Total_First_Pass_Progressive_Duration = this.Total_First_Pass_Progressive_Duration_Overall - this.First_Pass_Fixations[0].Event_Duration;
+                        else
+                            m_Total_First_Pass_Progressive_Duration = 0;
                     return m_Total_First_Pass_Progressive_Duration;
                 }
             }
@@ -282,7 +292,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 get
                 {
                     if (m_Total_First_Pass_Progressive_Number_Overall == -1)
-                        m_Total_First_Pass_Progressive_Number_Overall = this.m_Total_Fixations_Progressive_First_Pass.Count;
+                        m_Total_First_Pass_Progressive_Number_Overall = this.Total_Fixations_Progressive_First_Pass.Count;
                     return m_Total_First_Pass_Progressive_Number_Overall;
                 }
             }
@@ -367,12 +377,31 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 }
             }
 
+            private double m_Mean_AOI_Size = -1;
             [Description("AOI Size X [mm]")]
             public double Mean_AOI_Size
             {
                 get
                 {
-                    return this.Total_AOI_Size / this.Total_Fixation_Number;
+                    if (m_Mean_AOI_Size == -1)
+                    {
+                        List<double> sizes = new List<double>();
+                        IEnumerable<IEnumerable<double>> all_sizes = this.Fixations.Select(lst => lst.Select(fix=>{
+                            if (fix.AOI_Name != -1 && !fix.IsInExceptionBounds)
+                                return fix.AOI_Details.AOI_Size_X;
+                            else
+                                return 0;
+                        }).Distinct());
+                        foreach (var lst in all_sizes)
+                        {
+                            sizes.AddRange(lst);
+                        }
+                        sizes = sizes.Distinct().ToList();
+                        m_Mean_AOI_Size = sizes.Sum();
+                    }
+                    //m_Mean_AOI_Coverage = this.Total_AOI_Coverage / this.Total_Fixation_Number;
+                    return m_Mean_AOI_Size;
+                    //return this.Total_AOI_Size / this.Total_Fixation_Number;
                 }
             }
 
@@ -385,7 +414,13 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     if (m_Mean_AOI_Coverage == -1)
                     {
                         List<double> coverages = new List<double>();
-                        IEnumerable<IEnumerable<double>> all_coverages = this.Fixations.Select(lst => lst.Select(fix => fix.AOI_Coverage_In_Percents).Distinct());
+                        IEnumerable<IEnumerable<double>> all_coverages = this.Fixations.Select(lst => lst.Select(fix =>
+                        {
+                            if (fix.AOI_Name != -1 && !fix.IsInExceptionBounds)
+                                return fix.AOI_Details.AOI_Coverage_In_Percents;
+                            else
+                                return 0;
+                        }).Distinct());
                         foreach(var lst in all_coverages)
                         {
                             coverages.AddRange(lst);
@@ -437,11 +472,18 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_Fixations_Progressive_First_Pass == null)
                     {
-                        Fixation firstFixation = this.First_Pass_Fixations[0];
-                        int firstOneRightToFirst = this.First_Pass_Fixations.FindIndex(fix => fix.Previous_Fixation != null && fix.IsBeforeThan(fix.Previous_Fixation));
-                        if (firstOneRightToFirst == -1)
-                            firstOneRightToFirst = this.First_Pass_Fixations.Count;
-                        this.m_Fixations_Progressive_First_Pass = this.First_Pass_Fixations.GetRange(0, firstOneRightToFirst);
+                        if (this.First_Pass_Fixations.Any())
+                        {
+                            Fixation firstFixation = this.First_Pass_Fixations[0];
+                            int firstOneRightToFirst = this.First_Pass_Fixations.FindIndex(fix => fix.Previous_Fixation != null && fix.IsBeforeThan(fix.Previous_Fixation));
+                            if (firstOneRightToFirst == -1)
+                                firstOneRightToFirst = this.First_Pass_Fixations.Count;
+                            this.m_Fixations_Progressive_First_Pass = this.First_Pass_Fixations.GetRange(0, firstOneRightToFirst);
+                        }
+                        else
+                        {
+                            this.m_Fixations_Progressive_First_Pass = new List<Fixation>();
+                        }
                     }
                     return this.m_Fixations_Progressive_First_Pass;
                 }
@@ -455,12 +497,15 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     if (this.m_Total_Fixations_Progressive_First_Pass == null)
                     {
                         this.m_Total_Fixations_Progressive_First_Pass = new List<Fixation>();
-                        Fixation[] first_Pass_Fixations = this.First_Pass_Fixations.ToArray();
-                        this.m_Total_Fixations_Progressive_First_Pass.Add(first_Pass_Fixations[0]);
-                        for (int i = 1; i < first_Pass_Fixations.Length; ++i)
+                        if (this.First_Pass_Fixations.Any())
                         {
-                            if (first_Pass_Fixations[i - 1].IsBeforeThan(first_Pass_Fixations[i]))
-                                this.m_Total_Fixations_Progressive_First_Pass.Add(first_Pass_Fixations[i]);
+                            Fixation[] first_Pass_Fixations = this.First_Pass_Fixations.ToArray();
+                            this.m_Total_Fixations_Progressive_First_Pass.Add(first_Pass_Fixations[0]);
+                            for (int i = 1 ; i < first_Pass_Fixations.Length ; ++i)
+                            {
+                                if (first_Pass_Fixations[i - 1].IsBeforeThan(first_Pass_Fixations[i]))
+                                    this.m_Total_Fixations_Progressive_First_Pass.Add(first_Pass_Fixations[i]);
+                            }
                         }
                     }
                     return this.m_Total_Fixations_Progressive_First_Pass;
@@ -496,7 +541,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 this.m_First_Pass_Duration = -1;
                 this.m_First_Pass_Number = -1;
                 this.m_Fixations_Progressive_First_Pass = null;
-                this.First_Pass_Fixations = null;
+                this.First_Pass_Fixations = new List<Fixation>();
                 this.m_Regressions = null;
                 this.m_First_Pass_Progressive_Duration_Overall = -1;
                 this.m_Total_First_Pass_Progressive_Duration_Overall = -1;

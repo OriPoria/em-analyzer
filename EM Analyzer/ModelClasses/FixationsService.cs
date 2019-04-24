@@ -106,7 +106,8 @@ namespace EM_Analyzer.ModelClasses
                 foreach (List<Fixation> fixationList in values)
                 {
                     lastFixationsQueue.Clear();
-                    foreach (Fixation fixation in fixationList)
+                    List<Fixation> notExceptionalFixations = fixationList.Where(fix => !fix.IsException || (fix.IsInExceptionBounds && dealingWithInsideExceptions == DealingWithExceptionsEnum.Change_AOI_Group)).ToList();
+                    foreach (Fixation fixation in notExceptionalFixations)
                     {
                         // Get the last Fixations that relevant for our window
                         if (lastFixationsQueue.Count == Number_Of_Fixations_Out_Of_AOI_For_Exception + Number_Of_Fixations_In_AOI_For_Exception - 1)
@@ -126,9 +127,11 @@ namespace EM_Analyzer.ModelClasses
                                             exceptionalFix.AOI_Group_After_Change = fixation.AOI_Group_After_Change;
                                         // fix.IsInExceptionBounds = (fix.DistanceToAOI(AOIDetails.nameToAOIDetailsDictionary[fixation.AOI_Name+ fixation.Stimulus]) <= exceptionsLimit);
                                     });
+                                    lastFixationsQueue = new Queue<Fixation>(lastFixationsQueue.Where(fix => !fix.IsException));
                                 }
                             }
-                            lastFixationsQueue.Dequeue();
+                            if(lastFixationsQueue.Any())
+                                lastFixationsQueue.Dequeue();
                         }
                         lastFixationsQueue.Enqueue(fixation);
                     }
@@ -139,7 +142,9 @@ namespace EM_Analyzer.ModelClasses
             Number_Of_Fixations_In_AOI_For_Exception = int.Parse(ConfigurationService.NumberOfFixationsInAOIForException);
             foreach (List<Fixation> fixationList in values)
             {
-                List<CountedAOIFixations> countedAOIFixationsArray = ConvertFixationListToCoutedList(fixationList).ToList();
+                List<Fixation> notExceptionalFixations = fixationList.Where(fix => !fix.IsException || (fix.IsInExceptionBounds && dealingWithInsideExceptions == DealingWithExceptionsEnum.Change_AOI_Group)).ToList();
+                //fixationList.RemoveAll(fix => fix.IsException);
+                List<CountedAOIFixations> countedAOIFixationsArray = ConvertFixationListToCoutedList(notExceptionalFixations).ToList();
                 for (int i = 0 ; i < countedAOIFixationsArray.Count ; i++)
                 {
                     CountedAOIFixations currrentCountedAOIFixations = countedAOIFixationsArray[i];

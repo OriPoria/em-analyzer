@@ -35,6 +35,3 @@ D:\Documents\Projects\EM Analyzer\EM Analyzer\obj\Debug\ForBarIlanResearch.pdb
 D:\Documents\Projects\EM Analyzer\EM Analyzer\obj\Debug\EM Analyzer.csprojAssemblyReference.cache
 D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Debug\EPPlus.dll
 D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Debug\EPPlus.xml
-D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Debug\nunit.framework.dll
-D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Debug\nunit.framework.pdb
-D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Debug\nunit.framework.xml

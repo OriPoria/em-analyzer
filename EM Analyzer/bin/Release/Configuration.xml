@@ -47,7 +47,7 @@
         Do_Nothing = 1,
         Skip_In_First_Pass = 2
     -->
-    <Dealing_With_Exceptions_Outside_The_Limit>1</Dealing_With_Exceptions_Outside_The_Limit>  
+    <Dealing_With_Exceptions_Outside_The_Limit>2</Dealing_With_Exceptions_Outside_The_Limit>  
   </DealingWithExceptions>
   
 </Configuration>

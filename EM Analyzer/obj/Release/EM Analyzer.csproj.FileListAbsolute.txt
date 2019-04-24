@@ -15,7 +15,4 @@ D:\Documents\Projects\EM Analyzer\EM Analyzer\obj\Release\EM Analyzer.csproj.Cop
 D:\Documents\Projects\EM Analyzer\EM Analyzer\obj\Release\ForBarIlanResearch.exe
 D:\Documents\Projects\EM Analyzer\EM Analyzer\obj\Release\ForBarIlanResearch.pdb
 D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Release\EPPlus.dll
-D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Release\nunit.framework.dll
 D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Release\EPPlus.xml
-D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Release\nunit.framework.pdb
-D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Release\nunit.framework.xml

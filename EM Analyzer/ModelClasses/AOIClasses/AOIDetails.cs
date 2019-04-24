@@ -25,10 +25,12 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
         public double AOI_Coverage_In_Percents { get; set; }
         public bool IsProper { get; set; }
         public string DictionaryKey { get; private set; }
+        public double AOI_Size_X { get; set; }
 
         public AOIDetails(IEnumerable<string> details, uint lineNumber)
         {
             AOI_Coverage_In_Percents = -1;
+            AOI_Size_X = -1;
             IsProper = true;
             IEnumerator<string> enumerator = details.GetEnumerator();
             //string dictionaryKey = "";
