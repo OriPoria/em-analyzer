@@ -1,5 +1,6 @@
 ﻿using EM_Analyzer.Enums;
 using EM_Analyzer.ModelClasses;
+using EM_Analyzer.ModelClasses.AOIClasses;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +10,7 @@ using System.Windows.Forms;
 
 namespace EM_Analyzer
 {
-    class Program
+    public class Program
     {
         [STAThread]
         static void Main(string[] args)
@@ -65,28 +66,31 @@ namespace EM_Analyzer
             FixationsService.excelFileName = excelFilePath.Substring(excelFilePath.LastIndexOf(@"\") + 1);
             FixationsService.textFileName = textFilePath.Substring(textFilePath.LastIndexOf(@"\") + 1);
             FixationsService.outputPath = excelFilePath.Substring(0, excelFilePath.LastIndexOf(@"\"));
-            readTextFile(textFilePath);
+            ReadTextFile(textFilePath);
+            FixationsService.DealWithSeparatedAOIs();
             FixationsService.SortDictionary();
             if(int.Parse(ConfigurationService.RemoveFixationsAppearedBeforeFirstAOI)==1)
                 FixationsService.CleanAllFixationBeforeFirstAOI();
             FixationsService.SearchForExceptions();
-            FixationsService.DealWithExceptions();
 
-            ExcelsFilesMakers.FirstFileAfterProccessing.makeExcelFile();
+            ExcelsFilesMakers.FirstFileAfterProccessing.MakeExcelFile();
             Console.WriteLine("First File: " + ConfigurationService.FirstExcelFileName + " Finished!!! ");
-            ExcelsFilesMakers.SecondFileAfterProccessing.makeExcelFile();
+            FixationsService.DealWithExceptions();
+            ExcelsFilesMakers.SecondFileAfterProccessing.MakeExcelFile();
+            ExcelsFilesMakers.SecondFileConsideringCoverage.MakeExcelFile();
             Console.WriteLine("Second File: " + ConfigurationService.SecondExcelFileName + " Finished!!! ");
-            ExcelsFilesMakers.ThirdFileAfterProccessing.makeExcelFile();
+            ExcelsFilesMakers.ThirdFileAfterProccessing.MakeExcelFile();
             Console.WriteLine("Third File: " + ConfigurationService.ThirdExcelFileName + " Finished!!! ");
 
 
         }
 
-        private static void readTextFile(string filePath)
+        private static void ReadTextFile(string filePath)
         {
             string[] lines = File.ReadAllLines(filePath).Where(line => line.Trim().Count() > 0).ToArray();
 
-            FixationsService.tableColumns = lines[0].Split('\t').ToList();
+            FixationsService.tableColumns = lines[0].Split('\t').Select(column=>column.Trim().ToLower()).ToList();
+            FixationsService.InitializeColumnIndexes();
 
             for (uint i = 1; i < lines.Length; i++)
             {
@@ -100,29 +104,18 @@ namespace EM_Analyzer
                     MessageBox.Show("There is a problem with the Text File In Line: " + i + "\n Content: \"" + lines[i] + "\"");
                 }
             }
+
+            // Deletes Double Fixations (With The Same Index).
+            IEnumerable<string> participants = FixationsService.fixationSetToFixationListDictionary.Keys.ToList();
+            foreach (string participant in participants)
+            {
+                FixationsService.fixationSetToFixationListDictionary[participant] = FixationsService.fixationSetToFixationListDictionary[participant].GroupBy(fix=>fix.Index).Select(g=>g.First()).ToList();
+            }
         }
 
-        private static void sortTableByIndex(List<string[]> table)
+        private static void SortTableByIndex(List<string[]> table)
         {
-            table.Sort((a, b) => a[(int)TableColumnsEnum.Index].CompareTo(b[(int)TableColumnsEnum.Index]));
-        }
-
-        private static void releaseObject(object obj)
-        {
-            try
-            {
-                System.Runtime.InteropServices.Marshal.ReleaseComObject(obj);
-                obj = null;
-            }
-            catch (Exception ex)
-            {
-                obj = null;
-                MessageBox.Show("Unable to release the Object " + ex.ToString());
-            }
-            finally
-            {
-                GC.Collect();
-            }
+            table.Sort((a, b) => a[TextFileColumnIndexes.Index].CompareTo(b[TextFileColumnIndexes.Index]));
         }
 
         private void FirstDataProccessing(List<string[]> fixationTable)

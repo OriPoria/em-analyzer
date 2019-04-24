@@ -1,14 +1,11 @@
 D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Release\ForBarIlanResearch.exe.config
 D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Release\ForBarIlanResearch.exe
 D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Release\ForBarIlanResearch.pdb
-D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Release\ClosedXML.dll
 D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Release\DocumentFormat.OpenXml.dll
 D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Release\ExcelNumberFormat.dll
 D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Release\FastMember.dll
 D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Release\System.IO.FileSystem.Primitives.dll
 D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Release\System.IO.Packaging.dll
-D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Release\ClosedXML.pdb
-D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Release\ClosedXML.xml
 D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Release\DocumentFormat.OpenXml.xml
 D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Release\ExcelNumberFormat.xml
 D:\Documents\Projects\EM Analyzer\EM Analyzer\obj\Release\EM Analyzer.csprojAssemblyReference.cache
@@ -17,3 +14,8 @@ D:\Documents\Projects\EM Analyzer\EM Analyzer\obj\Release\EM Analyzer.csproj.Cor
 D:\Documents\Projects\EM Analyzer\EM Analyzer\obj\Release\EM Analyzer.csproj.CopyComplete
 D:\Documents\Projects\EM Analyzer\EM Analyzer\obj\Release\ForBarIlanResearch.exe
 D:\Documents\Projects\EM Analyzer\EM Analyzer\obj\Release\ForBarIlanResearch.pdb
+D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Release\EPPlus.dll
+D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Release\nunit.framework.dll
+D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Release\EPPlus.xml
+D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Release\nunit.framework.pdb
+D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Release\nunit.framework.xml

@@ -1,4 +1,5 @@
-﻿using EM_Analyzer.Services;
+﻿using EM_Analyzer.ModelClasses;
+using EM_Analyzer.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace EM_Analyzer.ExcelLogger
 
         private static void OnProgramExit(object sender, EventArgs e)
         {
-            ExcelsService.CreateExcelFromStringTable("Logs.xlsx", logs);
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.LogsExcelFileName, logs);
         }
 
         public static void AddLog(Log log)

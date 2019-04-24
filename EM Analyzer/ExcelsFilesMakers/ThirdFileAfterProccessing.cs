@@ -1,17 +1,15 @@
-﻿using ClosedXML.Attributes;
-using EM_Analyzer.ModelClasses;
+﻿using EM_Analyzer.ModelClasses;
 using EM_Analyzer.Services;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EM_Analyzer.ExcelsFilesMakers
 {
     class ThirdFileAfterProccessing
     {
-        public static void makeExcelFile()
+        public static void MakeExcelFile()
         {
             List<Fixation>[] fixationsLists = FixationsService.fixationSetToFixationListDictionary.Values.ToArray();
             List<ParticipantTrial> table = new List<ParticipantTrial>();
@@ -26,17 +24,17 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
         private class ParticipantTrial
         {
-            //[XLColumn(Ignore = true)]
+            ////[XLColumn(Ignore = true)]
             //public static Dictionary<string, ParticipantTrial> instancesDictionary = new Dictionary<string, ParticipantTrial>();
-            [XLColumn(Header = "Participant")]
+            [Description("Participant")]
             public string Participant { get; set; }
-            [XLColumn(Header = "Trial")]
+            [Description("Trial")]
             public string Trial { get; set; }
-            [XLColumn(Header = "Stimulus")]
+            [Description("Stimulus")]
             public string Stimulus { get; set; }
 
             private double m_Mean_Fixation_Duration;
-            [XLColumn(Header = "Mean Fixation Duration")]
+            [Description("Mean Fixation Duration")]
             public double Mean_Fixation_Duration
             {
                 get
@@ -52,7 +50,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
 
             private int m_Total_Fixation_Number;
-            [XLColumn(Header = "Total Fixation Number")]
+            [Description("Total Fixation Number")]
             public int Total_Fixation_Number
             {
                 get
@@ -67,7 +65,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
 
             private double m_Progressive_Fixation_Duration;
-            [XLColumn(Header = "Progressive Fixation Duration")]
+            [Description("Progressive Fixation Duration")]
             public double Progressive_Fixation_Duration
             {
                 get
@@ -81,7 +79,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 }
             }
 
-            [XLColumn(Header = "Progressive Fixation Number")]
+            [Description("Progressive Fixation Number")]
             public int Progressive_Fixation_Number
             {
                 get
@@ -91,7 +89,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             }
 
             private double m_Progressive_Saccade_Length;
-            [XLColumn(Header = "Progressive Saccade Length")]
+            [Description("Progressive Saccade Length")]
             public double Progressive_Saccade_Length
             {
                 get
@@ -105,7 +103,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             }
 
             private double m_Progressive_Saccade_Length_X;
-            [XLColumn(Header = "Progressive Saccade Length X")]
+            [Description("Progressive Saccade Length X")]
             public double Progressive_Saccade_Length_X
             {
                 get
@@ -120,7 +118,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
 
             private double m_Regressive_Fixation_Duration;
-            [XLColumn(Header = "Regressive Fixation Duration")]
+            [Description("Regressive Fixation Duration")]
             public double Regressive_Fixation_Duration
             {
                 get
@@ -134,7 +132,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 }
             }
 
-            [XLColumn(Header = "Regressive Fixation Number")]
+            [Description("Regressive Fixation Number")]
             public int Regressive_Fixation_Number
             {
                 get
@@ -144,7 +142,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             }
 
             private double m_Regressive_Saccade_Length;
-            [XLColumn(Header = "Regressive Saccade Length")]
+            [Description("Regressive Saccade Length")]
             public double Regressive_Saccade_Length
             {
                 get
@@ -158,7 +156,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             }
 
             private double m_Regressive_Saccade_Length_X;
-            [XLColumn(Header = "Regressive Saccade Length X")]
+            [Description("Regressive Saccade Length X")]
             public double Regressive_Saccade_Length_X
             {
                 get
@@ -173,11 +171,12 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
 
 
-            [XLColumn(Ignore = true)]
+            //[XLColumn(Ignore = true)]
+            [EpplusIgnore]
             public List<Fixation> Fixations { get; set; }
 
             private List<Fixation> m_Progressive_Fixations;
-            [XLColumn(Ignore = true)]
+            //[XLColumn(Ignore = true)]
             private List<Fixation> Progressive_Fixations
             {
                 get
@@ -191,7 +190,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             }
 
             private List<Fixation> m_Regressive_Fixations;
-            [XLColumn(Ignore = true)]
+            //[XLColumn(Ignore = true)]
             private List<Fixation> Regressive_Fixations
             {
                 get
@@ -264,7 +263,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 for (int i = 1; i < fixations.Length; ++i)
                 {
                     fixations[i].Previous_Fixation = fixations[i - 1];
-                    if (fixations[i - 1].isBeforeThan(fixations[i]))
+                    if (fixations[i - 1].IsBeforeThan(fixations[i]))
                         this.m_Progressive_Fixations.Add(fixations[i]);
                     else
                         this.m_Regressive_Fixations.Add(fixations[i]);

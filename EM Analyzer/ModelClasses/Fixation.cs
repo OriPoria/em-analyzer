@@ -1,123 +1,123 @@
-﻿using ClosedXML.Attributes;
-using EM_Analyzer.Enums;
+﻿using EM_Analyzer.Enums;
 using EM_Analyzer.ExcelLogger;
+using EM_Analyzer.ModelClasses.AOIClasses;
+using EM_Analyzer.Services;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+
 
 namespace EM_Analyzer.ModelClasses
 {
-    class Fixation
+    public class Fixation
     {
-        [XLColumn(Header = "Trial")]
+        [Description("Trial")]
         public string Trial { get; set; }
-        [XLColumn(Header = "Stimulus")]
+        [Description("Stimulus")]
         public string Stimulus { get; set; }
-        [XLColumn(Ignore = true)]
+        //[XLColumn(Ignore = true)]
+        [EpplusIgnore]
         public Fixation Previous_Fixation { get; set; }
-        [XLColumn(Header = "Participant")]
+        [Description("Participant")]
         public string Participant { get; set; }
-        [XLColumn(Header = "AOI Name")]
+        [Description("AOI Name")]
         public int AOI_Name { get; set; }
-        [XLColumn(Header = "AOI Group Before Change")]
+        [Description("AOI Group Before Change")]
         public int AOI_Group_Before_Change { get; set; }
-        [XLColumn(Header = "AOI Group After Change")]
+        [Description("AOI Group After Change")]
         public int AOI_Group_After_Change { get; set; }
-        [XLColumn(Header = "Exceptional Fixations")]
+        [Description("Is Exceptional")]
         public bool IsException { get; set; }
-        [XLColumn(Ignore = true)]
+        [EpplusIgnore]
         public long AOI_Size { get; set; }
-        [XLColumn(Header = "AOI Coverage In Percents")]
+        [Description("AOI Coverage In Percents")]
         public double AOI_Coverage_In_Percents { get; set; }
-        [XLColumn(Header = "Index")]
+        [Description("Index")]
         public long Index { get; set; }
-        [XLColumn(Header = "Event Duration")]
+        [Description("Event Duration")]
         public double Event_Duration { get; set; }
-        [XLColumn(Header = "Fixation Position X")]
+        [Description("Position X")]
         public double Fixation_Position_X { get; set; }
-        [XLColumn(Header = "Fixation Position Y")]
+        [Description("Position Y")]
         public double Fixation_Position_Y { get; set; }
-        [XLColumn(Header = "Fixation Average Pupil Diameter")]
+        [Description("Average Pupil Diameter")]
         public double Fixation_Average_Pupil_Diameter { get; set; }
-        [XLColumn(Ignore = true)]
-        public AOIDetails AOI_Details { get; private set; }
+        [EpplusIgnore]
+        public IAOI AOI_Details
+        {
+            get
+            {
+                if (AOIDetails.isAOIIncludeStimulus)
+                    return AOIsService.nameToAOIDictionary[AOI_Name + Stimulus];
+                else
+                    return AOIsService.nameToAOIDictionary[AOI_Name + ""];
+            }
+        }
 
-        [XLColumn(Ignore = true)]
+        //[EpplusIgnore]
+        [Description("Is In Exception Bounds")]
         public bool IsInExceptionBounds { get; set; }
 
         //static double minimumDuration = double.Parse(ConfigurationService.getValue(ConfigurationService.Minimum_Event_Duration_In_ms));
         //static double maximumDuration = double.Parse(ConfigurationService.getValue(ConfigurationService.Maximum_Event_Duration_In_ms));
 
-        static double minimumDuration = double.Parse(ConfigurationService.MinimumEventDurationInms);
-        static double maximumDuration = double.Parse(ConfigurationService.MaximumEventDurationInms);
+        static readonly double minimumDuration = double.Parse(ConfigurationService.MinimumEventDurationInms);
+        static readonly double maximumDuration = double.Parse(ConfigurationService.MaximumEventDurationInms);
 
 
         public static Fixation CreateFixationFromStringArray(string[] arr, uint lineNumber)
         {
             bool isFixationValid = true;
             bool isAOIValid = true;
-            Fixation newFixation = new Fixation();
+            Fixation newFixation = new Fixation
+            {
+                Trial = arr[TextFileColumnIndexes.Trial].Trim(),
+                Stimulus = arr[TextFileColumnIndexes.Stimulus].Trim(),
+                Participant = arr[TextFileColumnIndexes.Participant].Trim()
+            };
+
             try
             {
-                newFixation.Event_Duration = double.Parse(arr[(int)TableColumnsEnum.Event_Duration]);
+                newFixation.Event_Duration = double.Parse(arr[TextFileColumnIndexes.Event_Duration]);
                 if (newFixation.Event_Duration < minimumDuration || newFixation.Event_Duration > maximumDuration)
                     return null;
             }
+
             catch
             {
-                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Event Duration", arr[(int)TableColumnsEnum.Event_Duration], lineNumber));
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Event Duration", arr[TextFileColumnIndexes.Event_Duration], lineNumber));
                 isFixationValid = false;
             }
 
-
-            //try
-            //{
-            //    newFixation.AOI_Group_After_Change = newFixation.AOI_Group_Before_Change = int.Parse(arr[(int)TableColumnsEnum.AOI_Group]);
-            //    newFixation.AOI_Name = int.Parse(arr[(int)TableColumnsEnum.AOI_Name]);
-            //    newFixation.AOI_Size = long.Parse(arr[(int)TableColumnsEnum.AOI_Size]);
-            //}
-            //catch
-            //{
-            //    newFixation.AOI_Group_After_Change = newFixation.AOI_Group_Before_Change = -1;
-            //    newFixation.AOI_Name = -1;
-            //    newFixation.AOI_Size = -1;
-            //}
-
-
-
             try
             {
-                newFixation.AOI_Group_After_Change = newFixation.AOI_Group_Before_Change = int.Parse(arr[(int)TableColumnsEnum.AOI_Group]);
+                newFixation.AOI_Group_After_Change = newFixation.AOI_Group_Before_Change = int.Parse(arr[TextFileColumnIndexes.AOI_Group]);
             }
             catch
             {
                 isAOIValid = false;
-                ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI Group", arr[(int)TableColumnsEnum.AOI_Group], lineNumber));
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI Group", arr[TextFileColumnIndexes.AOI_Group], lineNumber));
             }
 
             try
             {
-                newFixation.AOI_Name = int.Parse(arr[(int)TableColumnsEnum.AOI_Name]);
+                newFixation.AOI_Name = int.Parse(arr[TextFileColumnIndexes.AOI_Name]);
             }
             catch
             {
                 isAOIValid = false;
-                ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI Name", arr[(int)TableColumnsEnum.AOI_Name], lineNumber));
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI Name", arr[TextFileColumnIndexes.AOI_Name], lineNumber));
             }
 
             try
             {
-                newFixation.AOI_Size = long.Parse(arr[(int)TableColumnsEnum.AOI_Size]);
+                newFixation.AOI_Size = long.Parse(arr[TextFileColumnIndexes.AOI_Size]);
             }
             catch
             {
                 isAOIValid = false;
-                ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI Size", arr[(int)TableColumnsEnum.AOI_Size], lineNumber));
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI Size", arr[TextFileColumnIndexes.AOI_Size], lineNumber));
             }
 
             if (!isAOIValid)
@@ -130,71 +130,79 @@ namespace EM_Analyzer.ModelClasses
 
             try
             {
-                newFixation.Fixation_Position_X = double.Parse(arr[(int)TableColumnsEnum.Fixation_Position_X]);
+                newFixation.Fixation_Position_X = double.Parse(arr[TextFileColumnIndexes.Fixation_Position_X]);
             }
             catch
             {
-                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Fixation Position X", arr[(int)TableColumnsEnum.Fixation_Position_X], lineNumber));
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Fixation Position X", arr[TextFileColumnIndexes.Fixation_Position_X], lineNumber));
                 isFixationValid = false;
             }
 
             try
             {
-                newFixation.Fixation_Position_Y = double.Parse(arr[(int)TableColumnsEnum.Fixation_Position_Y]);
+                newFixation.Fixation_Position_Y = double.Parse(arr[TextFileColumnIndexes.Fixation_Position_Y]);
             }
             catch
             {
-                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Fixation Position Y", arr[(int)TableColumnsEnum.Fixation_Position_Y], lineNumber));
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Fixation Position Y", arr[TextFileColumnIndexes.Fixation_Position_Y], lineNumber));
                 isFixationValid = false;
             }
 
             try
             {
-                newFixation.Fixation_Average_Pupil_Diameter = double.Parse(arr[(int)TableColumnsEnum.Fixation_Average_Pupil_Diameter]);
+                newFixation.Fixation_Average_Pupil_Diameter = double.Parse(arr[TextFileColumnIndexes.Fixation_Average_Pupil_Diameter]);
             }
             catch
             {
-                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Fixation Average Pupil Diameter", arr[(int)TableColumnsEnum.Fixation_Average_Pupil_Diameter], lineNumber));
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Fixation Average Pupil Diameter", arr[TextFileColumnIndexes.Fixation_Average_Pupil_Diameter], lineNumber));
                 isFixationValid = false;
             }
 
             try
             {
-                newFixation.AOI_Coverage_In_Percents = double.Parse(arr[(int)TableColumnsEnum.AOI_Coverage]);
+                newFixation.AOI_Coverage_In_Percents = double.Parse(arr[TextFileColumnIndexes.AOI_Coverage]);
+                if (newFixation.AOI_Name != -1 && newFixation.AOI_Details.AOI_Coverage_In_Percents < 0)
+                {
+                    newFixation.AOI_Details.AOI_Coverage_In_Percents = newFixation.AOI_Coverage_In_Percents;
+
+                }
             }
             catch
             {
-                ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI_Coverage", arr[(int)TableColumnsEnum.AOI_Coverage], lineNumber));
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI_Coverage", arr[TextFileColumnIndexes.AOI_Coverage], lineNumber));
                 isFixationValid = false;
             }
 
             try
             {
-                newFixation.Index = long.Parse(arr[(int)TableColumnsEnum.Index]);
+                newFixation.Index = long.Parse(arr[TextFileColumnIndexes.Index]);
             }
             catch
             {
-                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Index", arr[(int)TableColumnsEnum.Index], lineNumber));
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Index", arr[TextFileColumnIndexes.Index], lineNumber));
                 isFixationValid = false;
             }
 
-            newFixation.Trial = arr[(int)TableColumnsEnum.Trial].Trim();
-            newFixation.Stimulus = arr[(int)TableColumnsEnum.Stimulus].Trim();
-            newFixation.Participant = arr[(int)TableColumnsEnum.Participant].Trim();
 
 
             newFixation.IsException = false;
 
             if (newFixation.AOI_Name != -1)
             {
-                if (AOIDetails.isAOIIncludeStimulus)
-                    newFixation.AOI_Details = AOIDetails.nameToAOIDetailsDictionary[newFixation.AOI_Name + newFixation.Stimulus];
-                else
-                    newFixation.AOI_Details = AOIDetails.nameToAOIDetailsDictionary[newFixation.AOI_Name + ""];
+                //if (AOIDetails.isAOIIncludeStimulus)
+                //    newFixation.AOI_Details = AOIDetails.nameToAOIDetailsDictionary[newFixation.AOI_Name + newFixation.Stimulus];
+                //else
+                //    newFixation.AOI_Details = AOIDetails.nameToAOIDetailsDictionary[newFixation.AOI_Name + ""];
 
-                if (newFixation.AOI_Details.isProper && newFixation.DistanceToAOI(newFixation.AOI_Details) != 0)
+                //if (newFixation.AOI_Details.AOI_Coverage_In_Percents < 0)
+                //{
+                //    newFixation.AOI_Details.AOI_Coverage_In_Percents = newFixation.AOI_Coverage_In_Percents;
+                //}
+
+                //if (newFixation.AOI_Details.IsProper && newFixation.AOI_Details.DistanceToAOI(newFixation) != 0)
+                if (newFixation.AOI_Details.DistanceToAOI(newFixation) != 0)
                 {
-                    newFixation.AOI_Details.isProper = false;
+                    //newFixation.AOI_Details.IsProper = false;
                     ExcelLoggerService.AddLog(new Log() { FileName = FixationsService.textFileName, LineNumber = lineNumber, Description = "The Fixation Is Not Inside The AOI " + newFixation.AOI_Name });
                     //new Task(() => MessageBox.Show("There is a problem with the AOI " + newFixation.AOI_Name + " In Stimulus " + newFixation.Stimulus)).Start();
                 }
@@ -237,6 +245,14 @@ namespace EM_Analyzer.ModelClasses
             return details;
         }
 
+        public bool ShouldBeSkippedInFirstPass()
+        {
+            bool isException = IsException;
+            bool isInBoundAndShouldBeSkipped = IsInExceptionBounds && FixationsService.dealingWithInsideExceptions == DealingWithExceptionsEnum.Skip_In_First_Pass;
+            bool isOutOfBoundAndShouldBeSkipped = !IsInExceptionBounds && FixationsService.dealingWithOutsideExceptions == DealingWithExceptionsOutBoundsEnum.Skip_In_First_Pass;
+            return isException && (isInBoundAndShouldBeSkipped || isOutOfBoundAndShouldBeSkipped);
+        }
+
         public double DistanceTo(Fixation other)
         {
             return Math.Sqrt(Math.Pow(this.Fixation_Position_X - other.Fixation_Position_X, 2) + Math.Pow(this.Fixation_Position_Y - other.Fixation_Position_Y, 2));
@@ -247,77 +263,14 @@ namespace EM_Analyzer.ModelClasses
             return this.DistanceTo(this.Previous_Fixation);
         }
 
-        public bool isBeforeThan(Fixation other)
+        public bool IsBeforeThan(Fixation other)
         {
             return this.AOI_Name < other.AOI_Name || (this.Fixation_Position_X > other.Fixation_Position_X && this.AOI_Name == other.AOI_Name);
         }
 
-        public double DistanceToAOI(AOIDetails aoi_details)
-        {
-            double right_border, left_border, upper_border, buttom_border;
-            right_border = aoi_details.X + aoi_details.L / 2;
-            left_border = aoi_details.X - aoi_details.L / 2;
-            buttom_border = aoi_details.Y + aoi_details.H / 2;
-            upper_border = aoi_details.Y - aoi_details.H / 2;
-
-            if (this.Fixation_Position_X >= left_border && this.Fixation_Position_X <= right_border) //Inside X Bounds
-            {
-                if (this.Fixation_Position_Y >= upper_border && this.Fixation_Position_Y <= buttom_border)//Inside Y Bounds
-                    return 0;
-                else //Outside Y Bounds
-                {
-                    if (this.Fixation_Position_Y < upper_border)
-                    {
-                        return upper_border - this.Fixation_Position_Y;
-                    }
-                    else //this.Fixation_Position_Y > buttom_border
-                    {
-                        return this.Fixation_Position_Y - buttom_border;
-                    }
-                }
-            }
-            else //Outside X Bounds
-            {
-                if (this.Fixation_Position_Y >= upper_border && this.Fixation_Position_Y <= buttom_border)//Inside Y Bounds
-                {
-                    if (this.Fixation_Position_X < left_border)
-                    {
-                        return left_border - this.Fixation_Position_X;
-                    }
-                    else //this.Fixation_Position_X > right_border
-                    {
-                        return this.Fixation_Position_X - right_border;
-                    }
-                }
-                else //Outside Y Bounds (And X Bounds)
-                {
-                    double Y_Distance, X_Distance;
-                    if (this.Fixation_Position_Y < upper_border)
-                    {
-                        Y_Distance = upper_border - this.Fixation_Position_Y;
-                    }
-                    else //this.Fixation_Position_Y > buttom_border
-                    {
-                        Y_Distance = this.Fixation_Position_Y - buttom_border;
-                    }
-
-                    if (this.Fixation_Position_X < left_border)
-                    {
-                        X_Distance = left_border - this.Fixation_Position_X;
-                    }
-                    else //this.Fixation_Position_X > right_border
-                    {
-                        X_Distance = this.Fixation_Position_X - right_border;
-                    }
-
-                    return Math.Sqrt(Math.Pow(X_Distance, 2) + Math.Pow(Y_Distance, 2));
-                }
-            }
-        }
-
         private static Log CreateLogForFieldValidation(string fieldName, string valueFound, uint lineNumber)
         {
-            return new Log() { FileName = FixationsService.textFileName, LineNumber = lineNumber, Description = "The Value Of Field " + fieldName + " Is Not Valid!!!" + Environment.NewLine + "The Value Found Is: " + valueFound };
+            return new Log() { FileName = FixationsService.textFileName, LineNumber = lineNumber, Description = "The Value Of Field " + fieldName + " Is Not Valid!!! " + Environment.NewLine + "The Value Found Is: " + valueFound };
         }
     }
 }

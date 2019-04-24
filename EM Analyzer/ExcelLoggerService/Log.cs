@@ -1,19 +1,14 @@
-﻿using ClosedXML.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace EM_Analyzer.ExcelLogger
 {
     public class Log
     {
-        [XLColumn(Header ="File Name")]
+        //[XLColumn(Header ="File Name")]
         public string FileName { get; set; }
-        [XLColumn(Header = "Line")]
+        [Description("Line")]
         public uint LineNumber { get; set; }
-        [XLColumn(Header = "Description")]
+        [Description("Description")]
         public string Description { get; set; }
     }
 }

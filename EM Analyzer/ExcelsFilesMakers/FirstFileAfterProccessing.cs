@@ -14,7 +14,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
 {
     class FirstFileAfterProccessing
     {
-        public static void makeExcelFile()
+        public static void MakeExcelFile()
         {
             List<Fixation> table = new List<Fixation>();
             List<Fixation>[] values = FixationsService.fixationSetToFixationListDictionary.Values.ToArray();
