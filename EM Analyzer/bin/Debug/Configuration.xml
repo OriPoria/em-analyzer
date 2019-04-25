@@ -14,7 +14,7 @@
       Yes = 1
   -->
   <Remove_Fixations_Appeared_Before_First_AOI>1</Remove_Fixations_Appeared_Before_First_AOI>
-  <Minimum_Event_Duration_In_For_Skip_In_ms>3000</Minimum_Event_Duration_In_For_Skip_In_ms>
+  <Minimum_Event_Duration_In_For_Skip_In_ms>100</Minimum_Event_Duration_In_For_Skip_In_ms>
 
   <Standard_Deviation>1</Standard_Deviation>
   

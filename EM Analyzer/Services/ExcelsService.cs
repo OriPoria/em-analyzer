@@ -50,9 +50,9 @@ namespace EM_Analyzer.Services
                 ExcelWorksheet ws = wb.Workbook.Worksheets.Add("Inserting Tables");
                 ExcelRangeBase range = ws.Cells[1, 1].LoadFromCollectionFiltered(table);//,true,TableStyles.Medium1);
                 ws.Cells[ws.Dimension.Address].AutoFitColumns();
-                ws.Cells[ws.Dimension.Address].Style.WrapText = true;
-                ws.Cells[ws.Dimension.Address].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
-                ws.Cells[ws.Dimension.Address].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                //ws.Cells[ws.Dimension.Address].Style.WrapText = true;
+                //ws.Cells[ws.Dimension.Address].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                //ws.Cells[ws.Dimension.Address].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
                 DialogResult dialogResult; // = DialogResult.Retry;
                 do
                 {
@@ -91,24 +91,8 @@ namespace EM_Analyzer.Services
                     table.Add(range.Select(cell => cell.GetValue<T>()).ToList());
                 }
             }
-            //XLWorkbook wb = new XLWorkbook(fileName);
-            //var ws = wb.Worksheets.First();
-            //var firstRowUsed = ws.FirstRowUsed();
-            //var categoryRow = firstRowUsed.RowUsed();
-            //List<IEnumerable<T>> table = new List<IEnumerable<T>>();
-
-            //// Move to the next row (it now has the titles)
-            ////string[] columnsHeaders = categoryRow.Cells().Select(cell => cell.GetValue<string>()).ToArray();
-            //categoryRow = categoryRow.RowBelow();
-            //while (!categoryRow.IsEmpty())
-            //{
-            //    // table.Add(categoryRow.Cells().Select(cell => cell.GetValue<T>()).ToArray());
-            //    table.Add(categoryRow.Cells().Select(cell => cell.GetValue<T>()));
-            //    categoryRow = categoryRow.RowBelow();
-            //}
 
             return table;
-            //return null;
         }
     }
 }

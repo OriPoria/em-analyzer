@@ -20,6 +20,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             List<string> participants = FixationsService.fixationSetToFixationListDictionary.Keys.ToList();
             string dictionatyKey;
             int minimumEventDurationInForSkipInms = int.Parse(ConfigurationService.MinimumEventDurationInForSkipInms);
+            List<string> dictionaryKeysForSorting = new List<string>();
             foreach (string participantKey in participants)
             {
                 // Gets the current fixations list
@@ -59,10 +60,12 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 Fixation prevFixationInAOI = null;
                 foreach (Fixation fixation in fixations)
                 {
+                    
                     if (fixation.AOI_Group_After_Change != last_AOIGroup)
                     {
                         // The dictionary key for the current AOI Group for the current Participant
                         dictionatyKey = participantKey + '\t' + last_AOIGroup;
+                        
 
                         List<Fixation> fixationRange = fixations.GetRange(lastChangeIndex, currentIndex - lastChangeIndex);
 
@@ -80,6 +83,13 @@ namespace EM_Analyzer.ExcelsFilesMakers
                                 prevFixationInAOI.AOI_Group_After_Change < maxAOIGroupUntilNow
                                 );
                         }
+                        else
+                        {
+                            if (!dictionaryKeysForSorting.Contains(dictionatyKey))
+                                AOIClass.instancesDictionary[dictionatyKey].Skip = prevFixationInAOI.AOI_Group_After_Change < maxAOIGroupUntilNow;
+                        }
+                        if (!dictionaryKeysForSorting.Contains(dictionatyKey))
+                            dictionaryKeysForSorting.Add(dictionatyKey);
 
                         // Adds the new fixation range (with the same AOI Group and the same participant and there is no 
                         // fixations in this range that have another AOI Group.
@@ -97,8 +107,9 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 }
                 fixations.RemoveAt(fixations.Count - 1);
             }
-
-            ExcelsService.CreateExcelFromStringTable(ConfigurationService.SecondExcelFileName, AOIClass.instancesDictionary.Values.ToList());
+            List<AOIClass> aoiClasses = dictionaryKeysForSorting.Select(key=> AOIClass.instancesDictionary[key]).ToList();
+            //aoiClasses.Sort((aoi1, aoi2) => aoi1.AOI_Group.CompareTo(aoi2.AOI_Group));
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.SecondExcelFileName, aoiClasses);
         }
 
 
@@ -512,15 +523,18 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 }
             }
 
-            private IEnumerable<List<Fixation>> m_Regressions;
+            private List<List<Fixation>> m_Regressions;
             private IEnumerable<List<Fixation>> Regressions
             {
                 get
                 {
                     if (this.m_Regressions == null)
                     {
-                        this.m_Regressions = this.Fixations.GetRange(1, this.Fixations.Count - 1);
-                        this.m_Regressions = this.m_Regressions.Where(lst => lst.Count >= minimumNumberOfFixationsInARegression);
+                        this.m_Regressions = new List<List<Fixation>>(this.Fixations);
+                        this.m_Regressions.ForEach(lst => lst.RemoveAll(fix => this.First_Pass_Fixations.Contains(fix)));
+                        this.m_Regressions.RemoveAll(lst => lst.Count < minimumNumberOfFixationsInARegression);
+                        //this.m_Regressions = this.Fixations.GetRange(1, this.Fixations.Count - 1);
+                        //this.m_Regressions = this.m_Regressions.Where(lst => lst.Count >= minimumNumberOfFixationsInARegression);
                     }
                     return this.m_Regressions;
                 }
