@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EM_Analyzer.ExcelLogger;
 
 namespace EM_Analyzer.ModelClasses
 {
@@ -24,8 +25,8 @@ namespace EM_Analyzer.ModelClasses
         public static List<string> tableColumns;
         public static DealingWithExceptionsEnum dealingWithInsideExceptions = (DealingWithExceptionsEnum)int.Parse(ConfigurationService.DealingWithExceptionsInsideTheLimit);
         public static DealingWithExceptionsOutBoundsEnum dealingWithOutsideExceptions = (DealingWithExceptionsOutBoundsEnum)int.Parse(ConfigurationService.DealingWithExceptionsOutsideTheLimit);
-        public static int Number_Of_Fixations_Out_Of_AOI_For_Exception;
-        public static int Number_Of_Fixations_In_AOI_For_Exception;
+        public static int Number_Of_Fixations_In_Of_AOI_For_Exception;
+        public static int Number_Of_Fixations_Out_AOI_For_Exception;
         public static double exceptionsLimit = double.Parse(ConfigurationService.DealingWithExceptionsLimitInPixels);
 
         //public static bool IsFixationShouldBeSkippedInFirstPass(Fixation)
@@ -95,12 +96,12 @@ namespace EM_Analyzer.ModelClasses
 
         public static void SearchForExceptions()
         {
-            List<Fixation>[] values = fixationSetToFixationListDictionary.Values.ToArray();
-            Number_Of_Fixations_Out_Of_AOI_For_Exception = int.Parse(ConfigurationService.NumberOfFixationsOutOfAOIForException);
-            Number_Of_Fixations_In_AOI_For_Exception = int.Parse(ConfigurationService.NumberOfFixationsInAOIForException);
+            List<Fixation>[] values = fixationSetToFixationListDictionary.Values.ToArray(); // all fixations per participent 
+            Number_Of_Fixations_In_Of_AOI_For_Exception = int.Parse(ConfigurationService.NumberOfFixationsInOfAOIForException);
+            Number_Of_Fixations_Out_AOI_For_Exception = int.Parse(ConfigurationService.NumberOfFixationsOutAOIForException);
             //double exceptionsLimit = double.Parse(ConfigurationService.DealingWithExceptionsLimitInPixels);
             Queue<Fixation> lastFixationsQueue;// = new Queue<Fixation>();
-            while (Number_Of_Fixations_In_AOI_For_Exception > 0)
+            while (Number_Of_Fixations_Out_AOI_For_Exception > 0)
             {
                 lastFixationsQueue = new Queue<Fixation>();
                 foreach (List<Fixation> fixationList in values)
@@ -110,14 +111,14 @@ namespace EM_Analyzer.ModelClasses
                     foreach (Fixation fixation in notExceptionalFixations)
                     {
                         // Get the last Fixations that relevant for our window
-                        if (lastFixationsQueue.Count == Number_Of_Fixations_Out_Of_AOI_For_Exception + Number_Of_Fixations_In_AOI_For_Exception - 1)
+                        if (lastFixationsQueue.Count == Number_Of_Fixations_In_Of_AOI_For_Exception + Number_Of_Fixations_Out_AOI_For_Exception - 1)
                         {
                             if (fixation.AOI_Group_After_Change == lastFixationsQueue.First().AOI_Group_After_Change)
                             {
-                                // Gets a list of all the fixations that have another AOI.
+                                // Gets a list of all the fixations that have another AOI in the last fixations queue 
                                 List<Fixation> notAOIEqualsFixations = lastFixationsQueue.Where(fix => fix.AOI_Group_After_Change != fixation.AOI_Group_After_Change).ToList();
 
-                                if (notAOIEqualsFixations.Count <= Number_Of_Fixations_In_AOI_For_Exception && notAOIEqualsFixations.Any()) // it is exception
+                                if (notAOIEqualsFixations.Count <= Number_Of_Fixations_Out_AOI_For_Exception && notAOIEqualsFixations.Any()) // it is exception
                                 {
                                     notAOIEqualsFixations.ForEach(exceptionalFix =>
                                     {
@@ -136,10 +137,10 @@ namespace EM_Analyzer.ModelClasses
                         lastFixationsQueue.Enqueue(fixation);
                     }
                 }
-                Number_Of_Fixations_In_AOI_For_Exception--;
+                Number_Of_Fixations_Out_AOI_For_Exception--;
             }
 
-            Number_Of_Fixations_In_AOI_For_Exception = int.Parse(ConfigurationService.NumberOfFixationsInAOIForException);
+            Number_Of_Fixations_Out_AOI_For_Exception = int.Parse(ConfigurationService.NumberOfFixationsOutAOIForException);
             foreach (List<Fixation> fixationList in values)
             {
                 List<Fixation> notExceptionalFixations = fixationList.Where(fix => !fix.IsException || (fix.IsInExceptionBounds && dealingWithInsideExceptions == DealingWithExceptionsEnum.Change_AOI_Group)).ToList();
@@ -157,9 +158,10 @@ namespace EM_Analyzer.ModelClasses
                     }
                     else
                     {
-                        if (currrentCountedAOIFixations.Count <= Number_Of_Fixations_In_AOI_For_Exception)
+                        if (currrentCountedAOIFixations.Count <= Number_Of_Fixations_Out_AOI_For_Exception)
                         {
                             i = ChangeAOIGroupOfCountedAOIFixations(countedAOIFixationsArray, i);
+                         
                         }
                     }
                 }
@@ -183,8 +185,8 @@ namespace EM_Analyzer.ModelClasses
         private static int ChangeAOIGroupOfCountedAOIFixations(List<CountedAOIFixations> countedAOIFixationsArray, int index)
         {
             CountedAOIFixations currrentCountedAOIFixations = countedAOIFixationsArray[index];
-            bool needsToAddToPrevAOI = index > 0 && countedAOIFixationsArray[index - 1].Count >= Number_Of_Fixations_Out_Of_AOI_For_Exception && countedAOIFixationsArray[index - 1].AOI_Group!=-1;
-            bool needsToAddToNextAOI = index < countedAOIFixationsArray.Count - 1 && countedAOIFixationsArray[index + 1].Count >= Number_Of_Fixations_Out_Of_AOI_For_Exception && countedAOIFixationsArray[index + 1].AOI_Group != -1;
+            bool needsToAddToPrevAOI = index > 0 && countedAOIFixationsArray[index - 1].Count >= Number_Of_Fixations_In_Of_AOI_For_Exception && countedAOIFixationsArray[index - 1].AOI_Group!=-1;
+            bool needsToAddToNextAOI = index < countedAOIFixationsArray.Count - 1 && countedAOIFixationsArray[index + 1].Count >= Number_Of_Fixations_In_Of_AOI_For_Exception && countedAOIFixationsArray[index + 1].AOI_Group != -1;
             if (needsToAddToPrevAOI || needsToAddToNextAOI)
                 currrentCountedAOIFixations.Fixations.ForEach(fix => fix.IsException = true);
             // TODO: Dealing With Exceptional limits !!!!!!!!!!!!!!!!!!!!
@@ -198,9 +200,11 @@ namespace EM_Analyzer.ModelClasses
                     IAOI aoiAddingTo = prev.Fixations.First().AOI_Details;
                     currrentCountedAOIFixations.Fixations.ForEach(fix =>
                     {
+                        
                         fix.IsInExceptionBounds = prev.Fixations.First().AOI_Name != -1 && (aoiAddingTo.DistanceToAOI(fix) <= exceptionsLimit);
                         if (fix.IsInExceptionBounds && dealingWithInsideExceptions == DealingWithExceptionsEnum.Change_AOI_Group)
                             fix.AOI_Group_After_Change = prev.AOI_Group;
+                            //ExcelLoggerService.AddLog(log: new Log() { FileName = "Hanaka_reduced - First", LineNumber = (uint)fix.Index, Description = "The Fixation Is Not Inside The AOI " + fix.AOI_Group_Before_Change });
                     });
                     prev.Count += currrentCountedAOIFixations.Count;
                     prev.Fixations.AddRange(currrentCountedAOIFixations.Fixations);

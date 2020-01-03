@@ -1,9 +1,11 @@
 ﻿using EM_Analyzer.Enums;
 using EM_Analyzer.ModelClasses;
 using EM_Analyzer.Services;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using EM_Analyzer.Interfaces;
 
 namespace EM_Analyzer.ExcelsFilesMakers
 {
@@ -19,7 +21,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
             // Gets all the partisipants.
             List<string> participants = FixationsService.fixationSetToFixationListDictionary.Keys.ToList();
             string dictionatyKey;
-            int minimumEventDurationInForSkipInms = int.Parse(ConfigurationService.MinimumEventDurationInForSkipInms);
+            //int minimumEventDurationInForSkipInms = int.Parse(ConfigurationService.MinimumEventDurationInForSkipInms);
+            int MinimumNumberOfFixationsForSkip = int.Parse(ConfigurationService.MinimumNumberOfFixationsForSkip);
             List<string> dictionaryKeysForSorting = new List<string>();
             foreach (string participantKey in participants)
             {
@@ -53,7 +56,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     }
                 }
                 #endregion First_Pass
-
+                
                 // For All The Rest
                 fixations.Add(new Fixation() { AOI_Group_After_Change = -2 });
                 int lastChangeIndex = 0, currentIndex = 0, last_AOIGroup = fixations[0].AOI_Group_After_Change, maxAOIGroupUntilNow = -1;
@@ -96,8 +99,12 @@ namespace EM_Analyzer.ExcelsFilesMakers
                         AOIClass.instancesDictionary[dictionatyKey].Fixations.Add(fixationRange);
                         last_AOIGroup = fixation.AOI_Group_After_Change;
                         lastChangeIndex = currentIndex;
-                        if (maxAOIGroupUntilNow < last_AOIGroup 
-                            && fixationRange.Sum(fix => fix.Event_Duration) > minimumEventDurationInForSkipInms)
+                        //if (maxAOIGroupUntilNow < last_AOIGroup
+                        //    && fixationRange.Sum(fix => fix.Event_Duration) > minimumEventDurationInForSkipInms)
+                        //    maxAOIGroupUntilNow = last_AOIGroup;
+
+                        if (maxAOIGroupUntilNow < last_AOIGroup
+                            && fixationRange.Count() > MinimumNumberOfFixationsForSkip)
                             maxAOIGroupUntilNow = last_AOIGroup;
                     }
                     else
@@ -113,7 +120,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
         }
 
 
-        public class AOIClass
+        public class AOIClass:IAOIClassForConsideringCoverage
         {
             private static readonly uint minimumNumberOfFixationsInARegression = uint.Parse(ConfigurationService.MinimumNumberOfFixationsInARegression);
             //[XLColumn(Ignore = true)]
@@ -229,7 +236,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (m_First_Pass_Progressive_Number == -1)
                         m_First_Pass_Progressive_Number = this.First_Pass_Progressive_Number_Overall - 1;
-                    return m_First_Pass_Progressive_Number;
+                    return Math.Max(0,m_First_Pass_Progressive_Number);
                 }
             }
 
@@ -241,7 +248,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_First_Pass_Progressive_Duration_Overall == -1)
                         this.m_First_Pass_Progressive_Duration_Overall = this.Fixations_Progressive_First_Pass.Sum(fix => fix.Event_Duration);
-                    return this.m_First_Pass_Progressive_Duration_Overall;
+                    return Math.Max(0, m_First_Pass_Progressive_Duration_Overall);
                 }
             }
 
@@ -280,7 +287,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (m_Total_First_Pass_Progressive_Number == -1)
                         m_Total_First_Pass_Progressive_Number = this.Total_First_Pass_Progressive_Number_Overall - 1;
-                    return m_Total_First_Pass_Progressive_Number;
+                    return Math.Max(0, m_Total_First_Pass_Progressive_Number);
                 }
             }
 
@@ -292,7 +299,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_Total_First_Pass_Progressive_Duration_Overall == -1)
                         this.m_Total_First_Pass_Progressive_Duration_Overall = this.Total_Fixations_Progressive_First_Pass.Sum(fix => fix.Event_Duration);
-                    return this.m_Total_First_Pass_Progressive_Duration_Overall;
+                    return Math.Max(0, m_Total_First_Pass_Progressive_Duration_Overall);
                 }
             }
 
@@ -304,7 +311,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (m_Total_First_Pass_Progressive_Number_Overall == -1)
                         m_Total_First_Pass_Progressive_Number_Overall = this.Total_Fixations_Progressive_First_Pass.Count;
-                    return m_Total_First_Pass_Progressive_Number_Overall;
+                    return Math.Max(0, m_Total_First_Pass_Progressive_Number_Overall);
                 }
             }
 
@@ -530,7 +537,12 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_Regressions == null)
                     {
-                        this.m_Regressions = new List<List<Fixation>>(this.Fixations);
+                        this.m_Regressions = new List<List<Fixation>>();
+                        this.Fixations.ForEach(lst =>
+                        {
+                            this.m_Regressions.Add(lst.ToList());
+                        });
+                        //this.m_Regressions = new List<List<Fixation>>(this.Fixations);
                         this.m_Regressions.ForEach(lst => lst.RemoveAll(fix => this.First_Pass_Fixations.Contains(fix)));
                         this.m_Regressions.RemoveAll(lst => lst.Count < minimumNumberOfFixationsInARegression);
                         //this.m_Regressions = this.Fixations.GetRange(1, this.Fixations.Count - 1);

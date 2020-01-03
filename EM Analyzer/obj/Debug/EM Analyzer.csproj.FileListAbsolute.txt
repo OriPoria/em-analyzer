@@ -35,3 +35,58 @@ D:\Documents\Projects\EM Analyzer\EM Analyzer\obj\Debug\ForBarIlanResearch.pdb
 D:\Documents\Projects\EM Analyzer\EM Analyzer\obj\Debug\EM Analyzer.csprojAssemblyReference.cache
 D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Debug\EPPlus.dll
 D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Debug\EPPlus.xml
+C:\Users\user\Google Drive\מחקר\Notes\Eye movments\Computational data analysis\EM Analyzer code\EM Analyzer\bin\Debug\ForBarIlanResearch.exe.config
+C:\Users\user\Google Drive\מחקר\Notes\Eye movments\Computational data analysis\EM Analyzer code\EM Analyzer\bin\Debug\ForBarIlanResearch.exe
+C:\Users\user\Google Drive\מחקר\Notes\Eye movments\Computational data analysis\EM Analyzer code\EM Analyzer\bin\Debug\ForBarIlanResearch.pdb
+C:\Users\user\Google Drive\מחקר\Notes\Eye movments\Computational data analysis\EM Analyzer code\EM Analyzer\bin\Debug\DocumentFormat.OpenXml.dll
+C:\Users\user\Google Drive\מחקר\Notes\Eye movments\Computational data analysis\EM Analyzer code\EM Analyzer\bin\Debug\EPPlus.dll
+C:\Users\user\Google Drive\מחקר\Notes\Eye movments\Computational data analysis\EM Analyzer code\EM Analyzer\bin\Debug\ExcelNumberFormat.dll
+C:\Users\user\Google Drive\מחקר\Notes\Eye movments\Computational data analysis\EM Analyzer code\EM Analyzer\bin\Debug\FastMember.dll
+C:\Users\user\Google Drive\מחקר\Notes\Eye movments\Computational data analysis\EM Analyzer code\EM Analyzer\bin\Debug\System.IO.FileSystem.Primitives.dll
+C:\Users\user\Google Drive\מחקר\Notes\Eye movments\Computational data analysis\EM Analyzer code\EM Analyzer\bin\Debug\System.IO.Packaging.dll
+C:\Users\user\Google Drive\מחקר\Notes\Eye movments\Computational data analysis\EM Analyzer code\EM Analyzer\bin\Debug\DocumentFormat.OpenXml.xml
+C:\Users\user\Google Drive\מחקר\Notes\Eye movments\Computational data analysis\EM Analyzer code\EM Analyzer\bin\Debug\EPPlus.xml
+C:\Users\user\Google Drive\מחקר\Notes\Eye movments\Computational data analysis\EM Analyzer code\EM Analyzer\bin\Debug\ExcelNumberFormat.xml
+C:\Users\user\Google Drive\מחקר\Notes\Eye movments\Computational data analysis\EM Analyzer code\EM Analyzer\obj\Debug\EM Analyzer.csprojAssemblyReference.cache
+C:\Users\user\Google Drive\מחקר\Notes\Eye movments\Computational data analysis\EM Analyzer code\EM Analyzer\obj\Debug\EM Analyzer.csproj.ResolveComReference.cache
+C:\Users\user\Google Drive\מחקר\Notes\Eye movments\Computational data analysis\EM Analyzer code\EM Analyzer\obj\Debug\EM Analyzer.csproj.CopyComplete
+C:\Users\user\Google Drive\מחקר\Notes\Eye movments\Computational data analysis\EM Analyzer code\EM Analyzer\obj\Debug\ForBarIlanResearch.exe
+C:\Users\user\Google Drive\מחקר\Notes\Eye movments\Computational data analysis\EM Analyzer code\EM Analyzer\obj\Debug\ForBarIlanResearch.pdb
+E:\EM Analyzer code\EM Analyzer\bin\Debug\ForBarIlanResearch.exe.config
+E:\EM Analyzer code\EM Analyzer\bin\Debug\ForBarIlanResearch.exe
+E:\EM Analyzer code\EM Analyzer\bin\Debug\ForBarIlanResearch.pdb
+E:\EM Analyzer code\EM Analyzer\bin\Debug\DocumentFormat.OpenXml.dll
+E:\EM Analyzer code\EM Analyzer\bin\Debug\EPPlus.dll
+E:\EM Analyzer code\EM Analyzer\bin\Debug\ExcelNumberFormat.dll
+E:\EM Analyzer code\EM Analyzer\bin\Debug\FastMember.dll
+E:\EM Analyzer code\EM Analyzer\bin\Debug\System.IO.FileSystem.Primitives.dll
+E:\EM Analyzer code\EM Analyzer\bin\Debug\System.IO.Packaging.dll
+E:\EM Analyzer code\EM Analyzer\bin\Debug\DocumentFormat.OpenXml.xml
+E:\EM Analyzer code\EM Analyzer\bin\Debug\EPPlus.xml
+E:\EM Analyzer code\EM Analyzer\bin\Debug\ExcelNumberFormat.xml
+E:\EM Analyzer code\EM Analyzer\obj\Debug\EM Analyzer.csprojResolveAssemblyReference.cache
+E:\EM Analyzer code\EM Analyzer\obj\Debug\EM Analyzer.csproj.ResolveComReference.cache
+E:\EM Analyzer code\EM Analyzer\obj\Debug\EM Analyzer.csproj.CoreCompileInputs.cache
+E:\EM Analyzer code\EM Analyzer\obj\Debug\ForBarIlanResearch.exe
+E:\EM Analyzer code\EM Analyzer\obj\Debug\ForBarIlanResearch.pdb
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\bin\Debug\DocumentFormat.OpenXml.dll
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\bin\Debug\EPPlus.dll
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\bin\Debug\ExcelNumberFormat.dll
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\bin\Debug\FastMember.dll
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\bin\Debug\System.IO.FileSystem.Primitives.dll
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\bin\Debug\System.IO.Packaging.dll
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\bin\Debug\DocumentFormat.OpenXml.xml
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\bin\Debug\EPPlus.xml
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\bin\Debug\ExcelNumberFormat.xml
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\obj\Debug\EM Analyzer.csproj.ResolveComReference.cache
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\obj\Debug\EM Analyzer.csproj.CoreCompileInputs.cache
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\bin\Debug\EyeMonitoringAnalysis.exe.config
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\bin\Debug\EyeMonitoringAnalysis.exe.manifest
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\bin\Debug\EyeMonitoringAnalysis.application
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\bin\Debug\EyeMonitoringAnalysis.exe
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\bin\Debug\EyeMonitoringAnalysis.pdb
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\obj\Debug\EyeMonitoringAnalysis.exe.manifest
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\obj\Debug\EyeMonitoringAnalysis.application
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\obj\Debug\EyeMonitoringAnalysis.exe
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\obj\Debug\EyeMonitoringAnalysis.pdb
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\obj\Debug\EM Analyzer.csprojResolveAssemblyReference.cache

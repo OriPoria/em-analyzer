@@ -5,6 +5,8 @@ using static EM_Analyzer.ExcelsFilesMakers.SecondFileAfterProccessing;
 using EM_Analyzer.ModelClasses;
 using EM_Analyzer.Services;
 using System.ComponentModel;
+using EM_Analyzer.Interfaces;
+using System.Globalization;
 
 namespace EM_Analyzer.ExcelsFilesMakers
 {
@@ -36,10 +38,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 aoi => aoi.Regression_Number,
                 aoi => aoi.Regression_Duration,
                 aoi => aoi.First_Regression_Duration,
-                aoi => aoi.Pupil_Diameter,
-                //aoi=>aoi.Total_Pupil_Diameter,
-                //aoi=>aoi.Mean_AOI_Size,
-                //aoi=>aoi.Total_AOI_Size
+                aoi => aoi.Pupil_Diameter
 
             };
             return filteringsExpressions;
@@ -50,6 +49,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             List<SettingValue> settingExpressions = new List<SettingValue>
             {
                 (aoi, value) => aoi.Total_Fixation_Duration = value,
+                //(aoi, value) => aoi.Total_Fixation_Duration = String.Format("{0:0.0000000000000}", value),
                 (aoi, value) => aoi.Total_Fixation_Number = value,
                 (aoi, value) => aoi.First_Fixation_Duration = value,
                 (aoi, value) => aoi.First_Pass_Duration = value,
@@ -68,9 +68,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 (aoi, value) => aoi.Regression_Duration = value,
                 (aoi, value) => aoi.First_Regression_Duration = value,
                 (aoi, value) => aoi.Pupil_Diameter = value,
-                //(aoi, value) => aoi.Total_Pupil_Diameter = value,
-                //(aoi, value) => aoi.Mean_AOI_Size = value,
-                //(aoi, value) => aoi.Total_AOI_Size = value
+                //(aoi, value) => aoi.Mean_AOI_Size = value
+             
             };
             return settingExpressions;
         }
@@ -106,7 +105,40 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 standardDevisionAllowed,
                 aoi => aoi.AOI_Group == -1);
             ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI", byAOIGroup);
+
+
+            //List<AIOClassAfterCoverageForExcel> by_AIO_And_Participant = new List<AIOClassAfterCoverageForExcel>(byParticipant.Count + byAOIGroup.Count);
+            HashSet<AIOClassAfterCoverageForExcel> by_AIO_And_Participant = new HashSet<AIOClassAfterCoverageForExcel>();
+            //by_AIO_And_Participant.AddRange(byParticipant);
+            //by_AIO_And_Participant.AddRange(byAOIGroup);
+            by_AIO_And_Participant.UnionWith(byParticipant);
+            by_AIO_And_Participant.UnionWith(byAOIGroup);
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI and Participant", by_AIO_And_Participant);
+
+
+            List<AIOClassAfterCoverageForExcel> by_AIO_Or_Participant = new List<AIOClassAfterCoverageForExcel>(Math.Min(byParticipant.Count, byAOIGroup.Count));
+            foreach(AIOClassAfterCoverageForExcel group in byAOIGroup)
+            {
+                foreach(AIOClassAfterCoverageForExcel participant in byParticipant)
+                {
+                    if(group == participant)
+                    {
+                        by_AIO_Or_Participant.Add(group);
+                    }
+                }
+            }
+            //List<AIOClassAfterCoverageForExcel> by_AIO_and_Participant = (List<AIOClassAfterCoverageForExcel>)and;
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI or Participant", by_AIO_Or_Participant);
+            
         }
+
+        //public static string DecimalPlaceNoRounding(double d, int decimalPlaces = 2)
+        //{
+        //    d = d * Math.Pow(10, decimalPlaces);
+        //    d = Math.Truncate(d);
+        //    d = d / Math.Pow(10, decimalPlaces);
+        //    return string.Format("{0:N" + Math.Abs(decimalPlaces) + "}", d);
+        //}
 
         private static List<AIOClassAfterCoverageForExcel> DeleteOutOfStdValues(Func<AIOClassAfterCoverage, string> KeySelector,
             List<NumericExpression> filteringsExpressions,
@@ -135,25 +167,36 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     IEnumerable<double> valuesForStandardDevision = currentAOIs.Select(aoi => currentFilter(aoi));
                     IEnumerable<double> standardDevisionGrades = StandardDevision.ComputeStandardDevisionGrades(valuesForStandardDevision);
                     int length = standardDevisionGrades.Count();
+                    double afterFilter;
+                    string valueString = " ";
                     for (int i = 0 ; i < length ; ++i)
                     {
                         if (Math.Abs(standardDevisionGrades.ElementAt(i)) > standardDevisionAllowed)
                             currentSetter(currentAOIs[i].AOIForExcel, "");
                         else
-                            currentSetter(currentAOIs[i].AOIForExcel, currentFilter(currentAOIs[i]) + "");
+                        {
+                            afterFilter = currentFilter(currentAOIs[i]);
+                            valueString = afterFilter.ToString("G17");
+
+                            currentSetter(currentAOIs[i].AOIForExcel, valueString);
+                        }
                     }
                 }
             }
+            
             List<AIOClassAfterCoverageForExcel> forExcel = acceptedAOIs.Select(aoi => aoi.AOIForExcel).ToList();
             return forExcel;
         }
+        
 
 
         public class AIOClassAfterCoverage
         {
             public static List<AIOClassAfterCoverage> allInstances = new List<AIOClassAfterCoverage>();
-            private readonly AOIClass AOI;
+            private readonly IAOIClassForConsideringCoverage AOI;
             public AIOClassAfterCoverageForExcel AOIForExcel;
+            
+            public static int denominator_value = int.Parse(ConfigurationService.SecondFileFilteringDenominator);
 
             [Description("Participant")]
             public string Participant { get => AOI.Participant; }
@@ -171,7 +214,11 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
-                    return AOI.Total_Fixation_Duration / AOI.Mean_AOI_Coverage;
+                    if(denominator_value == 2)
+                        return AOI.Total_Fixation_Duration / AOI.Mean_AOI_Coverage;
+                    if(denominator_value == 1)
+                        return AOI.Total_Fixation_Duration / AOI.Mean_AOI_Size;
+                    return AOI.Total_Fixation_Duration;
                 }
             }
 
@@ -180,7 +227,11 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
-                    return AOI.Total_Fixation_Number / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 2)
+                        return AOI.Total_Fixation_Number / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 1)
+                        return AOI.Total_Fixation_Number / AOI.Mean_AOI_Size;
+                    return AOI.Total_Fixation_Number;
                 }
             }
 
@@ -189,7 +240,11 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
-                    return AOI.First_Fixation_Duration / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 2)
+                        return AOI.First_Fixation_Duration / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 1)
+                        return AOI.First_Fixation_Duration / AOI.Mean_AOI_Size;
+                    return AOI.First_Fixation_Duration;
                 }
             }
 
@@ -198,25 +253,34 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
-                    return AOI.First_Pass_Duration / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 2)
+                        return AOI.First_Pass_Duration / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 1)
+                        return AOI.First_Pass_Duration / AOI.Mean_AOI_Size;
+                    return AOI.First_Pass_Duration;
                 }
             }
-
             [Description("First-Pass Number")]
-            public double First_Pass_Number
-            {
+            public double First_Pass_Number {
                 get
                 {
-                    return AOI.First_Pass_Number / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 2)
+                        return AOI.First_Pass_Number / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 1)
+                        return AOI.First_Pass_Number / AOI.Mean_AOI_Size;
+                    return AOI.First_Pass_Number;
                 }
             }
 
             [Description("First-Pass Progressive Duration")]
-            public double First_Pass_Progressive_Duration
-            {
+            public double First_Pass_Progressive_Duration {
                 get
                 {
-                    return AOI.First_Pass_Progressive_Duration / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 2)
+                        return AOI.First_Pass_Progressive_Duration / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 1)
+                        return AOI.First_Pass_Progressive_Duration / AOI.Mean_AOI_Size;
+                    return AOI.First_Pass_Progressive_Duration;
                 }
             }
 
@@ -225,7 +289,11 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
-                    return AOI.First_Pass_Progressive_Number / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 2)
+                        return AOI.First_Pass_Progressive_Number / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 1)
+                        return AOI.First_Pass_Progressive_Number / AOI.Mean_AOI_Size;
+                    return AOI.First_Pass_Progressive_Number;
                 }
             }
 
@@ -234,7 +302,11 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
-                    return AOI.First_Pass_Progressive_Duration_Overall / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 2)
+                        return AOI.First_Pass_Progressive_Duration_Overall / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 1)
+                        return AOI.First_Pass_Progressive_Duration_Overall / AOI.Mean_AOI_Size;
+                    return AOI.First_Pass_Progressive_Duration_Overall;
                 }
             }
 
@@ -243,7 +315,11 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
-                    return AOI.First_Pass_Progressive_Number_Overall / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 2)
+                        return AOI.First_Pass_Progressive_Number_Overall / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 1)
+                        return AOI.First_Pass_Progressive_Number_Overall / AOI.Mean_AOI_Size;
+                    return AOI.First_Pass_Progressive_Number_Overall;
                 }
             }
 
@@ -252,7 +328,11 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
-                    return AOI.Total_First_Pass_Progressive_Duration / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 2)
+                        return AOI.Total_First_Pass_Progressive_Duration / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 1)
+                        return AOI.Total_First_Pass_Progressive_Duration / AOI.Mean_AOI_Size;
+                    return AOI.Total_First_Pass_Progressive_Duration;
                 }
             }
 
@@ -261,7 +341,11 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
-                    return AOI.Total_First_Pass_Progressive_Number / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 2)
+                        return AOI.Total_First_Pass_Progressive_Number / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 1)
+                        return AOI.Total_First_Pass_Progressive_Number / AOI.Mean_AOI_Size;
+                    return AOI.Total_First_Pass_Progressive_Number;
                 }
             }
 
@@ -270,7 +354,11 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
-                    return AOI.Total_First_Pass_Progressive_Duration_Overall / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 2)
+                        return AOI.Total_First_Pass_Progressive_Duration_Overall / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 1)
+                        return AOI.Total_First_Pass_Progressive_Duration_Overall / AOI.Mean_AOI_Size;
+                    return AOI.Total_First_Pass_Progressive_Duration_Overall;
                 }
             }
 
@@ -279,7 +367,11 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
-                    return AOI.Total_First_Pass_Progressive_Number_Overall / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 2)
+                        return AOI.Total_First_Pass_Progressive_Number_Overall / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 1)
+                        return AOI.Total_First_Pass_Progressive_Number_Overall / AOI.Mean_AOI_Size;
+                    return AOI.Total_First_Pass_Progressive_Number_Overall;
                 }
             }
 
@@ -288,7 +380,11 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
-                    return AOI.Total_First_Pass_Regressive_Duration / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 2)
+                        return AOI.Total_First_Pass_Regressive_Duration / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 1)
+                        return AOI.Total_First_Pass_Regressive_Duration / AOI.Mean_AOI_Size;
+                    return AOI.Total_First_Pass_Regressive_Duration;
                 }
             }
 
@@ -297,7 +393,11 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
-                    return AOI.Total_First_Pass_Regressive_Number / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 2)
+                        return AOI.Total_First_Pass_Regressive_Number / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 1)
+                        return AOI.Total_First_Pass_Regressive_Number / AOI.Mean_AOI_Size;
+                    return AOI.Total_First_Pass_Regressive_Number;
                 }
             }
 
@@ -306,7 +406,11 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
-                    return AOI.Regression_Number / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 2)
+                        return AOI.Regression_Number / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 1)
+                        return AOI.Regression_Number / AOI.Mean_AOI_Size;
+                    return AOI.Regression_Number;
                 }
             }
 
@@ -315,7 +419,11 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
-                    return AOI.Regression_Duration / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 2)
+                        return AOI.Regression_Duration / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 1)
+                        return AOI.Regression_Duration / AOI.Mean_AOI_Size;
+                    return AOI.Regression_Duration;
                 }
             }
 
@@ -324,7 +432,11 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
-                    return AOI.First_Regression_Duration / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 2)
+                        return AOI.First_Regression_Duration / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 1)
+                        return AOI.First_Regression_Duration / AOI.Mean_AOI_Size;
+                    return AOI.First_Regression_Duration;
                 }
             }
 
@@ -336,16 +448,20 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
-                    return AOI.Pupil_Diameter / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 2)
+                        return AOI.Pupil_Diameter / AOI.Mean_AOI_Coverage;
+                    if (denominator_value == 1)
+                        return AOI.Pupil_Diameter / AOI.Mean_AOI_Size;
+                    return AOI.Pupil_Diameter;
                 }
             }
 
-            [Description("AOI Size X [mm]")]
+            //[Description("AOI Size X [mm]")]
             public double Mean_AOI_Size
             {
                 get
                 {
-                    return AOI.Mean_AOI_Size / AOI.Mean_AOI_Coverage;
+                    return AOI.Mean_AOI_Size;
                 }
             }
 
@@ -358,7 +474,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 }
             }
 
-            public AIOClassAfterCoverage(AOIClass AOI)
+            public AIOClassAfterCoverage(IAOIClassForConsideringCoverage AOI)
             {
                 this.AOI = AOI;
                 allInstances.Add(this);
@@ -380,8 +496,18 @@ namespace EM_Analyzer.ExcelsFilesMakers
             [Description("Text Name")]
             public string Text_Name { get => AOIAfterCoverage.Text_Name; }
 
+            [Description("AOI Group")]
+            public int AOI_Group { get => AOIAfterCoverage.AOI_Group; }
+
+            //[Description("Total Fixation Duration")]
+            //public string Total_Fixation_Duration
+            //{
+            //    get => Total_Fixation_Duration;
+            //    set => Total_Fixation_Duration = String.Format("{0:0.0000000000000}", value);
+            //}
+
             [Description("Total Fixation Duration")]
-            public string Total_Fixation_Duration { get; set; }
+            public string Total_Fixation_Duration { get;set; }
 
             [Description("Total Fixation Number")]
             public string Total_Fixation_Number { get; set; }
@@ -440,12 +566,43 @@ namespace EM_Analyzer.ExcelsFilesMakers
             [Description("Pupil Diameter [mm]")]
             public string Pupil_Diameter { get; set; }
 
-            [Description("AOI Size X [mm]")]
-            public string Mean_AOI_Size { get; set; }
+            //[Description("AOI Size X [mm]")]
+            //public string Mean_AOI_Size { get; set; }
 
             public AIOClassAfterCoverageForExcel(AIOClassAfterCoverage AOIClassAfterCoverage)
             {
                 this.AOIAfterCoverage = AOIClassAfterCoverage;
+            }
+
+            public static bool operator == (AIOClassAfterCoverageForExcel lhs, AIOClassAfterCoverageForExcel rhs)
+            {
+                if (lhs.Participant == rhs.Participant && lhs.Trial == rhs.Trial && lhs.Stimulus == rhs.Stimulus
+                    && lhs.Text_Name == rhs.Text_Name && lhs.AOI_Group == rhs.AOI_Group && lhs.Total_Fixation_Duration == rhs.Total_Fixation_Duration &&
+                    lhs.Total_Fixation_Number == rhs.Total_Fixation_Number && lhs.First_Fixation_Duration == rhs.First_Fixation_Duration && lhs.First_Pass_Duration == rhs.First_Pass_Duration
+                        && lhs.First_Pass_Number == rhs.First_Pass_Number && lhs.First_Pass_Progressive_Duration == rhs.First_Pass_Progressive_Duration && lhs.First_Pass_Progressive_Number == rhs.First_Pass_Progressive_Number &&
+                        lhs.First_Pass_Progressive_Duration_Overall == rhs.First_Pass_Progressive_Duration_Overall && lhs.First_Pass_Progressive_Number_Overall == rhs.First_Pass_Progressive_Number_Overall &&
+                        lhs.Total_First_Pass_Progressive_Duration == rhs.Total_First_Pass_Progressive_Duration && lhs.Total_First_Pass_Progressive_Number == rhs.Total_First_Pass_Progressive_Number &&
+                        lhs.Total_First_Pass_Progressive_Duration_Overall == rhs.Total_First_Pass_Progressive_Duration_Overall && lhs.Total_First_Pass_Progressive_Number_Overall == rhs.Total_First_Pass_Progressive_Number_Overall &&
+                        lhs.Total_First_Pass_Regressive_Duration == rhs.Total_First_Pass_Regressive_Duration && lhs.Total_First_Pass_Regressive_Number == rhs.Total_First_Pass_Regressive_Number &&
+                        lhs.Regression_Number == rhs.Regression_Number && lhs.Regression_Duration == rhs.Regression_Duration && lhs.First_Regression_Duration == rhs.First_Regression_Duration &&
+                        lhs.Skip == rhs.Skip && lhs.Pupil_Diameter == rhs.Pupil_Diameter)
+                    return true;
+                return false;
+            }
+            public static bool operator != (AIOClassAfterCoverageForExcel lhs, AIOClassAfterCoverageForExcel rhs)
+            {
+                if (lhs.Participant == rhs.Participant && lhs.Trial == rhs.Trial && lhs.Stimulus == rhs.Stimulus
+                   && lhs.Text_Name == rhs.Text_Name && lhs.AOI_Group == rhs.AOI_Group && lhs.Total_Fixation_Duration == rhs.Total_Fixation_Duration &&
+                   lhs.Total_Fixation_Number == rhs.Total_Fixation_Number && lhs.First_Fixation_Duration == rhs.First_Fixation_Duration && lhs.First_Pass_Duration == rhs.First_Pass_Duration
+                       && lhs.First_Pass_Number == rhs.First_Pass_Number && lhs.First_Pass_Progressive_Duration == rhs.First_Pass_Progressive_Duration && lhs.First_Pass_Progressive_Number == rhs.First_Pass_Progressive_Number &&
+                       lhs.First_Pass_Progressive_Duration_Overall == rhs.First_Pass_Progressive_Duration_Overall && lhs.First_Pass_Progressive_Number_Overall == rhs.First_Pass_Progressive_Number_Overall &&
+                       lhs.Total_First_Pass_Progressive_Duration == rhs.Total_First_Pass_Progressive_Duration && lhs.Total_First_Pass_Progressive_Number == rhs.Total_First_Pass_Progressive_Number &&
+                       lhs.Total_First_Pass_Progressive_Duration_Overall == rhs.Total_First_Pass_Progressive_Duration_Overall && lhs.Total_First_Pass_Progressive_Number_Overall == rhs.Total_First_Pass_Progressive_Number_Overall &&
+                       lhs.Total_First_Pass_Regressive_Duration == rhs.Total_First_Pass_Regressive_Duration && lhs.Total_First_Pass_Regressive_Number == rhs.Total_First_Pass_Regressive_Number &&
+                       lhs.Regression_Number == rhs.Regression_Number && lhs.Regression_Duration == rhs.Regression_Duration && lhs.First_Regression_Duration == rhs.First_Regression_Duration &&
+                       lhs.Skip == rhs.Skip && lhs.Pupil_Diameter == rhs.Pupil_Diameter)
+                    return false;
+                return true;
             }
         }
     }

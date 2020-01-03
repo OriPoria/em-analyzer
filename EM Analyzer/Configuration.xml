@@ -2,13 +2,20 @@
 <Configuration>
   
   <Minimum_Event_Duration_In_ms>50</Minimum_Event_Duration_In_ms>
-  <Number_Of_Fixations_In_AOI_For_Exception>1</Number_Of_Fixations_In_AOI_For_Exception>
-  <Number_Of_Fixations_Out_Of_AOI_For_Exception>5</Number_Of_Fixations_Out_Of_AOI_For_Exception>
+  <Number_Of_Fixations_Out_AOI_For_Exception>1</Number_Of_Fixations_Out_AOI_For_Exception>
+  <Number_Of_Fixations_In_Of_AOI_For_Exception>5</Number_Of_Fixations_In_Of_AOI_For_Exception>
+  <!-- 
+    Second_File_Filtering_denominator :
+    enter the value-denominator- 
+    Mean_AOI_Coverage = 0,
+    Mean_AOI_Size = 1
+  -->
+  <Second_File_Filtering_denominator>0</Second_File_Filtering_denominator>
   
   <OutputFiles>
     <First_Excel_File_Name>First.xlsx</First_Excel_File_Name>
     <Second_Excel_File_Name>Second.xlsx</Second_Excel_File_Name>
-    <Third_Excel_File_Name>Third.xlsx</Third_Excel_File_Name>
+    <Third_Excel_File_Name>Third.xlsx</Third_Excel_File_Name> 
   </OutputFiles>
   
   <DealingWithExceptions>

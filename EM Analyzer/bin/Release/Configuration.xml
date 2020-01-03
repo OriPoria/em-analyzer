@@ -2,10 +2,17 @@
 <Configuration>
   
   <Minimum_Event_Duration_In_ms>50</Minimum_Event_Duration_In_ms>
+  
   <Maximum_Event_Duration_In_ms>1000</Maximum_Event_Duration_In_ms>
+  
   <Minimum_Number_Of_Fixations_In_A_Regression>2</Minimum_Number_Of_Fixations_In_A_Regression>
+  
   <Number_Of_Fixations_In_AOI_For_Exception>2</Number_Of_Fixations_In_AOI_For_Exception>
+  
   <Number_Of_Fixations_Out_Of_AOI_For_Exception>3</Number_Of_Fixations_Out_Of_AOI_For_Exception>
+  
+  <!-- Second_File_Filtering_denominator :enter the value-denominator-  with nothing = 0 ,Mean_AOI_Size = 1,Mean_AOI_Coverage = 2-->
+  <Second_File_Filtering_denominator>2</Second_File_Filtering_denominator>
 
 
   <!--
@@ -14,14 +21,17 @@
       Yes = 1
   -->
   <Remove_Fixations_Appeared_Before_First_AOI>1</Remove_Fixations_Appeared_Before_First_AOI>
-  <Minimum_Event_Duration_In_For_Skip_In_ms>3000</Minimum_Event_Duration_In_For_Skip_In_ms>
+  
+  <!-- <Minimum_Event_Duration_In_For_Skip_In_ms>100</Minimum_Event_Duration_In_For_Skip_In_ms> -->
+  
+  <Minimum_Number_Of_Fixations_For_Skip>4</Minimum_Number_Of_Fixations_For_Skip>
 
   <Standard_Deviation>1</Standard_Deviation>
   
   <OutputFiles>
     <First_Excel_File_Name>First</First_Excel_File_Name>
     <Second_Excel_File_Name>Second</Second_Excel_File_Name>
-    <Considered_Second_Excel_File_Name>Second - Considered</Considered_Second_Excel_File_Name>
+    <Considered_Second_Excel_File_Name>Second - Filtered</Considered_Second_Excel_File_Name>
     <Third_Excel_File_Name>Third</Third_Excel_File_Name>
 
     <Logs_Excel_File_Name>Logs</Logs_Excel_File_Name>

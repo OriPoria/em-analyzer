@@ -12,7 +12,7 @@ namespace EM_Analyzer
         public static double ComputeStandardDevision(IEnumerable<double> values)
         {
             double average = values.Average();
-            int n = values.Count();
+            int n = values.Count()-1;
             double standardDevision = Math.Sqrt(values.Sum(val => Math.Pow((val - average), 2)) / n);
             return standardDevision;
         }

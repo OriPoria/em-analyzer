@@ -16,3 +16,19 @@ D:\Documents\Projects\EM Analyzer\EM Analyzer\obj\Release\ForBarIlanResearch.exe
 D:\Documents\Projects\EM Analyzer\EM Analyzer\obj\Release\ForBarIlanResearch.pdb
 D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Release\EPPlus.dll
 D:\Documents\Projects\EM Analyzer\EM Analyzer\bin\Release\EPPlus.xml
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\bin\Release\ForBarIlanResearch.exe.config
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\bin\Release\ForBarIlanResearch.exe
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\bin\Release\ForBarIlanResearch.pdb
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\bin\Release\DocumentFormat.OpenXml.dll
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\bin\Release\EPPlus.dll
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\bin\Release\ExcelNumberFormat.dll
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\bin\Release\FastMember.dll
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\bin\Release\System.IO.FileSystem.Primitives.dll
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\bin\Release\System.IO.Packaging.dll
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\bin\Release\DocumentFormat.OpenXml.xml
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\bin\Release\EPPlus.xml
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\bin\Release\ExcelNumberFormat.xml
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\obj\Release\EM Analyzer.csproj.ResolveComReference.cache
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\obj\Release\EM Analyzer.csproj.CoreCompileInputs.cache
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\obj\Release\ForBarIlanResearch.exe
+C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\obj\Release\ForBarIlanResearch.pdb

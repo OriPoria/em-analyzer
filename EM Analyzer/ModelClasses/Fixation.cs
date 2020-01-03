@@ -97,7 +97,8 @@ namespace EM_Analyzer.ModelClasses
             catch
             {
                 isAOIValid = false;
-                ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI Group", arr[TextFileColumnIndexes.AOI_Group], lineNumber));
+                //Console.Write("not valid");
+                //ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI Group", arr[TextFileColumnIndexes.AOI_Group], lineNumber + 1));
             }
 
             try
@@ -107,7 +108,8 @@ namespace EM_Analyzer.ModelClasses
             catch
             {
                 isAOIValid = false;
-                ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI Name", arr[TextFileColumnIndexes.AOI_Name], lineNumber));
+                //Console.Write("not valid");
+                //ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI Name", arr[TextFileColumnIndexes.AOI_Name], lineNumber + 1));
             }
 
             try
@@ -121,7 +123,8 @@ namespace EM_Analyzer.ModelClasses
             catch
             {
                 isAOIValid = false;
-                ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI Size", arr[TextFileColumnIndexes.AOI_Size], lineNumber));
+                //Console.Write("not valid");
+                //ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI Size", arr[TextFileColumnIndexes.AOI_Size], lineNumber + 1));
             }
 
             if (!isAOIValid)
@@ -187,29 +190,31 @@ namespace EM_Analyzer.ModelClasses
             }
 
 
-
+            
             newFixation.IsException = false;
 
-            if (newFixation.AOI_Name != -1)
-            {
-                //if (AOIDetails.isAOIIncludeStimulus)
-                //    newFixation.AOI_Details = AOIDetails.nameToAOIDetailsDictionary[newFixation.AOI_Name + newFixation.Stimulus];
-                //else
-                //    newFixation.AOI_Details = AOIDetails.nameToAOIDetailsDictionary[newFixation.AOI_Name + ""];
+            //write to log considering the Hanaka txt and it's not neccesry 
 
-                //if (newFixation.AOI_Details.AOI_Coverage_In_Percents < 0)
-                //{
-                //    newFixation.AOI_Details.AOI_Coverage_In_Percents = newFixation.AOI_Coverage_In_Percents;
-                //}
+            //if (newFixation.AOI_Name != -1)
+            //{
+            //    //if (AOIDetails.isAOIIncludeStimulus)
+            //    //    newFixation.AOI_Details = AOIDetails.nameToAOIDetailsDictionary[newFixation.AOI_Name + newFixation.Stimulus];
+            //    //else
+            //    //    newFixation.AOI_Details = AOIDetails.nameToAOIDetailsDictionary[newFixation.AOI_Name + ""];
 
-                //if (newFixation.AOI_Details.IsProper && newFixation.AOI_Details.DistanceToAOI(newFixation) != 0)
-                if (newFixation.AOI_Details.DistanceToAOI(newFixation) != 0)
-                {
-                    //newFixation.AOI_Details.IsProper = false;
-                    ExcelLoggerService.AddLog(new Log() { FileName = FixationsService.textFileName, LineNumber = lineNumber, Description = "The Fixation Is Not Inside The AOI " + newFixation.AOI_Name });
-                    //new Task(() => MessageBox.Show("There is a problem with the AOI " + newFixation.AOI_Name + " In Stimulus " + newFixation.Stimulus)).Start();
-                }
-            }
+            //    //if (newFixation.AOI_Details.AOI_Coverage_In_Percents < 0)
+            //    //{
+            //    //    newFixation.AOI_Details.AOI_Coverage_In_Percents = newFixation.AOI_Coverage_In_Percents;
+            //    //}
+
+            //    //if (newFixation.AOI_Details.IsProper && newFixation.AOI_Details.DistanceToAOI(newFixation) != 0)
+            //    if (newFixation.AOI_Details.DistanceToAOI(newFixation) != 0)
+            //    {
+            //        //newFixation.AOI_Details.IsProper = false;
+            //        ExcelLoggerService.AddLog(new Log() { FileName = FixationsService.textFileName, LineNumber = lineNumber, Description = "The Fixation Is Not Inside The AOI Name" + newFixation.AOI_Name });
+            //        //new Task(() => MessageBox.Show("There is a problem with the AOI " + newFixation.AOI_Name + " In Stimulus " + newFixation.Stimulus)).Start();
+            //    }
+            //}
 
             if (!isFixationValid)
                 return null;

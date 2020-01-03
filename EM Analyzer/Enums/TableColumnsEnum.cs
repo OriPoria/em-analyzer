@@ -81,6 +81,6 @@ namespace EM_Analyzer.Enums
         Fixation_Position_X,
         Fixation_Position_Y,
         Fixation_Average_Pupil_Diameter,
-            AOI_Size;
+        AOI_Size;
     }
 }
