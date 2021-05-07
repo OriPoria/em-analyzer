@@ -38,11 +38,6 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 // For The First Pass Fixations
                 foreach (CountedAOIFixations countedAOIFixations in countedAOIFixationsForFirstPass)
                 {
-                    // First try with first pass
-                    if (!FixationsService.IsLeagalFirstPassFixations(countedAOIFixations))
-                        continue;
-                    // End
-
 
                     dictionatyKey = participantKey + '\t' + countedAOIFixations.AOI_Group;
                     if (!AOIClass.instancesDictionary.ContainsKey(dictionatyKey))
