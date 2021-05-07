@@ -15,7 +15,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
     {
         //public delegate double NumericExpression(AOIClass value);
         /// <summary>
-        /// Makes the second excel file after proccessing.\
+        /// Makes the second excel file after proccessing
         /// </summary>
         public static void MakeExcelFile()
         {
