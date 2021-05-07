@@ -27,6 +27,8 @@ namespace EM_Analyzer.ModelClasses
         public static DealingWithExceptionsOutBoundsEnum dealingWithOutsideExceptions = (DealingWithExceptionsOutBoundsEnum)int.Parse(ConfigurationService.DealingWithExceptionsOutsideTheLimit);
         public static int Number_Of_Fixations_In_Of_AOI_For_Exception;
         public static int Number_Of_Fixations_Out_AOI_For_Exception;
+        public static int Minimum_Number_Of_Fixations_For_First_Pass = int.Parse(ConfigurationService.MinimumNumberOfFixationsForFirstPass);
+        public static double Minimum_Duration_Of_Fixation_For_First_Pass = double.Parse(ConfigurationService.MinimumDurationOfFixationForFirstPass);
         public static double exceptionsLimit = double.Parse(ConfigurationService.DealingWithExceptionsLimitInPixels);
 
         //public static bool IsFixationShouldBeSkippedInFirstPass(Fixation)
@@ -70,6 +72,17 @@ namespace EM_Analyzer.ModelClasses
                     fixationList.RemoveRange(0, firstFixaitionAtFirstAOI);
             }
         }
+        public static bool IsLeagalFirstPassFixations(CountedAOIFixations countedAOIFixations)
+        {
+            if (countedAOIFixations.Fixations.Count < Minimum_Number_Of_Fixations_For_First_Pass)
+                return false;
+            
+            foreach (Fixation fixation in countedAOIFixations.Fixations)
+                if (fixation.Event_Duration < Minimum_Duration_Of_Fixation_For_First_Pass)
+                    return false;
+            
+            return true;
+        }
 
         public static void DealWithSeparatedAOIs()
         {
@@ -91,7 +104,6 @@ namespace EM_Analyzer.ModelClasses
                     AOIsService.nameToAOIDictionary[aoi.DictionaryKey] = separatedAOI;
                 }
             }
-            //Console.WriteLine();
         }
 
         public static void SearchForExceptions()

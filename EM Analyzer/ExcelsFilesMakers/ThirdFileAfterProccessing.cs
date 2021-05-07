@@ -18,7 +18,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 table.Add(new ParticipantTrial(fixations[0].Trial, fixations[0].Stimulus, fixations[0].Participant));
             }
-            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ThirdExcelFileName, table);
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ThirdExcelFileName, table, null);
         }
 
 

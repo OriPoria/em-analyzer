@@ -32,3 +32,25 @@ C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\obj\Release\EM Analyzer.
 C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\obj\Release\EM Analyzer.csproj.CoreCompileInputs.cache
 C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\obj\Release\ForBarIlanResearch.exe
 C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\obj\Release\ForBarIlanResearch.pdb
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\EyeMonitoringAnalysis.exe.config
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\EyeMonitoringAnalysis.exe.manifest
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\EyeMonitoringAnalysis.application
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\EyeMonitoringAnalysis.exe
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\EyeMonitoringAnalysis.pdb
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\DocumentFormat.OpenXml.dll
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\EPPlus.dll
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\ExcelNumberFormat.dll
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\FastMember.dll
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\System.IO.FileSystem.Primitives.dll
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\System.IO.Packaging.dll
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\DocumentFormat.OpenXml.xml
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\EPPlus.xml
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\ExcelNumberFormat.xml
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\obj\Release\EM Analyzer.csprojAssemblyReference.cache
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\obj\Release\EM Analyzer.csproj.ResolveComReference.cache
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\obj\Release\EM Analyzer.csproj.CoreCompileInputs.cache
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\obj\Release\EyeMonitoringAnalysis.exe.manifest
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\obj\Release\EyeMonitoringAnalysis.application
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\obj\Release\EM Analyzer.csproj.CopyComplete
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\obj\Release\EyeMonitoringAnalysis.exe
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\obj\Release\EyeMonitoringAnalysis.pdb

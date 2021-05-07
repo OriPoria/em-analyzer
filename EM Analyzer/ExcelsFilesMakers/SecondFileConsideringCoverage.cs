@@ -7,6 +7,7 @@ using EM_Analyzer.Services;
 using System.ComponentModel;
 using EM_Analyzer.Interfaces;
 using System.Globalization;
+using OfficeOpenXml;
 
 namespace EM_Analyzer.ExcelsFilesMakers
 {
@@ -78,7 +79,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
         {
             double standardDevisionAllowed;
             try
-            {
+            {   
                 standardDevisionAllowed = double.Parse(ConfigurationService.StandardDeviation);
             }
             catch
@@ -96,7 +97,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 settingExpressions,
                 standardDevisionAllowed,
                 aoi => aoi.AOI_Group == -1);
-            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By Participant", byParticipant);
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By Participant", byParticipant, editExcel);
 
             List<AIOClassAfterCoverageForExcel> byAOIGroup = DeleteOutOfStdValues(
                 aoi => aoi.Stimulus + aoi.AOI_Group,
@@ -104,7 +105,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 settingExpressions,
                 standardDevisionAllowed,
                 aoi => aoi.AOI_Group == -1);
-            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI", byAOIGroup);
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI", byAOIGroup, editExcel);
 
 
             //List<AIOClassAfterCoverageForExcel> by_AIO_And_Participant = new List<AIOClassAfterCoverageForExcel>(byParticipant.Count + byAOIGroup.Count);
@@ -113,7 +114,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             //by_AIO_And_Participant.AddRange(byAOIGroup);
             by_AIO_And_Participant.UnionWith(byParticipant);
             by_AIO_And_Participant.UnionWith(byAOIGroup);
-            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI and Participant", by_AIO_And_Participant);
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI and Participant", by_AIO_And_Participant, editExcel);
 
 
             List<AIOClassAfterCoverageForExcel> by_AIO_Or_Participant = new List<AIOClassAfterCoverageForExcel>(Math.Min(byParticipant.Count, byAOIGroup.Count));
@@ -128,17 +129,31 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 }
             }
             //List<AIOClassAfterCoverageForExcel> by_AIO_and_Participant = (List<AIOClassAfterCoverageForExcel>)and;
-            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI or Participant", by_AIO_Or_Participant);
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI or Participant", by_AIO_Or_Participant, editExcel);
             
         }
+        public static int editExcel(ExcelWorksheet ws)
+        {
+            ws.InsertColumn(Constans.startCondsInx, AOIClass.maxConditions);
+            for (int i = Constans.startCondsInx; i < Constans.startCondsInx + AOIClass.maxConditions; i++)
+                ws.Cells[1, i].Value = $"Cond{i - 6}";
+            for (int i = 2; i <= ws.Dimension.Rows; i++)
+            {
+                if (ws.Cells[i, Constans.aoiTargetCol].Value != null)
+                {
+                    List<string> sNames = Constans.parseSpecialName(ws.Cells[i, Constans.aoiTargetCol].Value.ToString());
+                    int k = 0;
+                    for (int j = Constans.startCondsInx; j < sNames.Count + Constans.startCondsInx; j++)
+                    {
+                        ws.Cells[i, j].Value = sNames[k];
+                        k++;
+                    }
 
-        //public static string DecimalPlaceNoRounding(double d, int decimalPlaces = 2)
-        //{
-        //    d = d * Math.Pow(10, decimalPlaces);
-        //    d = Math.Truncate(d);
-        //    d = d / Math.Pow(10, decimalPlaces);
-        //    return string.Format("{0:N" + Math.Abs(decimalPlaces) + "}", d);
-        //}
+                }
+
+            }
+            return 0;
+        }
 
         private static List<AIOClassAfterCoverageForExcel> DeleteOutOfStdValues(Func<AIOClassAfterCoverage, string> KeySelector,
             List<NumericExpression> filteringsExpressions,
@@ -208,6 +223,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
             public string Text_Name { get => AOI.Text_Name; }
             [Description("AOI Group")]
             public int AOI_Group { get => AOI.AOI_Group; }
+            [Description("AOI Target")]
+            public string AOI_Target { get => AOI.AOI_Target; }
 
             [Description("Total Fixation Duration")]
             public double Total_Fixation_Duration
@@ -456,7 +473,6 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 }
             }
 
-            //[Description("AOI Size X [mm]")]
             public double Mean_AOI_Size
             {
                 get
@@ -486,6 +502,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
         public class AIOClassAfterCoverageForExcel
         {
             private AIOClassAfterCoverage AOIAfterCoverage;
+            public static int maxConditions;
+
 
             [Description("Participant")]
             public string Participant { get => AOIAfterCoverage.Participant; }
@@ -498,13 +516,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
             [Description("AOI Group")]
             public int AOI_Group { get => AOIAfterCoverage.AOI_Group; }
-
-            //[Description("Total Fixation Duration")]
-            //public string Total_Fixation_Duration
-            //{
-            //    get => Total_Fixation_Duration;
-            //    set => Total_Fixation_Duration = String.Format("{0:0.0000000000000}", value);
-            //}
+            [Description("AOI Target")]
+            public string AOI_Target { get => AOIAfterCoverage.AOI_Target; }
 
             [Description("Total Fixation Duration")]
             public string Total_Fixation_Duration { get;set; }
@@ -565,9 +578,6 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
             [Description("Pupil Diameter [mm]")]
             public string Pupil_Diameter { get; set; }
-
-            //[Description("AOI Size X [mm]")]
-            //public string Mean_AOI_Size { get; set; }
 
             public AIOClassAfterCoverageForExcel(AIOClassAfterCoverage AOIClassAfterCoverage)
             {

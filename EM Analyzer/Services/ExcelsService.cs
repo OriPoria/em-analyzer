@@ -40,17 +40,13 @@ namespace EM_Analyzer.Services
                 TableStyles.None,
                 BindingFlags.Instance | BindingFlags.Public,
                 membersToInclude);
-            //return @this.LoadFromCollection(collection, true,
-            //    TableStyles.Light1, 
-            //    BindingFlags.Instance | BindingFlags.Public,
-            //    membersToInclude);
         }
 
     }
 
     public class ExcelsService
     {
-        public static void CreateExcelFromStringTable<T>(string fileName, IEnumerable<T> table)//List<string[]> table)
+        public static void CreateExcelFromStringTable<T>(string fileName, IEnumerable<T> table, Func<ExcelWorksheet, int> editExcelFunc)
         {
             using (var wb = new ExcelPackage())
             {
@@ -67,12 +63,10 @@ namespace EM_Analyzer.Services
                 {
                     ws.View.FreezePanes(2, 6);
                 }
-                ExcelRangeBase range = ws.Cells[1, 1].LoadFromCollectionFiltered(table);//,true,TableStyles.Medium1);
+                ExcelRangeBase range = ws.Cells[1, 1].LoadFromCollectionFiltered(table);
+
                 ws.Cells[ws.Dimension.Address].AutoFitColumns();
-                
-                //ws.Cells[ws.Dimension.Address].Style.WrapText = true;
-                //ws.Cells[ws.Dimension.Address].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
-                //ws.Cells[ws.Dimension.Address].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                editExcelFunc?.Invoke(ws);
                 DialogResult dialogResult; // = DialogResult.Retry;
                 do
                 {
@@ -196,24 +190,6 @@ namespace EM_Analyzer.Services
 
             //Get the properties of T
             List<PropertyInfo> modelProperties = new T().GetType().GetProperties().ToList();
-
-            //Assume first row has the column names
-            //var colnames = groups.FirstOrDefault()
-            //    .Select((hcell, idx) => new
-            //    {
-            //        Name = hcell.Value.ToString(),
-            //        index = idx
-            //    })
-            //    .Where(o => modelProperties.Select(p => p.Name).Contains(o.Name))
-            //    .ToList();
-
-
-            //var colnames = groups.FirstOrDefault()
-            //    .Select((hcell, idx) => new
-            //    {
-            //        Name = hcell.Value.ToString(),
-            //        index = idx
-            //    }).Select(c=>c.Name).ToList();
 
             var colnames = groups.FirstOrDefault()
                 .Select((hcell, idx) => new

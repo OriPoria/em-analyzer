@@ -33,7 +33,6 @@ namespace EM_Analyzer
             } while (!isOptionOK);
 
             
-
             string excelFilePath = "";
 
             using (OpenFileDialog openFileDialog = new OpenFileDialog
@@ -46,6 +45,7 @@ namespace EM_Analyzer
                 CheckPathExists = true
             })
             {
+                
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     excelFilePath = openFileDialog.FileName;
@@ -54,6 +54,7 @@ namespace EM_Analyzer
                 {
                     return;
                 }
+                
             }
 
             if (chosenOption == 3)
@@ -71,14 +72,13 @@ namespace EM_Analyzer
             Thread readingExcelFile;
             readingExcelFile = new Thread(() =>
             {
-                    AOIDetails.LoadAllAOIFromFile(excelFilePath);
+                AOIDetails.LoadAllAOIFromFile(excelFilePath);
             });
-            //});
+            
             readingExcelFile.Start();
-            //readingExcelFile.Join();
 
             string textFilePath = "";
-
+            
             using (OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 RestoreDirectory = true,
@@ -98,6 +98,7 @@ namespace EM_Analyzer
                     return;
                 }
             }
+            
 
             readingExcelFile.Join();
             FixationsService.excelFileName = excelFilePath.Substring(excelFilePath.LastIndexOf(@"\") + 1);
@@ -106,7 +107,7 @@ namespace EM_Analyzer
             ReadTextFile(textFilePath);
             FixationsService.DealWithSeparatedAOIs();
             FixationsService.SortDictionary();
-            if(int.Parse(ConfigurationService.RemoveFixationsAppearedBeforeFirstAOI)==1)
+            if (int.Parse(ConfigurationService.RemoveFixationsAppearedBeforeFirstAOI) == 1)
                 FixationsService.CleanAllFixationBeforeFirstAOI();
             FixationsService.SearchForExceptions();
 
@@ -145,7 +146,7 @@ namespace EM_Analyzer
                     MessageBox.Show("There is a problem with the Text File In Line: " + i + "\n Content: \"" + lines[i] + "\"");
                 }
             }
-
+            var x = FixationsService.fixationSetToFixationListDictionary;
             // Deletes Double Fixations (With The Same Index).
             IEnumerable<string> participants = FixationsService.fixationSetToFixationListDictionary.Keys.ToList();
             foreach (string participant in participants)

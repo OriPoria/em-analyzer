@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{38E49BCF-7C38-41D2-AA2F-9D1EFF7366D6}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>ForBarIlanResearch</RootNamespace>
+    <RootNamespace>EM_Analyzer</RootNamespace>
     <AssemblyName>EyeMonitoringAnalysis</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -15,7 +15,10 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>C:\Users\ניר\Desktop\EM\</PublishUrl>
+    <!--
+	      <PublishUrl>C:\Users\oripo\Desktop\עבודה\EyeTracker\</PublishUrl>
+
+	  -->
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -25,7 +28,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationRevision>2</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -36,7 +39,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -51,10 +54,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>6C18B4212C2915C2F2BB8920B02ABDEEEF61F874</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>0545C0BF324D31A3872C982A8063D81B57B0A12C</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>EM Analyzer_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>EM Analyzer_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -101,6 +104,7 @@
     <Compile Include="Enums\TableColumnsEnum.cs" />
     <Compile Include="ExcelLoggerService\ExcelLoggerService.cs" />
     <Compile Include="ExcelLoggerService\Log.cs" />
+    <Compile Include="ExcelsFilesMakers\Constans.cs" />
     <Compile Include="ExcelsFilesMakers\FirstFileAfterProccessing.cs" />
     <Compile Include="ExcelsFilesMakers\ReadingSecondFileAfterProccessing.cs" />
     <Compile Include="ExcelsFilesMakers\SecondFileAfterProccessing.cs" />
@@ -121,6 +125,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="EM Analyzer_1_TemporaryKey.pfx" />
     <None Include="EM Analyzer_TemporaryKey.pfx" />
     <None Include="packages.config" />
   </ItemGroup>

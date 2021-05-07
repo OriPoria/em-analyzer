@@ -11,9 +11,6 @@ namespace EM_Analyzer.ExcelsFilesMakers
 {
     public class AIOClassFromExcel : IAOIClassForConsideringCoverage
     {
-        //public static List<AIOClassFromExcel> allInstances = new List<AIOClassFromExcel>();
-        //public AIOClassAfterCoverageForExcel AOIForExcel;
-
         [Description("Participant")]
         public string Participant { get; set; }
         [Description("Trial")]
@@ -24,6 +21,9 @@ namespace EM_Analyzer.ExcelsFilesMakers
         public string Text_Name { get; set; }
         [Description("AOI Group")]
         public int AOI_Group { get; set; }
+        [Description("AOI Target")]
+        public string AOI_Target { get; set; }
+        public List<string> List_Of_Strings { get; set; }
 
         [Description("Total Fixation Duration")]
         public double Total_Fixation_Duration { get; set; }
@@ -91,6 +91,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
         [Description("AOI Coverage [%]")]
         public double Mean_AOI_Coverage { get; set; }
 
+
         public void CreateAIOClassAfterCoverage()
         {
             new AIOClassAfterCoverage(this);
@@ -98,6 +99,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
         public AIOClassFromExcel()
         {
+
         }
 
     }

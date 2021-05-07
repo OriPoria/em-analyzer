@@ -14,7 +14,8 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
     public class AOIDetails : IAOI
     {
         public static Dictionary<string, AOIDetails> nameToAOIDetailsDictionary = new Dictionary<string, AOIDetails>();
-        public static bool isAOIIncludeStimulus = false;
+        public static Dictionary<int, string> groupToSpecialName = new Dictionary<int, string>();
+//        public static bool isAOIIncludeStimulus = false;
         public string Stimulus { get; set; }
         public int Name { get; set; }
         public int Group { get; set; }
@@ -26,6 +27,7 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
         public bool IsProper { get; set; }
         public string DictionaryKey { get; private set; }
         public double AOI_Size_X { get; set; }
+        public string SpecialNmae { get; set; }
 
         public AOIDetails(IEnumerable<string> details, uint lineNumber)
         {
@@ -37,108 +39,100 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
 
             enumerator.MoveNext();
             int count = details.Count();
-            if (count >= 7)
+            Stimulus = enumerator.Current;
+            enumerator.MoveNext();
+            DictionaryKey = Stimulus;
+            
+            try
             {
-                Stimulus = enumerator.Current;
-                enumerator.MoveNext();
-                DictionaryKey = Stimulus;
+                Name = int.Parse(enumerator.Current);
             }
-            if (count >= 6)
+            catch
             {
-                try
-                {
-                    Name = int.Parse(enumerator.Current);
-                }
-                catch
-                {
-                    ExcelLoggerService.AddLog(CreateLogForFieldValidation("Name", enumerator.Current, lineNumber));
-                    IsProper = false;
-                }
-                enumerator.MoveNext();
-
-                try
-                {
-                    Group = int.Parse(enumerator.Current);
-                }
-                catch
-                {
-                    ExcelLoggerService.AddLog(CreateLogForFieldValidation("Group", enumerator.Current, lineNumber));
-                    IsProper = false;
-                }
-                enumerator.MoveNext();
-
-                try
-                {
-                    X = double.Parse(enumerator.Current);
-                }
-                catch
-                {
-                    ExcelLoggerService.AddLog(CreateLogForFieldValidation("X", enumerator.Current, lineNumber));
-                    IsProper = false;
-                }
-                enumerator.MoveNext();
-
-                try
-                {
-                    Y = double.Parse(enumerator.Current);
-                }
-                catch
-                {
-                    ExcelLoggerService.AddLog(CreateLogForFieldValidation("Y", enumerator.Current, lineNumber));
-                    IsProper = false;
-                }
-                enumerator.MoveNext();
-
-                try
-                {
-                    H = double.Parse(enumerator.Current);
-                }
-                catch
-                {
-                    ExcelLoggerService.AddLog(CreateLogForFieldValidation("H", enumerator.Current, lineNumber));
-                    IsProper = false;
-                }
-                enumerator.MoveNext();
-
-                try
-                {
-                    L = double.Parse(enumerator.Current);
-                }
-                catch
-                {
-                    ExcelLoggerService.AddLog(CreateLogForFieldValidation("L", enumerator.Current, lineNumber));
-                    IsProper = false;
-                }
-                enumerator.MoveNext();
-
-                if (IsProper)
-                {
-                    DictionaryKey = Name + DictionaryKey;
-                    AOIsService.nameToAOIDictionary[DictionaryKey] = this;
-                    AOIDetails.nameToAOIDetailsDictionary[DictionaryKey] = this;
-                }
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Name", enumerator.Current, lineNumber));
+                IsProper = false;
             }
-            /*
+            enumerator.MoveNext();
+
+            try
             {
-                this.Name = int.Parse(details[(int)ExcelAOITableEnum.Name]);
-                this.Group = int.Parse(details[(int)ExcelAOITableEnum.Group]);
-                this.X = double.Parse(details[(int)ExcelAOITableEnum.X]);
-                this.Y = double.Parse(details[(int)ExcelAOITableEnum.Y]);
-                this.H = double.Parse(details[(int)ExcelAOITableEnum.H]);
-                this.L = double.Parse(details[(int)ExcelAOITableEnum.L]);
-                nameToAOIDetailsDictionary[this.Name+ this.Stimulus] = this;
+                Group = int.Parse(enumerator.Current);
             }
-            */
+            catch
+            {
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Group", enumerator.Current, lineNumber));
+                IsProper = false;
+            }
+            enumerator.MoveNext();
+
+            try
+            {
+                X = double.Parse(enumerator.Current);
+            }
+            catch
+            {
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("X", enumerator.Current, lineNumber));
+                IsProper = false;
+            }
+            enumerator.MoveNext();
+
+            try
+            {
+                Y = double.Parse(enumerator.Current);
+            }
+            catch
+            {
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Y", enumerator.Current, lineNumber));
+                IsProper = false;
+            }
+            enumerator.MoveNext();
+
+            try
+            {
+                H = double.Parse(enumerator.Current);
+            }
+            catch
+            {
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("H", enumerator.Current, lineNumber));
+                IsProper = false;
+            }
+            enumerator.MoveNext();
+
+            try
+            {
+                L = double.Parse(enumerator.Current);
+            }
+            catch
+            {
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("L", enumerator.Current, lineNumber));
+                IsProper = false;
+            }
+            enumerator.MoveNext();
+            
+            // to add AOI with special name
+            if (count >= 8 && enumerator.Current != null) 
+            {
+                SpecialNmae = enumerator.Current;
+                groupToSpecialName[Group] = SpecialNmae;
+            }
+
+            if (IsProper)
+            {
+                DictionaryKey = Name + DictionaryKey;
+                AOIsService.nameToAOIDictionary[DictionaryKey] = this;
+                AOIDetails.nameToAOIDetailsDictionary[DictionaryKey] = this;
+            }
+            
+
         }
 
         public static void LoadAllAOIFromFile(string fileName)
         {
             List<IEnumerable<string>> table = ExcelsService.ReadExcelFile<string>(fileName);
-            isAOIIncludeStimulus = false;
+//            isAOIIncludeStimulus = false;
             IEnumerable<string> first = table.FirstOrDefault();
-            if (first.Count() >= 7)
-                isAOIIncludeStimulus = true;
-            //table.AsParallel().(details => new AOIDetails(details));
+//            if (first.Count() >= 7)
+//                isAOIIncludeStimulus = true;
             uint lineNumber = 1;
             foreach (IEnumerable<string> details in table)
             {

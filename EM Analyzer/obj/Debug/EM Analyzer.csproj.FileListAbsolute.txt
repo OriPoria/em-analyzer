@@ -90,3 +90,38 @@ C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\obj\Debug\EyeMonitoringA
 C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\obj\Debug\EyeMonitoringAnalysis.exe
 C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\obj\Debug\EyeMonitoringAnalysis.pdb
 C:\Users\ניר\Desktop\EM\EM Analyzer code\EM Analyzer\obj\Debug\EM Analyzer.csprojResolveAssemblyReference.cache
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\obj\Debug\EM Analyzer.csprojAssemblyReference.cache
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\obj\Debug\EM Analyzer.csproj.ResolveComReference.cache
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\obj\Debug\EyeMonitoringAnalysis.exe.manifest
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\obj\Debug\EyeMonitoringAnalysis.application
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\obj\Debug\EM Analyzer.csproj.CopyComplete
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\obj\Debug\EyeMonitoringAnalysis.exe
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\obj\Debug\EyeMonitoringAnalysis.pdb
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\EyeMonitoringAnalysis.exe.config
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\EyeMonitoringAnalysis.exe.manifest
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\EyeMonitoringAnalysis.application
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\EyeMonitoringAnalysis.exe
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\EyeMonitoringAnalysis.pdb
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\DocumentFormat.OpenXml.dll
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\EPPlus.dll
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\ExcelNumberFormat.dll
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\FastMember.dll
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\System.IO.FileSystem.Primitives.dll
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\System.IO.Packaging.dll
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\DocumentFormat.OpenXml.xml
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\EPPlus.xml
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\ExcelNumberFormat.xml
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\EyeMonitoringAnalysis.exe.config
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\EyeMonitoringAnalysis.exe.manifest
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\EyeMonitoringAnalysis.application
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\EyeMonitoringAnalysis.exe
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\EyeMonitoringAnalysis.pdb
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\DocumentFormat.OpenXml.dll
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\EPPlus.dll
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\ExcelNumberFormat.dll
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\FastMember.dll
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\System.IO.FileSystem.Primitives.dll
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\System.IO.Packaging.dll
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\DocumentFormat.OpenXml.xml
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\EPPlus.xml
+C:\Users\oripo\source\repos\em-analyzer\EM Analyzer\bin\Release\ExcelNumberFormat.xml

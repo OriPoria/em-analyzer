@@ -35,7 +35,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 lineNumber++;
             }
 
-            ExcelsService.CreateExcelFromStringTable(ConfigurationService.FirstExcelFileName, table);
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.FirstExcelFileName, table, null);
         }
     }
 }

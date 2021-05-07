@@ -48,19 +48,16 @@ namespace EM_Analyzer.ModelClasses
         {
             get
             {
-                if (AOIDetails.isAOIIncludeStimulus)
+//                if (AOIDetails.isAOIIncludeStimulus)
                     return AOIsService.nameToAOIDictionary[AOI_Name + Stimulus];
-                else
-                    return AOIsService.nameToAOIDictionary[AOI_Name + ""];
+//                else
+//                    return AOIsService.nameToAOIDictionary[AOI_Name + ""];
             }
         }
 
         //[EpplusIgnore]
         [Description("Is In Exception Bounds")]
         public bool IsInExceptionBounds { get; set; }
-
-        //static double minimumDuration = double.Parse(ConfigurationService.getValue(ConfigurationService.Minimum_Event_Duration_In_ms));
-        //static double maximumDuration = double.Parse(ConfigurationService.getValue(ConfigurationService.Maximum_Event_Duration_In_ms));
 
         static readonly double minimumDuration = double.Parse(ConfigurationService.MinimumEventDurationInms);
         static readonly double maximumDuration = double.Parse(ConfigurationService.MaximumEventDurationInms);
@@ -253,6 +250,7 @@ namespace EM_Analyzer.ModelClasses
             return details;
         }
 
+        // function that filter fixation if it should be considered as first pass
         public bool ShouldBeSkippedInFirstPass()
         {
             bool isException = IsException;

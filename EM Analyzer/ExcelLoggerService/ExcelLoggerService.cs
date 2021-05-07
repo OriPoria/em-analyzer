@@ -20,7 +20,7 @@ namespace EM_Analyzer.ExcelLogger
 
         private static void OnProgramExit(object sender, EventArgs e)
         {
-            ExcelsService.CreateExcelFromStringTable(ConfigurationService.LogsExcelFileName, logs);
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.LogsExcelFileName, logs, null);
         }
 
         public static void AddLog(Log log)

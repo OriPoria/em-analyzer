@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Configuration>
-  
+
   <Minimum_Event_Duration_In_ms>50</Minimum_Event_Duration_In_ms>
   <Number_Of_Fixations_Out_AOI_For_Exception>1</Number_Of_Fixations_Out_AOI_For_Exception>
   <Number_Of_Fixations_In_Of_AOI_For_Exception>5</Number_Of_Fixations_In_Of_AOI_For_Exception>
+
   <!-- 
     Second_File_Filtering_denominator :
     enter the value-denominator- 
