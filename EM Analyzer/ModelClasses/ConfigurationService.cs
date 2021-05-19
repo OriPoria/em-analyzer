@@ -7,10 +7,13 @@ namespace EM_Analyzer.ModelClasses
         public const string CONFIG_FILE = "./Configuration.xml";
         public const string Minimum_Event_Duration_In_ms = "Minimum_Event_Duration_In_ms";
         public const string Maximum_Event_Duration_In_ms = "Maximum_Event_Duration_In_ms";
+        
         public const string Number_Of_Fixations_Out_AOI_For_Exception = "Number_Of_Fixations_Out_Of_AOI_For_Exception";
         public const string Number_Of_Fixations_In_Of_AOI_For_Exception = "Number_Of_Fixations_In_AOI_For_Exception";
-        public const string Minimum_Number_Of_Fixations_For_Regression = "Minimum_Number_Of_Fixations_For_Regression";
         
+        public const string Minimum_Number_Of_Fixations_For_Regression = "Minimum_Number_Of_Fixations_For_Regression";
+        public const string Minimum_Duration_Of_Fixation_For_Regression = "Minimum_Duration_Of_Fixation_For_Regression";
+
         public const string Minimum_Number_Of_Fixations_For_First_Pass = "Minimum_Number_Of_Fixations_For_First_Pass";
         public const string Minimum_Duration_Of_Fixation_For_First_Pass = "Minimum_Duration_Of_Fixation_For_First_Pass";
         
@@ -25,8 +28,10 @@ namespace EM_Analyzer.ModelClasses
         public const string Standard_Deviation = "Standard_Deviation";
         public const string Excel_Files_Extension = "Excel_Files_Extension";
         public const string Logs_Excel_File_Name = "Logs_Excel_File_Name";
-        //public const string Minimum_Event_Duration_In_For_Skip_In_ms = "Minimum_Event_Duration_In_For_Skip_In_ms";
+        
         public const string Minimum_Number_Of_Fixations_For_Skip = "Minimum_Number_Of_Fixations_For_Skip";
+        public const string Minimum_Duration_Of_Fixation_For_Skip = "Minimum_Duration_Of_Fixation_For_Skip";
+        
         public const string Second_File_Filtering_denominator = "Second_File_Filtering_denominator";
         //Logs_Excel_File_Name
 
@@ -48,6 +53,7 @@ namespace EM_Analyzer.ModelClasses
         public static string MinimumEventDurationInms { get { return GetValue(Minimum_Event_Duration_In_ms); } }
         public static string MaximumEventDurationInms { get { return GetValue(Maximum_Event_Duration_In_ms); } }
         public static string MinimumNumberOfFixationsForRegression { get { return GetValue(Minimum_Number_Of_Fixations_For_Regression); } }
+        public static string MinimumDurationOfFixationForRegression { get { return GetValue(Minimum_Duration_Of_Fixation_For_Regression); } }
         public static string MinimumNumberOfFixationsForFirstPass { get { return GetValue(Minimum_Number_Of_Fixations_For_First_Pass); } }
         public static string MinimumDurationOfFixationForFirstPass { get { return GetValue(Minimum_Duration_Of_Fixation_For_First_Pass); } }
         public static string NumberOfFixationsOutAOIForException { get { return GetValue(Number_Of_Fixations_Out_AOI_For_Exception); } }
@@ -60,6 +66,7 @@ namespace EM_Analyzer.ModelClasses
         public static string ExcelFilesExtension { get { return GetValue(Excel_Files_Extension); } }
         public static string LogsExcelFileName { get { return GetValue(Logs_Excel_File_Name); } }
         public static string MinimumNumberOfFixationsForSkip {  get { return GetValue(Minimum_Number_Of_Fixations_For_Skip); } }
+        public static string MinimumDurationOfFixationForSkip { get { return GetValue(Minimum_Duration_Of_Fixation_For_Skip); } }
         public static string SecondFileFilteringDenominator { get { return GetValue(Second_File_Filtering_denominator); } }
     }
 }

@@ -25,10 +25,19 @@ namespace EM_Analyzer.ModelClasses
         public static List<string> tableColumns;
         public static DealingWithExceptionsEnum dealingWithInsideExceptions = (DealingWithExceptionsEnum)int.Parse(ConfigurationService.DealingWithExceptionsInsideTheLimit);
         public static DealingWithExceptionsOutBoundsEnum dealingWithOutsideExceptions = (DealingWithExceptionsOutBoundsEnum)int.Parse(ConfigurationService.DealingWithExceptionsOutsideTheLimit);
+        
         public static int Number_Of_Fixations_In_Of_AOI_For_Exception;
         public static int Number_Of_Fixations_Out_AOI_For_Exception;
+        
         public static int Minimum_Number_Of_Fixations_For_First_Pass = int.Parse(ConfigurationService.MinimumNumberOfFixationsForFirstPass);
         public static double Minimum_Duration_Of_Fixation_For_First_Pass = double.Parse(ConfigurationService.MinimumDurationOfFixationForFirstPass);
+        
+        public static int Minimum_Number_Of_Fixations_For_Skip = int.Parse(ConfigurationService.MinimumNumberOfFixationsForSkip);
+        public static double Minimum_Duration_Of_Fixation_For_Skip = double.Parse(ConfigurationService.MinimumDurationOfFixationForSkip);
+        
+        public static int Minimum_Number_Of_Fixations_For_Regression = int.Parse(ConfigurationService.MinimumNumberOfFixationsForRegression);
+        public static double Minimum_Duration_Of_Fixation_For_Regression = double.Parse(ConfigurationService.MinimumDurationOfFixationForRegression);
+
         public static double exceptionsLimit = double.Parse(ConfigurationService.DealingWithExceptionsLimitInPixels);
 
         //public static bool IsFixationShouldBeSkippedInFirstPass(Fixation)
@@ -74,14 +83,41 @@ namespace EM_Analyzer.ModelClasses
         }
         public static bool IsLeagalFirstPassFixations(CountedAOIFixations countedAOIFixations)
         {
-            if (countedAOIFixations.Fixations.Count < Minimum_Number_Of_Fixations_For_First_Pass)
-                return false;
-            
+            int counter = 0;
             foreach (Fixation fixation in countedAOIFixations.Fixations)
-                if (fixation.Event_Duration < Minimum_Duration_Of_Fixation_For_First_Pass)
-                    return false;
-            
-            return true;
+            {
+                if (fixation.Event_Duration > Minimum_Duration_Of_Fixation_For_First_Pass)
+                    counter += 1;
+
+                if (counter >= Minimum_Number_Of_Fixations_For_First_Pass)
+                    return true;
+            }
+
+            return false;
+        }
+        public static bool IsLeagalFixationsForSkip(List<Fixation> fixationRange)
+        {
+            int counter = 0;
+            foreach (Fixation fixation in fixationRange)
+            {
+                if (fixation.Event_Duration > Minimum_Duration_Of_Fixation_For_Skip)
+                    counter += 1;
+                if (counter >= Minimum_Number_Of_Fixations_For_Skip)
+                    return true;
+            }
+            return false;
+        }
+        public static bool IsLeagalRegressionFixations(List<Fixation> fixations) 
+        {
+            int counter = 0;
+            foreach (Fixation fixation in fixations)
+            {
+                if (fixation.Event_Duration > Minimum_Duration_Of_Fixation_For_Regression)
+                    counter += 1;
+                if (counter >= Minimum_Number_Of_Fixations_For_Regression)
+                    return true;
+            }
+            return false;
         }
 
         public static void DealWithSeparatedAOIs()

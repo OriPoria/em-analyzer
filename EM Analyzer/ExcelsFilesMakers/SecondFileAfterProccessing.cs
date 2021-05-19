@@ -38,6 +38,11 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 // For The First Pass Fixations
                 foreach (CountedAOIFixations countedAOIFixations in countedAOIFixationsForFirstPass)
                 {
+                    // First try with first pass
+                    if (!FixationsService.IsLeagalFirstPassFixations(countedAOIFixations))
+                        continue;
+                    // End
+
 
                     dictionatyKey = participantKey + '\t' + countedAOIFixations.AOI_Group;
                     if (!AOIClass.instancesDictionary.ContainsKey(dictionatyKey))
@@ -107,9 +112,16 @@ namespace EM_Analyzer.ExcelsFilesMakers
                         lastChangeIndex = currentIndex;
 
 
-                        if (maxAOIGroupUntilNow < last_AOIGroup
+                        if (maxAOIGroupUntilNow < last_AOIGroup && FixationsService.IsLeagalFixationsForSkip(fixationRange))
+                            maxAOIGroupUntilNow = last_AOIGroup;
+                        /*
+                         * old skip legality
+                         * if (maxAOIGroupUntilNow < last_AOIGroup
                             && fixationRange.Count() > minimumNumberOfFixationsForSkip)
                             maxAOIGroupUntilNow = last_AOIGroup;
+                         * 
+                         */
+
                     }
                     else
                         fixation.Previous_Fixation = prevFixationInAOI;
@@ -548,11 +560,43 @@ namespace EM_Analyzer.ExcelsFilesMakers
                         this.m_Regressions = new List<List<Fixation>>();
                         this.Fixations.ForEach(lst =>
                         {
+                            // TODO: add to the regression lists that after (including) first pass
+
                             this.m_Regressions.Add(lst.ToList());
                         });
                         //this.m_Regressions = new List<List<Fixation>>(this.Fixations);
-                        this.m_Regressions.ForEach(lst => lst.RemoveAll(fix => this.First_Pass_Fixations.Contains(fix)));
-                        this.m_Regressions.RemoveAll(lst => lst.Count < minimumNumberOfFixationsInARegression);
+
+                        // OLD:
+                        // this.m_Regressions.ForEach(lst => lst.RemoveAll(fix => this.First_Pass_Fixations.Contains(fix)));
+                        // NEW:
+                        int firstPassIndex = -1;
+                        int i = 0;
+                        if (this.First_Pass_Fixations.Count > 0)
+                        {
+                            this.m_Regressions.ForEach((lst) =>
+                            {
+                                // FIND THE LAST FIXATION OF THE FIRST PASS, THE BATCHES OF THIS AOI FIXATIONS IS "NOT THE SAME"
+                                // AS THE BATCHES FOR CALCULATION OF FIRST PASS
+                                if (lst.Contains(this.First_Pass_Fixations[First_Pass_Fixations.Count - 1]))
+                                {
+                                    firstPassIndex = i;
+                                }
+                                i += 1;
+                            });
+                            i = 0;
+                            m_Regressions.ForEach((lst) => {
+                                if (i <= firstPassIndex)
+                                    lst.Clear();
+                                i += 1;
+                            });
+
+                        }
+
+                        // OLD:
+                        //this.m_Regressions.RemoveAll(lst => lst.Count < minimumNumberOfFixationsInARegression);
+                        this.m_Regressions.RemoveAll(lst => !FixationsService.IsLeagalRegressionFixations(lst));
+
+
                         //this.m_Regressions = this.Fixations.GetRange(1, this.Fixations.Count - 1);
                         //this.m_Regressions = this.m_Regressions.Where(lst => lst.Count >= minimumNumberOfFixationsInARegression);
                     }

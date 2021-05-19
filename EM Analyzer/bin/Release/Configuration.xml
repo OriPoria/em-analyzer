@@ -1,17 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Configuration>
-  
-    <Minimum_Number_Of_Fixations_For_Regression>2</Minimum_Number_Of_Fixations_For_Regression>
-
-  
+    
   <Minimum_Event_Duration_In_ms>50</Minimum_Event_Duration_In_ms>
   
   <Maximum_Event_Duration_In_ms>1000</Maximum_Event_Duration_In_ms>
   
-  <Minimum_Number_Of_Fixations_In_A_Regression>2</Minimum_Number_Of_Fixations_In_A_Regression>
+  <Minimum_Number_Of_Fixations_For_Regression>0</Minimum_Number_Of_Fixations_For_Regression>
+    <Minimum_Duration_Of_Fixation_For_Regression>85</Minimum_Duration_Of_Fixation_For_Regression>
   
-  <Minimum_Number_Of_Fixations_For_First_Pass>4</Minimum_Number_Of_Fixations_For_First_Pass>
-  <Minimum_Duration_Of_Fixation_For_First_Pass>300</Minimum_Duration_Of_Fixation_For_First_Pass>
+  <Minimum_Number_Of_Fixations_For_First_Pass>2</Minimum_Number_Of_Fixations_For_First_Pass>
+  <Minimum_Duration_Of_Fixation_For_First_Pass>180</Minimum_Duration_Of_Fixation_For_First_Pass>
   
   <Number_Of_Fixations_In_AOI_For_Exception>2</Number_Of_Fixations_In_AOI_For_Exception>
   
@@ -31,6 +29,7 @@
   <!-- <Minimum_Event_Duration_In_For_Skip_In_ms>100</Minimum_Event_Duration_In_For_Skip_In_ms> -->
   
   <Minimum_Number_Of_Fixations_For_Skip>4</Minimum_Number_Of_Fixations_For_Skip>
+  <Minimum_Duration_Of_Fixation_For_Skip>100</Minimum_Duration_Of_Fixation_For_Skip>
 
   <Standard_Deviation>1</Standard_Deviation>
   
@@ -67,3 +66,5 @@
   </DealingWithExceptions>
   
 </Configuration>
+
+
