@@ -77,7 +77,7 @@ namespace EM_Analyzer
             
             readingExcelFile.Start();
 
-            string textFilePath = "";
+            string specialTextFilePath = "";
             
             using (OpenFileDialog openFileDialog = new OpenFileDialog
             {
@@ -91,20 +91,40 @@ namespace EM_Analyzer
             {
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    textFilePath = openFileDialog.FileName;
+                    specialTextFilePath = openFileDialog.FileName;
                 }
                 else
                 {
                     return;
                 }
             }
-            
+            string wordsTextFilePath = "";
+
+            using (OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                RestoreDirectory = true,
+                Title = "Open The Text File: ",
+                Filter = "Text files (*.txt)|*.txt",
+                Multiselect = false,
+                CheckFileExists = true,
+                CheckPathExists = true
+            })
+            {
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    wordsTextFilePath = openFileDialog.FileName;
+                }
+                else
+                {
+                    return;
+                }
+            }
 
             readingExcelFile.Join();
             FixationsService.excelFileName = excelFilePath.Substring(excelFilePath.LastIndexOf(@"\") + 1);
-            FixationsService.textFileName = textFilePath.Substring(textFilePath.LastIndexOf(@"\") + 1);
+            FixationsService.textFileName = specialTextFilePath.Substring(specialTextFilePath.LastIndexOf(@"\") + 1);
             FixationsService.outputPath = excelFilePath.Substring(0, excelFilePath.LastIndexOf(@"\"));
-            ReadTextFile(textFilePath);
+            ReadTextFiles(specialTextFilePath, wordsTextFilePath);
             FixationsService.DealWithSeparatedAOIs();
             FixationsService.SortDictionary();
             if (int.Parse(ConfigurationService.RemoveFixationsAppearedBeforeFirstAOI) == 1)
@@ -126,24 +146,31 @@ namespace EM_Analyzer
 
         }
 
-        private static void ReadTextFile(string filePath)
+        private static void ReadTextFiles(string specialFilePath, string wordFilePath)
         {
-            string[] lines = File.ReadAllLines(filePath);
+            string[] lines = File.ReadAllLines(specialFilePath);
             lines = lines.Where(line => line.Trim().Count() > 0).ToArray();
-
+            string[] wordsLines = File.ReadAllLines(wordFilePath);
+            wordsLines = wordsLines.Where(line => line.Trim().Count() > 0).ToArray();
+            for (int i = 1; i < wordsLines.Length; i++)
+            {
+                string[] columns = wordsLines[i].Split('\t');
+                string aoiName = columns[9].Split(' ')[1];
+                lines[i] = lines[i] + $"\t{aoiName}";
+            }
             FixationsService.tableColumns = lines[0].Split('\t').Select(column=>column.Trim().ToLower()).ToList();
             FixationsService.InitializeColumnIndexes();
             //i begin from 2, the first line is categors
-            for (uint i = 2; i < lines.Length; i++)
+            for (uint j = 2; j < lines.Length; j++)
             {
-                string[] currentRow = lines[i].Split('\t');
+                string[] currentRow = lines[j].Split('\t');
                 try
                 {
-                    Fixation.CreateFixationFromStringArray(currentRow, i);
+                    Fixation.CreateFixationFromStringArray(currentRow, j);
                 }
                 catch
                 {
-                    MessageBox.Show("There is a problem with the Text File In Line: " + i + "\n Content: \"" + lines[i] + "\"");
+                    MessageBox.Show("There is a problem with the Text File In Line: " + j + "\n Content: \"" + lines[j] + "\"");
                 }
             }
             var x = FixationsService.fixationSetToFixationListDictionary;

@@ -343,6 +343,8 @@ namespace EM_Analyzer.ModelClasses
             TextFileColumnIndexes.Fixation_Position_Y = tableColumns.FindIndex(column => column.Contains("position") && column.Contains("y"));
             TextFileColumnIndexes.Fixation_Position_X = tableColumns.FindIndex(column => column.Contains("position") && !column.Contains("y"));
             TextFileColumnIndexes.Fixation_Average_Pupil_Diameter = tableColumns.FindIndex(column => column.Contains("average") && column.Contains("pupil") && column.Contains("diameter"));
+            // word index is in the last column, not found in the first line of the titles of the column
+            TextFileColumnIndexes.Word_Index = tableColumns.Count;
         }
     }
 }

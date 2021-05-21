@@ -43,6 +43,8 @@ namespace EM_Analyzer.ModelClasses
         public double Fixation_Position_Y { get; set; }
         [Description("Average Pupil Diameter")]
         public double Fixation_Average_Pupil_Diameter { get; set; }
+        [Description("Word Index")]
+        public int Word_Index { get; set; }
         [EpplusIgnore]
         public IAOI AOI_Details
         {
@@ -185,9 +187,17 @@ namespace EM_Analyzer.ModelClasses
                 ExcelLoggerService.AddLog(CreateLogForFieldValidation("Index", arr[TextFileColumnIndexes.Index], lineNumber));
                 isFixationValid = false;
             }
+            try
+            {
+                string s = arr[TextFileColumnIndexes.Word_Index];
+                newFixation.Word_Index = int.Parse(s);
+            }
+            catch
+            {
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Word_Index", arr[TextFileColumnIndexes.Word_Index], lineNumber));
+                isFixationValid = false;
+            }
 
-
-            
             newFixation.IsException = false;
 
             //write to log considering the Hanaka txt and it's not neccesry 
