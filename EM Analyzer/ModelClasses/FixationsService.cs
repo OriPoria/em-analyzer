@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EM_Analyzer.ExcelLogger;
+using System.Windows.Forms;
 
 namespace EM_Analyzer.ModelClasses
 {
@@ -19,8 +20,11 @@ namespace EM_Analyzer.ModelClasses
     class FixationsService
     {
         public static Dictionary<string, List<Fixation>> fixationSetToFixationListDictionary = new Dictionary<string, List<Fixation>>();
-        public static string textFileName = "";
-        public static string excelFileName = "";
+        public static Dictionary<string, List<WordIndex>> wordIndexSetToFixationListDictionary = new Dictionary<string, List<WordIndex>>();
+        public static string phrasesTextFileName = "";
+        public static string wordsTextFileName = "";
+        public static string phrasesExcelFileName = "";
+        public static string wordsExcelFileName = "";
         public static string outputPath = "";
         public static List<string> tableColumns;
         public static DealingWithExceptionsEnum dealingWithInsideExceptions = (DealingWithExceptionsEnum)int.Parse(ConfigurationService.DealingWithExceptionsInsideTheLimit);
@@ -64,11 +68,29 @@ namespace EM_Analyzer.ModelClasses
             }
             return countedAOIFixations;
         }
-
         public static void SortDictionary()
         {
             List<List<Fixation>> values = fixationSetToFixationListDictionary.Values.ToList();
             values.ForEach(fixationList => fixationList.Sort((a, b) => a.Index.CompareTo(b.Index)));
+        }
+        public static void SortWordIndexDictionary()
+        {
+            List<List<WordIndex>> values = wordIndexSetToFixationListDictionary.Values.ToList();
+            values.ForEach(fixationList => fixationList.Sort((a, b) => a.Index.CompareTo(b.Index)));
+        }
+        public static void UnifyDictionaryWithWordIndex()
+        {
+            foreach (var item in fixationSetToFixationListDictionary.Keys)
+            {
+                var x1 = fixationSetToFixationListDictionary[item];
+                var x2 = wordIndexSetToFixationListDictionary[item];
+                for (int i = 0; i < x1.Count; i++)
+                {
+                    if (x1[i].Index != x2[i].Index)
+                        MessageBox.Show($"error in sort of fixation by index at line {i} at key {item}");
+                    x1[i].Word_Index = x2[i].Group;
+                }
+            }
         }
 
         public static void CleanAllFixationBeforeFirstAOI()
@@ -122,7 +144,7 @@ namespace EM_Analyzer.ModelClasses
 
         public static void DealWithSeparatedAOIs()
         {
-            List<AOIDetails> all_AOIs = AOIDetails.nameToAOIDetailsDictionary.Values.ToList();
+            List<AOIDetails> all_AOIs = AOIDetails.nameToAOIPhrasesDetailsDictionary.Values.ToList();
 
             var results = from aoi in all_AOIs
                           group aoi by aoi.Stimulus + aoi.Group into grou
@@ -137,7 +159,7 @@ namespace EM_Analyzer.ModelClasses
                 SeparatedAOI separatedAOI = new SeparatedAOI(AOIs.Cast<IAOI>());
                 foreach (var aoi in AOIs)
                 {
-                    AOIsService.nameToAOIDictionary[aoi.DictionaryKey] = separatedAOI;
+                    AOIsService.nameToAOIPhrasesDictionary[aoi.DictionaryKey] = separatedAOI;
                 }
             }
         }

@@ -72,7 +72,7 @@ namespace EM_Analyzer.Services
                 {
                     try
                     {
-                        wb.SaveAs(new FileInfo(FixationsService.outputPath + "/" + FixationsService.textFileName.Substring(0, FixationsService.textFileName.IndexOf('.')) + " - " + fileName + ConfigurationService.ExcelFilesExtension));
+                        wb.SaveAs(new FileInfo(FixationsService.outputPath + "/" + FixationsService.phrasesTextFileName.Substring(0, FixationsService.phrasesTextFileName.IndexOf('.')) + " - " + fileName + ConfigurationService.ExcelFilesExtension));
                         dialogResult = DialogResult.Abort;
                     }
                     catch (InvalidOperationException e)

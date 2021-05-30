@@ -51,7 +51,7 @@ namespace EM_Analyzer.ModelClasses
             get
             {
 //                if (AOIDetails.isAOIIncludeStimulus)
-                    return AOIsService.nameToAOIDictionary[AOI_Name + Stimulus];
+                    return AOIsService.nameToAOIPhrasesDictionary[AOI_Name + Stimulus];
 //                else
 //                    return AOIsService.nameToAOIDictionary[AOI_Name + ""];
             }
@@ -187,16 +187,7 @@ namespace EM_Analyzer.ModelClasses
                 ExcelLoggerService.AddLog(CreateLogForFieldValidation("Index", arr[TextFileColumnIndexes.Index], lineNumber));
                 isFixationValid = false;
             }
-            try
-            {
-                string s = arr[TextFileColumnIndexes.Word_Index];
-                newFixation.Word_Index = int.Parse(s);
-            }
-            catch
-            {
-                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Word_Index", arr[TextFileColumnIndexes.Word_Index], lineNumber));
-                isFixationValid = false;
-            }
+
 
             newFixation.IsException = false;
 
@@ -226,6 +217,7 @@ namespace EM_Analyzer.ModelClasses
             if (!isFixationValid)
                 return null;
 
+
             string dictionatyKey = newFixation.GetDictionaryKey();
             if (!FixationsService.fixationSetToFixationListDictionary.ContainsKey(dictionatyKey))
                 FixationsService.fixationSetToFixationListDictionary[dictionatyKey] = new List<Fixation>();
@@ -234,7 +226,60 @@ namespace EM_Analyzer.ModelClasses
             return newFixation;
 
         }
+        public static WordIndex CreateWordIndexFromStringArray(string[] arr, uint lineNumber)
+        {
+            Fixation newFixation = new Fixation
+            {
+                Trial = arr[TextFileColumnIndexes.Trial].Trim(),
+                Stimulus = arr[TextFileColumnIndexes.Stimulus].Trim(),
+                Participant = arr[TextFileColumnIndexes.Participant].Trim()
+            };
+            WordIndex wordIndex = new WordIndex();
+            bool isValid = true;
+            try
+            {
+                newFixation.Event_Duration = double.Parse(arr[TextFileColumnIndexes.Event_Duration]);
+                if (newFixation.Event_Duration < minimumDuration || newFixation.Event_Duration > maximumDuration)
+                    return null;
+            }
 
+            catch
+            {
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Event Duration", arr[TextFileColumnIndexes.Event_Duration], lineNumber));
+                isValid = false;
+            }
+
+            try
+            {
+                char[] c = { ' ' };
+                wordIndex.Group = int.Parse(arr[TextFileColumnIndexes.AOI_Name].Split(c)[1]);
+            }
+            catch
+            {
+                wordIndex.Group = -1;
+//                isValid = false;
+                //ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI Name", arr[TextFileColumnIndexes.AOI_Name], lineNumber + 1));
+            }
+            try
+            {
+                wordIndex.Index = long.Parse(arr[TextFileColumnIndexes.Index]);
+            }
+            catch
+            {
+                isValid = false;
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Index", arr[TextFileColumnIndexes.Index], lineNumber));
+            }
+            if (!isValid)
+                return null;
+            
+            string dictionatyKey = newFixation.GetDictionaryKey();
+            if (!FixationsService.wordIndexSetToFixationListDictionary.ContainsKey(dictionatyKey))
+                FixationsService.wordIndexSetToFixationListDictionary[dictionatyKey] = new List<WordIndex>();
+            FixationsService.wordIndexSetToFixationListDictionary[dictionatyKey].Add(wordIndex);
+
+            return wordIndex;
+
+        }
         public string GetDictionaryKey()
         {
             return this.Participant + '\t' + this.Trial + '\t' + this.Stimulus;
@@ -286,7 +331,7 @@ namespace EM_Analyzer.ModelClasses
 
         private static Log CreateLogForFieldValidation(string fieldName, string valueFound, uint lineNumber)
         {
-            return new Log() { FileName = FixationsService.textFileName, LineNumber = lineNumber, Description = "The Value Of Field " + fieldName + " Is Not Valid!!! " + Environment.NewLine + "The Value Found Is: " + valueFound };
+            return new Log() { FileName = FixationsService.phrasesTextFileName, LineNumber = lineNumber, Description = "The Value Of Field " + fieldName + " Is Not Valid!!! " + Environment.NewLine + "The Value Found Is: " + valueFound };
         }
     }
 }

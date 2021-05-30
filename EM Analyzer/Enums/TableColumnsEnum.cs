@@ -66,6 +66,11 @@ namespace EM_Analyzer.Enums
         Do_Nothing = 1,
         Skip_In_First_Pass=2
     }
+    public enum AOITypes
+    {
+        Phrases = 1,
+        Words = 2
+    }
 
     // For the text file with the bad headers (not relevant for now, maybe for the future).
     static class TextFileColumnIndexes

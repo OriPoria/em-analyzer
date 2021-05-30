@@ -33,35 +33,44 @@ namespace EM_Analyzer
             } while (!isOptionOK);
 
             
-            string excelFilePath = "";
+            string phrasesExcelFilePath = "";
+            string wordsExcelFilePath = "";
 
-            using (OpenFileDialog openFileDialog = new OpenFileDialog
+            while (phrasesExcelFilePath == "" || wordsExcelFilePath == "")
             {
-                RestoreDirectory = true,
-                Title = "Open The Excel File: ",
-                Filter = "Excel files (*.xls*)|*.xls*",
-                Multiselect = false,
-                CheckFileExists = true,
-                CheckPathExists = true
-            })
-            {
-                
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                using (OpenFileDialog openFileDialog = new OpenFileDialog
                 {
-                    excelFilePath = openFileDialog.FileName;
-                }
-                else
+                    RestoreDirectory = true,
+                    Title = "Open The Excel File: ",
+                    Filter = "Excel files (*.xls*)|*.xls*",
+                    Multiselect = false,
+                    CheckFileExists = true,
+                    CheckPathExists = true
+                })
                 {
-                    return;
+
+                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        if (openFileDialog.FileName.EndsWith("phrases.xlsx"))
+                            phrasesExcelFilePath = openFileDialog.FileName;
+                        else if (openFileDialog.FileName.EndsWith("words.xlsx"))
+                            wordsExcelFilePath = openFileDialog.FileName;
+                    }
+                    else
+                    {
+                        return;
+                    }
+
                 }
-                
+
             }
+
 
             if (chosenOption == 3)
             {
-                FixationsService.textFileName = excelFilePath.Substring(excelFilePath.LastIndexOf(@"\") + 1);
-                FixationsService.outputPath = excelFilePath.Substring(0, excelFilePath.LastIndexOf(@"\"));
-                var collection = ExcelsService.GetObjectsFromExcel(excelFilePath);
+                FixationsService.phrasesTextFileName = phrasesExcelFilePath.Substring(phrasesExcelFilePath.LastIndexOf(@"\") + 1);
+                FixationsService.outputPath = phrasesExcelFilePath.Substring(0, phrasesExcelFilePath.LastIndexOf(@"\"));
+                var collection = ExcelsService.GetObjectsFromExcel(phrasesExcelFilePath);
                 foreach (var aoi in collection)
                 {
                     aoi.CreateAIOClassAfterCoverage();
@@ -72,61 +81,52 @@ namespace EM_Analyzer
             Thread readingExcelFile;
             readingExcelFile = new Thread(() =>
             {
-                AOIDetails.LoadAllAOIFromFile(excelFilePath);
+                AOIDetails.LoadAllAOIPhraseFromFile(phrasesExcelFilePath);
+                AOIDetails.LoadAllAOIWordFromFile(wordsExcelFilePath);
             });
             
             readingExcelFile.Start();
 
-            string specialTextFilePath = "";
-            
-            using (OpenFileDialog openFileDialog = new OpenFileDialog
-            {
-                RestoreDirectory = true,
-                Title = "Open The Text File: ",
-                Filter = "Text files (*.txt)|*.txt",
-                Multiselect = false,
-                CheckFileExists = true,
-                CheckPathExists = true
-            })
-            {
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    specialTextFilePath = openFileDialog.FileName;
-                }
-                else
-                {
-                    return;
-                }
-            }
+            string phrasesTextFilePath = "";
             string wordsTextFilePath = "";
-
-            using (OpenFileDialog openFileDialog = new OpenFileDialog
+            while (phrasesTextFilePath == "" || wordsTextFilePath == "")
             {
-                RestoreDirectory = true,
-                Title = "Open The Text File: ",
-                Filter = "Text files (*.txt)|*.txt",
-                Multiselect = false,
-                CheckFileExists = true,
-                CheckPathExists = true
-            })
-            {
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                using (OpenFileDialog openFileDialog = new OpenFileDialog
                 {
-                    wordsTextFilePath = openFileDialog.FileName;
-                }
-                else
+                    RestoreDirectory = true,
+                    Title = "Open The Text File: ",
+                    Filter = "Text files (*.txt)|*.txt",
+                    Multiselect = false,
+                    CheckFileExists = true,
+                    CheckPathExists = true
+                })
                 {
-                    return;
+                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        if (openFileDialog.FileName.EndsWith("_c.txt"))
+                            phrasesTextFilePath = openFileDialog.FileName;
+                        else if (openFileDialog.FileName.EndsWith("_w.txt"))
+                            wordsTextFilePath = openFileDialog.FileName;
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
             }
+
 
             readingExcelFile.Join();
-            FixationsService.excelFileName = excelFilePath.Substring(excelFilePath.LastIndexOf(@"\") + 1);
-            FixationsService.textFileName = specialTextFilePath.Substring(specialTextFilePath.LastIndexOf(@"\") + 1);
-            FixationsService.outputPath = excelFilePath.Substring(0, excelFilePath.LastIndexOf(@"\"));
-            ReadTextFiles(specialTextFilePath, wordsTextFilePath);
+            FixationsService.phrasesExcelFileName = phrasesExcelFilePath.Substring(phrasesExcelFilePath.LastIndexOf(@"\") + 1);
+            FixationsService.wordsExcelFileName = wordsExcelFilePath.Substring(wordsExcelFilePath.LastIndexOf(@"\") + 1);
+            FixationsService.phrasesTextFileName = phrasesTextFilePath.Substring(phrasesTextFilePath.LastIndexOf(@"\") + 1);
+            FixationsService.wordsTextFileName = wordsTextFilePath.Substring(wordsTextFilePath.LastIndexOf(@"\") + 1);
+            FixationsService.outputPath = phrasesExcelFilePath.Substring(0, phrasesExcelFilePath.LastIndexOf(@"\"));
+            ReadTextFiles(phrasesTextFilePath, wordsTextFilePath);
             FixationsService.DealWithSeparatedAOIs();
             FixationsService.SortDictionary();
+            FixationsService.SortWordIndexDictionary();
+            FixationsService.UnifyDictionaryWithWordIndex();
             if (int.Parse(ConfigurationService.RemoveFixationsAppearedBeforeFirstAOI) == 1)
                 FixationsService.CleanAllFixationBeforeFirstAOI();
             FixationsService.SearchForExceptions();
@@ -149,19 +149,13 @@ namespace EM_Analyzer
         private static void ReadTextFiles(string specialFilePath, string wordFilePath)
         {
             string[] lines = File.ReadAllLines(specialFilePath);
+
             lines = lines.Where(line => line.Trim().Count() > 0).ToArray();
-            string[] wordsLines = File.ReadAllLines(wordFilePath);
-            wordsLines = wordsLines.Where(line => line.Trim().Count() > 0).ToArray();
-            for (int i = 1; i < wordsLines.Length; i++)
-            {
-                string[] columns = wordsLines[i].Split('\t');
-                string aoiName = columns[9].Split(' ')[1];
-                lines[i] = lines[i] + $"\t{aoiName}";
-            }
+
             FixationsService.tableColumns = lines[0].Split('\t').Select(column=>column.Trim().ToLower()).ToList();
             FixationsService.InitializeColumnIndexes();
-            //i begin from 2, the first line is categors
-            for (uint j = 2; j < lines.Length; j++)
+            //i begin from 1, the first line is categors
+            for (uint j = 1; j < lines.Length; j++)
             {
                 string[] currentRow = lines[j].Split('\t');
                 try
@@ -173,14 +167,28 @@ namespace EM_Analyzer
                     MessageBox.Show("There is a problem with the Text File In Line: " + j + "\n Content: \"" + lines[j] + "\"");
                 }
             }
-            var x = FixationsService.fixationSetToFixationListDictionary;
             // Deletes Double Fixations (With The Same Index).
             IEnumerable<string> participants = FixationsService.fixationSetToFixationListDictionary.Keys.ToList();
             foreach (string participant in participants)
             {
                 FixationsService.fixationSetToFixationListDictionary[participant] = FixationsService.fixationSetToFixationListDictionary[participant].GroupBy(fix=>fix.Index).Select(g=>g.First()).ToList();
             }
-        }
+            
+            string[] wordsLines = File.ReadAllLines(wordFilePath);
+            wordsLines = wordsLines.Where(line => line.Trim().Count() > 0).ToArray();
+            for (uint j = 1; j < wordsLines.Length; j++)
+            {
+                string[] columns = wordsLines[j].Split('\t');
+                Fixation.CreateWordIndexFromStringArray(columns, j);
+            }
+            foreach (string participant in participants)
+            {
+                FixationsService.wordIndexSetToFixationListDictionary[participant] = FixationsService.wordIndexSetToFixationListDictionary[participant].GroupBy(fix => fix.Index).Select(g => g.First()).ToList();
+            }
+            Dictionary<string, List<Fixation>> fixatioDicTest = FixationsService.fixationSetToFixationListDictionary;
+            Dictionary<string, List<WordIndex>> wordsDicTest = FixationsService.wordIndexSetToFixationListDictionary;
+            var x = 0;
+    }
 
         private static void SortTableByIndex(List<string[]> table)
         {

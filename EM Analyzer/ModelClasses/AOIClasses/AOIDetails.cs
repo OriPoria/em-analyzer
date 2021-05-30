@@ -13,9 +13,13 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
 {
     public class AOIDetails : IAOI
     {
-        public static Dictionary<string, AOIDetails> nameToAOIDetailsDictionary = new Dictionary<string, AOIDetails>();
-        public static Dictionary<int, string> groupToSpecialName = new Dictionary<int, string>();
-//        public static bool isAOIIncludeStimulus = false;
+        public static Dictionary<string, AOIDetails> nameToAOIPhrasesDetailsDictionary = new Dictionary<string, AOIDetails>();
+        public static Dictionary<int, string> groupPhraseToSpecialName = new Dictionary<int, string>();
+        
+        public static Dictionary<string, AOIDetails> nameToAOIWordsDetailsDictionary = new Dictionary<string, AOIDetails>();
+        public static Dictionary<int, string> groupWordToSpecialName = new Dictionary<int, string>();
+
+        //        public static bool isAOIIncludeStimulus = false;
         public string Stimulus { get; set; }
         public int Name { get; set; }
         public int Group { get; set; }
@@ -29,7 +33,7 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
         public double AOI_Size_X { get; set; }
         public string SpecialNmae { get; set; }
 
-        public AOIDetails(IEnumerable<string> details, uint lineNumber)
+        public AOIDetails(IEnumerable<string> details, uint lineNumber, AOITypes type)
         {
             AOI_Coverage_In_Percents = -1;
             AOI_Size_X = -1;
@@ -113,20 +117,31 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
             if (count >= 8 && enumerator.Current != null) 
             {
                 SpecialNmae = enumerator.Current;
-                groupToSpecialName[Group] = SpecialNmae;
+                if (type == AOITypes.Phrases)
+                    groupPhraseToSpecialName[Group] = SpecialNmae;
+                else if (type == AOITypes.Words)
+                    groupWordToSpecialName[Group] = SpecialNmae;
+
             }
 
             if (IsProper)
             {
                 DictionaryKey = Name + DictionaryKey;
-                AOIsService.nameToAOIDictionary[DictionaryKey] = this;
-                AOIDetails.nameToAOIDetailsDictionary[DictionaryKey] = this;
+                if (type == AOITypes.Phrases)
+                {
+                    AOIsService.nameToAOIPhrasesDictionary[DictionaryKey] = this;
+                    AOIDetails.nameToAOIPhrasesDetailsDictionary[DictionaryKey] = this;
+                } else if (type == AOITypes.Words)
+                {
+                    AOIsService.nameToAOIWordsDictionary[DictionaryKey] = this;
+                    AOIDetails.nameToAOIWordsDetailsDictionary[DictionaryKey] = this;
+                }
             }
             
 
         }
 
-        public static void LoadAllAOIFromFile(string fileName)
+        public static void LoadAllAOIPhraseFromFile(string fileName)
         {
             List<IEnumerable<string>> table = ExcelsService.ReadExcelFile<string>(fileName);
 //            isAOIIncludeStimulus = false;
@@ -136,10 +151,28 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
             uint lineNumber = 1;
             foreach (IEnumerable<string> details in table)
             {
-                new AOIDetails(details, lineNumber);
+                new AOIDetails(details, lineNumber, AOITypes.Phrases);
                 lineNumber++;
             }
         }
+        public static void LoadAllAOIWordFromFile(string fileName)
+        {
+            List<IEnumerable<string>> table = ExcelsService.ReadExcelFile<string>(fileName);
+            //            isAOIIncludeStimulus = false;
+            IEnumerable<string> first = table.FirstOrDefault();
+            //            if (first.Count() >= 7)
+            //                isAOIIncludeStimulus = true;
+            uint lineNumber = 1;
+            foreach (IEnumerable<string> details in table)
+            {
+                List<string> detailsStr = details.ToList();
+                detailsStr[2] = detailsStr[1];
+
+                new AOIDetails(detailsStr, lineNumber, AOITypes.Words);
+                lineNumber++;
+            }
+        }
+
 
         public double DistanceToAOI(Fixation fixation)
         {
@@ -209,7 +242,7 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
 
         private static Log CreateLogForFieldValidation(string fieldName, string valueFound, uint lineNumber)
         {
-            return new Log() { FileName = FixationsService.excelFileName, LineNumber = lineNumber, Description = "The Value Of Field " + fieldName + " Is Not Valid!!!" + Environment.NewLine + "The Value Found Is: " + valueFound };
+            return new Log() { FileName = FixationsService.phrasesExcelFileName, LineNumber = lineNumber, Description = "The Value Of Field " + fieldName + " Is Not Valid!!!" + Environment.NewLine + "The Value Found Is: " + valueFound };
         }
     }
 }

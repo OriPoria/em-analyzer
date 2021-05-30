@@ -153,7 +153,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             [Description("Text Name")]
             public string Text_Name
             {
-                get { return FixationsService.excelFileName; }
+                get { return FixationsService.phrasesExcelFileName; }
             }
             [Description("AOI Group")]
             public int AOI_Group { get; set; }
@@ -611,7 +611,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 this.Stimulus = Stimulus;
                 this.Participant = Participant;
                 this.AOI_Group = AOI_Group;
-                this.AOI_Target = AOIDetails.groupToSpecialName.ContainsKey(AOI_Group) ? AOIDetails.groupToSpecialName[AOI_Group] : null;
+                this.AOI_Target = AOIDetails.groupPhraseToSpecialName.ContainsKey(AOI_Group) ? AOIDetails.groupPhraseToSpecialName[AOI_Group] : null;
                 if (this.AOI_Target != null)
                 {
                     List<string> sNames = Constans.parseSpecialName(AOI_Target);
