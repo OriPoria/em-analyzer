@@ -130,11 +130,11 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
                 if (type == AOITypes.Phrases)
                 {
                     AOIsService.nameToAOIPhrasesDictionary[DictionaryKey] = this;
-                    AOIDetails.nameToAOIPhrasesDetailsDictionary[DictionaryKey] = this;
+                    nameToAOIPhrasesDetailsDictionary[DictionaryKey] = this;
                 } else if (type == AOITypes.Words)
                 {
                     AOIsService.nameToAOIWordsDictionary[DictionaryKey] = this;
-                    AOIDetails.nameToAOIWordsDetailsDictionary[DictionaryKey] = this;
+                    nameToAOIWordsDetailsDictionary[DictionaryKey] = this;
                 }
             }
             
