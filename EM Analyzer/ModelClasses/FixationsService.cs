@@ -46,7 +46,7 @@ namespace EM_Analyzer.ModelClasses
 
         //public static bool IsFixationShouldBeSkippedInFirstPass(Fixation)
 
-        public static List<CountedAOIFixations> ConvertFixationListToCoutedList(List<Fixation> fixations)
+        public static List<CountedAOIFixations> ConvertFixationListToCoutedListByPhrase(List<Fixation> fixations)
         {
             List<CountedAOIFixations> countedAOIFixations = new List<CountedAOIFixations>();
             Fixation prevFixation = fixations.First();
@@ -61,6 +61,28 @@ namespace EM_Analyzer.ModelClasses
                 else
                 {
                     currentCountedAOIFixations = new CountedAOIFixations() { AOI_Group = fixation.AOI_Group_After_Change, Count = 1, Fixations = new List<Fixation>() };
+                    countedAOIFixations.Add(currentCountedAOIFixations);
+                }
+                currentCountedAOIFixations.Fixations.Add(fixation);
+                prevFixation = fixation;
+            }
+            return countedAOIFixations;
+        }
+        public static List<CountedAOIFixations> ConvertFixationListToCoutedListByWords(List<Fixation> fixations)
+        {
+            List<CountedAOIFixations> countedAOIFixations = new List<CountedAOIFixations>();
+            Fixation prevFixation = fixations.First();
+            CountedAOIFixations currentCountedAOIFixations = new CountedAOIFixations() { AOI_Group = fixations.First().Word_Index, Count = 0, Fixations = new List<Fixation>() };
+            countedAOIFixations.Add(currentCountedAOIFixations);
+            foreach (Fixation fixation in fixations)
+            {
+                if (fixation.Word_Index == prevFixation.Word_Index)
+                {
+                    currentCountedAOIFixations.Count++;
+                }
+                else
+                {
+                    currentCountedAOIFixations = new CountedAOIFixations() { AOI_Group = fixation.Word_Index, Count = 1, Fixations = new List<Fixation>() };
                     countedAOIFixations.Add(currentCountedAOIFixations);
                 }
                 currentCountedAOIFixations.Fixations.Add(fixation);
@@ -98,6 +120,7 @@ namespace EM_Analyzer.ModelClasses
             List<Fixation>[] values = fixationSetToFixationListDictionary.Values.ToArray();
             foreach (List<Fixation> fixationList in values)
             {
+
                 int firstFixaitionAtFirstAOI = fixationList.FindIndex(fix => fix.AOI_Group_Before_Change == 1);
                 if (firstFixaitionAtFirstAOI > 0)
                     fixationList.RemoveRange(0, firstFixaitionAtFirstAOI);
@@ -180,6 +203,7 @@ namespace EM_Analyzer.ModelClasses
                     List<Fixation> notExceptionalFixations = fixationList.Where(fix => !fix.IsException || (fix.IsInExceptionBounds && dealingWithInsideExceptions == DealingWithExceptionsEnum.Change_AOI_Group)).ToList();
                     foreach (Fixation fixation in notExceptionalFixations)
                     {
+
                         // Get the last Fixations that relevant for our window
                         if (lastFixationsQueue.Count == Number_Of_Fixations_In_Of_AOI_For_Exception + Number_Of_Fixations_Out_AOI_For_Exception - 1)
                         {
@@ -215,7 +239,7 @@ namespace EM_Analyzer.ModelClasses
             {
                 List<Fixation> notExceptionalFixations = fixationList.Where(fix => !fix.IsException || (fix.IsInExceptionBounds && dealingWithInsideExceptions == DealingWithExceptionsEnum.Change_AOI_Group)).ToList();
                 //fixationList.RemoveAll(fix => fix.IsException);
-                List<CountedAOIFixations> countedAOIFixationsArray = ConvertFixationListToCoutedList(notExceptionalFixations).ToList();
+                List<CountedAOIFixations> countedAOIFixationsArray = ConvertFixationListToCoutedListByPhrase(notExceptionalFixations).ToList();
                 for (int i = 0 ; i < countedAOIFixationsArray.Count ; i++)
                 {
                     CountedAOIFixations currrentCountedAOIFixations = countedAOIFixationsArray[i];

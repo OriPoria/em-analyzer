@@ -17,7 +17,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
         /// <summary>
         /// Makes the second excel file after proccessing
         /// </summary>
-        public static void MakeExcelFile()
+        public static void MakeExcelFile(AOITypes type)
         {
             // Gets all the partisipants.
             List<string> participants = FixationsService.fixationSetToFixationListDictionary.Keys.ToList();
@@ -32,7 +32,11 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 List<Fixation> fixationsForFirstPass = fixations.ToList();
                 // Make filter per fixation
                 fixationsForFirstPass.RemoveAll(fix => fix.ShouldBeSkippedInFirstPass());
-                List<CountedAOIFixations> countedAOIFixationsForFirstPass = FixationsService.ConvertFixationListToCoutedList(fixationsForFirstPass);
+                List<CountedAOIFixations> countedAOIFixationsForFirstPass;
+                if (type == AOITypes.Phrases)
+                    countedAOIFixationsForFirstPass = FixationsService.ConvertFixationListToCoutedListByPhrase(fixationsForFirstPass);
+                else
+                    countedAOIFixationsForFirstPass = FixationsService.ConvertFixationListToCoutedListByWords(fixationsForFirstPass);
 
                 #region First_Pass
                 // For The First Pass Fixations
@@ -54,7 +58,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                                 fixationInAOI.Stimulus,
                                 fixationInAOI.Participant,
                                 countedAOIFixations.AOI_Group,
-                                false
+                                false,
+                                type
                                 //if the current fixation's AOI is not bigger then all the previous fixations so we skip it
                                 //prevFixationInAOI.AOI_Group_After_Change < maxAOIGroupUntilNow
                                 )
@@ -67,18 +72,17 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     }
                 }
                 #endregion First_Pass
-                
                 // For All The Rest
                 fixations.Add(new Fixation() { AOI_Group_After_Change = -2 });
-                int lastChangeIndex = 0, currentIndex = 0, last_AOIGroup = fixations[0].AOI_Group_After_Change, maxAOIGroupUntilNow = -1;
+                int lastChangeIndex = 0, currentIndex = 0, last_AOI = GetAOIByType(fixations[0], type), maxAOIGroupUntilNow = -1;
                 Fixation prevFixationInAOI = null;
                 foreach (Fixation fixation in fixations)
                 {
                     
-                    if (fixation.AOI_Group_After_Change != last_AOIGroup)
+                    if (GetAOIByType(fixation, type) != last_AOI)
                     {
                         // The dictionary key for the current AOI Group for the current Participant
-                        dictionatyKey = participantKey + '\t' + last_AOIGroup;
+                        dictionatyKey = participantKey + '\t' + last_AOI;
                         
 
                         List<Fixation> fixationRange = fixations.GetRange(lastChangeIndex, currentIndex - lastChangeIndex);
@@ -92,15 +96,16 @@ namespace EM_Analyzer.ExcelsFilesMakers
                                 prevFixationInAOI.Trial,
                                 prevFixationInAOI.Stimulus,
                                 prevFixationInAOI.Participant,
-                                prevFixationInAOI.AOI_Group_After_Change,
+                                GetAOIByType(prevFixationInAOI, type),
                                 //if the current fixation's AOI is not bigger then all the previous fixations so we skip it
-                                prevFixationInAOI.AOI_Group_After_Change < maxAOIGroupUntilNow
+                                GetAOIByType(prevFixationInAOI, type) < maxAOIGroupUntilNow,
+                                type
                                 );
                         }
                         else
                         {
                             if (!dictionaryKeysForSorting.Contains(dictionatyKey))
-                                AOIClass.instancesDictionary[dictionatyKey].Skip = prevFixationInAOI.AOI_Group_After_Change < maxAOIGroupUntilNow;
+                                AOIClass.instancesDictionary[dictionatyKey].Skip = GetAOIByType(prevFixationInAOI, type) < maxAOIGroupUntilNow;
                         }
                         if (!dictionaryKeysForSorting.Contains(dictionatyKey))
                             dictionaryKeysForSorting.Add(dictionatyKey);
@@ -108,12 +113,12 @@ namespace EM_Analyzer.ExcelsFilesMakers
                         // Adds the new fixation range (with the same AOI Group and the same participant and there is no 
                         // fixations in this range that have another AOI Group.
                         AOIClass.instancesDictionary[dictionatyKey].Fixations.Add(fixationRange);
-                        last_AOIGroup = fixation.AOI_Group_After_Change;
+                        last_AOI = GetAOIByType(fixation, type);
                         lastChangeIndex = currentIndex;
 
 
-                        if (maxAOIGroupUntilNow < last_AOIGroup && FixationsService.IsLeagalFixationsForSkip(fixationRange))
-                            maxAOIGroupUntilNow = last_AOIGroup;
+                        if (maxAOIGroupUntilNow < last_AOI && FixationsService.IsLeagalFixationsForSkip(fixationRange))
+                            maxAOIGroupUntilNow = last_AOI;
                         /*
                          * old skip legality
                          * if (maxAOIGroupUntilNow < last_AOIGroup
@@ -132,11 +137,19 @@ namespace EM_Analyzer.ExcelsFilesMakers
             }
             List<AOIClass> aoiClasses = dictionaryKeysForSorting.Select(key=> AOIClass.instancesDictionary[key]).ToList();
             List<ExpandoObject> myAlterAois = new List<ExpandoObject>();
-            ExcelsService.CreateExcelFromStringTable(ConfigurationService.SecondExcelFileName, aoiClasses,
-              SecondFileConsideringCoverage.editExcel);
+
+            ExcelsService.CreateExcelFromStringTable(
+                ConfigurationService.SecondExcelFileName + "_" + Enum.GetName(typeof(AOITypes), type), aoiClasses,
+              SecondFileConsideringCoverage.EditExcel);
         }
         
-
+        public static int GetAOIByType(Fixation fixation, AOITypes type)
+        {
+            if (type == AOITypes.Phrases)
+                return fixation.AOI_Group_After_Change;
+            else
+                return fixation.Word_Index;
+        }
 
         public class AOIClass : IAOIClassForConsideringCoverage
         {
@@ -605,13 +618,16 @@ namespace EM_Analyzer.ExcelsFilesMakers
             }
 
 
-            public AOIClass(string Trial, string Stimulus, string Participant, int AOI_Group, bool Skip)
+            public AOIClass(string Trial, string Stimulus, string Participant, int AOI_Group, bool Skip, AOITypes type)
             {
                 this.Trial = Trial;
                 this.Stimulus = Stimulus;
                 this.Participant = Participant;
                 this.AOI_Group = AOI_Group;
-                this.AOI_Target = AOIDetails.groupPhraseToSpecialName.ContainsKey(AOI_Group) ? AOIDetails.groupPhraseToSpecialName[AOI_Group] : null;
+                if (type == AOITypes.Phrases)
+                    this.AOI_Target = AOIDetails.groupPhraseToSpecialName.ContainsKey(AOI_Group) ? AOIDetails.groupPhraseToSpecialName[AOI_Group] : null;
+                else
+                    this.AOI_Target = AOIDetails.groupWordToSpecialName.ContainsKey(AOI_Group) ? AOIDetails.groupWordToSpecialName[AOI_Group] : null;
                 if (this.AOI_Target != null)
                 {
                     List<string> sNames = Constans.parseSpecialName(AOI_Target);

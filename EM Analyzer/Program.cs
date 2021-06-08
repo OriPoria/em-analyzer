@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using static EM_Analyzer.ExcelsFilesMakers.SecondFileAfterProccessing;
 
 namespace EM_Analyzer
 {
@@ -69,13 +70,21 @@ namespace EM_Analyzer
             if (chosenOption == 3)
             {
                 FixationsService.phrasesTextFileName = phrasesExcelFilePath.Substring(phrasesExcelFilePath.LastIndexOf(@"\") + 1);
+                FixationsService.wordsTextFileName = wordsExcelFilePath.Substring(phrasesExcelFilePath.LastIndexOf(@"\") + 1);
                 FixationsService.outputPath = phrasesExcelFilePath.Substring(0, phrasesExcelFilePath.LastIndexOf(@"\"));
-                var collection = ExcelsService.GetObjectsFromExcel(phrasesExcelFilePath);
-                foreach (var aoi in collection)
+                string[] excelPathes = { phrasesExcelFilePath, wordsExcelFilePath };
+                int i = 0;
+                foreach (AOITypes type in (AOITypes[])Enum.GetValues(typeof(AOITypes)))
                 {
-                    aoi.CreateAIOClassAfterCoverage();
+                    var collection = ExcelsService.GetObjectsFromExcel(excelPathes[i]);
+                    foreach (var aoi in collection)
+                    {
+                        aoi.CreateAIOClassAfterCoverage();
+                    }
+                    ExcelsFilesMakers.SecondFileConsideringCoverage.MakeExcelFile(type);
+                    i++;
                 }
-                ExcelsFilesMakers.SecondFileConsideringCoverage.MakeExcelFile();
+
                 return;
             }
             Thread readingExcelFile;
@@ -134,12 +143,17 @@ namespace EM_Analyzer
             ExcelsFilesMakers.FirstFileAfterProccessing.MakeExcelFile();
             Console.WriteLine("First File: " + ConfigurationService.FirstExcelFileName + " Finished!!! ");
             FixationsService.DealWithExceptions();
-            ExcelsFilesMakers.SecondFileAfterProccessing.MakeExcelFile();
-            if (chosenOption == 1)
+            foreach (AOITypes type in (AOITypes[]) Enum.GetValues(typeof(AOITypes)))
             {
-                ExcelsFilesMakers.SecondFileConsideringCoverage.MakeExcelFile();
-                Console.WriteLine("Second File: " + ConfigurationService.SecondExcelFileName + " Finished!!! ");
+                ExcelsFilesMakers.SecondFileAfterProccessing.MakeExcelFile(type);
+                AOIClass.instancesDictionary.Clear();
+                     if (chosenOption == 1)
+                     {
+                         ExcelsFilesMakers.SecondFileConsideringCoverage.MakeExcelFile(type);
+                     }
             }
+            Console.WriteLine("Second File: " + ConfigurationService.SecondExcelFileName + " Finished!!! ");
+
             ExcelsFilesMakers.ThirdFileAfterProccessing.MakeExcelFile();
             Console.WriteLine("Third File: " + ConfigurationService.ThirdExcelFileName + " Finished!!! ");
 
@@ -187,7 +201,6 @@ namespace EM_Analyzer
             }
             Dictionary<string, List<Fixation>> fixatioDicTest = FixationsService.fixationSetToFixationListDictionary;
             Dictionary<string, List<WordIndex>> wordsDicTest = FixationsService.wordIndexSetToFixationListDictionary;
-            var x = 0;
     }
 
         private static void SortTableByIndex(List<string[]> table)

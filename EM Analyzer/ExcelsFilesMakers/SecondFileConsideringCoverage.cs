@@ -8,6 +8,7 @@ using System.ComponentModel;
 using EM_Analyzer.Interfaces;
 using System.Globalization;
 using OfficeOpenXml;
+using EM_Analyzer.Enums;
 
 namespace EM_Analyzer.ExcelsFilesMakers
 {
@@ -75,7 +76,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             return settingExpressions;
         }
 
-        public static void MakeExcelFile()
+        public static void MakeExcelFile(AOITypes type)
         {
             double standardDevisionAllowed;
             try
@@ -97,7 +98,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 settingExpressions,
                 standardDevisionAllowed,
                 aoi => aoi.AOI_Group == -1);
-            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By Participant", byParticipant, editExcel);
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By Participant" + "_" + Enum.GetName(typeof(AOITypes), type), byParticipant, EditExcel);
 
             List<AIOClassAfterCoverageForExcel> byAOIGroup = DeleteOutOfStdValues(
                 aoi => aoi.Stimulus + aoi.AOI_Group,
@@ -105,7 +106,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 settingExpressions,
                 standardDevisionAllowed,
                 aoi => aoi.AOI_Group == -1);
-            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI", byAOIGroup, editExcel);
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI" + "_" + Enum.GetName(typeof(AOITypes), type), byAOIGroup, EditExcel);
 
 
             //List<AIOClassAfterCoverageForExcel> by_AIO_And_Participant = new List<AIOClassAfterCoverageForExcel>(byParticipant.Count + byAOIGroup.Count);
@@ -114,7 +115,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             //by_AIO_And_Participant.AddRange(byAOIGroup);
             by_AIO_And_Participant.UnionWith(byParticipant);
             by_AIO_And_Participant.UnionWith(byAOIGroup);
-            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI and Participant", by_AIO_And_Participant, editExcel);
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI and Participant" + "_" + Enum.GetName(typeof(AOITypes), type), by_AIO_And_Participant, EditExcel);
 
 
             List<AIOClassAfterCoverageForExcel> by_AIO_Or_Participant = new List<AIOClassAfterCoverageForExcel>(Math.Min(byParticipant.Count, byAOIGroup.Count));
@@ -129,10 +130,10 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 }
             }
             //List<AIOClassAfterCoverageForExcel> by_AIO_and_Participant = (List<AIOClassAfterCoverageForExcel>)and;
-            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI or Participant", by_AIO_Or_Participant, editExcel);
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI or Participant" + "_" + Enum.GetName(typeof(AOITypes), type), by_AIO_Or_Participant, EditExcel);
             
         }
-        public static int editExcel(ExcelWorksheet ws)
+        public static int EditExcel(ExcelWorksheet ws)
         {
             ws.InsertColumn(Constans.startCondsInx, AOIClass.maxConditions);
             for (int i = Constans.startCondsInx; i < Constans.startCondsInx + AOIClass.maxConditions; i++)
