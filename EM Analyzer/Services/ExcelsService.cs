@@ -54,7 +54,7 @@ namespace EM_Analyzer.Services
                 ExcelWorksheet ws = wb.Workbook.Worksheets.Add("Inserting Tables");
                 String nameFile = fileName;
                 String islogs = "Logs";
-                String isFiltered = "Second - Filtered";
+                String isFiltered = "AOI - Filtered";
                 if (!nameFile.Contains(islogs))
                 {
                     ws.View.FreezePanes(2, 4);
@@ -72,7 +72,18 @@ namespace EM_Analyzer.Services
                 {
                     try
                     {
-                        wb.SaveAs(new FileInfo(FixationsService.outputPath + "/" + FixationsService.phrasesTextFileName.Substring(0, FixationsService.phrasesTextFileName.IndexOf('.')) + " - " + fileName + ConfigurationService.ExcelFilesExtension));
+                        if (nameFile.Contains(isFiltered))
+                        {
+                            string path = FixationsService.outputPath + "/" + FixationsService.phrasesTextFileName.Substring(0, FixationsService.phrasesTextFileName.IndexOf('.')) + " - Filters";
+                            if (!Directory.Exists(path))
+                            {
+                                DirectoryInfo di = Directory.CreateDirectory(path);
+                            }
+                            FileInfo fi = new FileInfo(path + "/" + fileName + ConfigurationService.ExcelFilesExtension);
+                            wb.SaveAs(fi);
+                        }
+                        else
+                            wb.SaveAs(new FileInfo(FixationsService.outputPath + "/" + FixationsService.phrasesTextFileName.Substring(0, FixationsService.phrasesTextFileName.IndexOf('.')) + " - " + fileName + ConfigurationService.ExcelFilesExtension));
                         dialogResult = DialogResult.Abort;
                     }
                     catch (InvalidOperationException e)

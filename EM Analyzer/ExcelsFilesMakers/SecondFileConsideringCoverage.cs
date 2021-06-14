@@ -17,6 +17,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
         private delegate double NumericExpression(AIOClassAfterCoverage value);
         //private delegate void SettingValue(AIOClassAfterCoverageForExcel AOI, double value);
         private delegate void SettingValue(AIOClassAfterCoverageForExcel AOI, string value);
+        public static AOITypes currentType;
 
         private static List<NumericExpression> GetNumericExpressions()
         {
@@ -76,7 +77,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             return settingExpressions;
         }
 
-        public static void MakeExcelFile(AOITypes type)
+        public static void MakeExcelFile()
         {
             double standardDevisionAllowed;
             try
@@ -98,7 +99,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 settingExpressions,
                 standardDevisionAllowed,
                 aoi => aoi.AOI_Group == -1);
-            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By Participant" + "_" + Enum.GetName(typeof(AOITypes), type), byParticipant, EditExcel);
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By Participant" + "_" + Enum.GetName(typeof(AOITypes), currentType), byParticipant, EditExcel);
 
             List<AIOClassAfterCoverageForExcel> byAOIGroup = DeleteOutOfStdValues(
                 aoi => aoi.Stimulus + aoi.AOI_Group,
@@ -106,7 +107,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 settingExpressions,
                 standardDevisionAllowed,
                 aoi => aoi.AOI_Group == -1);
-            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI" + "_" + Enum.GetName(typeof(AOITypes), type), byAOIGroup, EditExcel);
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI" + "_" + Enum.GetName(typeof(AOITypes), currentType), byAOIGroup, EditExcel);
 
 
             //List<AIOClassAfterCoverageForExcel> by_AIO_And_Participant = new List<AIOClassAfterCoverageForExcel>(byParticipant.Count + byAOIGroup.Count);
@@ -115,7 +116,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             //by_AIO_And_Participant.AddRange(byAOIGroup);
             by_AIO_And_Participant.UnionWith(byParticipant);
             by_AIO_And_Participant.UnionWith(byAOIGroup);
-            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI and Participant" + "_" + Enum.GetName(typeof(AOITypes), type), by_AIO_And_Participant, EditExcel);
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI and Participant" + "_" + Enum.GetName(typeof(AOITypes), currentType), by_AIO_And_Participant, EditExcel);
 
 
             List<AIOClassAfterCoverageForExcel> by_AIO_Or_Participant = new List<AIOClassAfterCoverageForExcel>(Math.Min(byParticipant.Count, byAOIGroup.Count));
@@ -130,7 +131,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 }
             }
             //List<AIOClassAfterCoverageForExcel> by_AIO_and_Participant = (List<AIOClassAfterCoverageForExcel>)and;
-            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI or Participant" + "_" + Enum.GetName(typeof(AOITypes), type), by_AIO_Or_Participant, EditExcel);
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI or Participant" + "_" + Enum.GetName(typeof(AOITypes), currentType), by_AIO_Or_Participant, EditExcel);
             
         }
         public static int EditExcel(ExcelWorksheet ws)

@@ -18,9 +18,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
         /// Makes the second excel file after proccessing
         /// </summary>
         public static AOITypes currentType;
-        public static void MakeExcelFile(AOITypes type)
+        public static void MakeExcelFile()
         {
-            currentType = type;
             // Gets all the partisipants.
             List<string> participants = FixationsService.fixationSetToFixationListDictionary.Keys.ToList();
             string dictionatyKey;
@@ -35,7 +34,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 // Make filter per fixation
                 fixationsForFirstPass.RemoveAll(fix => fix.ShouldBeSkippedInFirstPass());
                 List<CountedAOIFixations> countedAOIFixationsForFirstPass;
-                if (type == AOITypes.Phrases)
+                if (currentType == AOITypes.Phrases)
                     countedAOIFixationsForFirstPass = FixationsService.ConvertFixationListToCoutedListByPhrase(fixationsForFirstPass);
                 else
                     countedAOIFixationsForFirstPass = FixationsService.ConvertFixationListToCoutedListByWords(fixationsForFirstPass);
@@ -45,13 +44,10 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 foreach (CountedAOIFixations countedAOIFixations in countedAOIFixationsForFirstPass)
                 {
                     // First try with first pass
-                    if (!FixationsService.IsLeagalFirstPassFixations(countedAOIFixations) && type == AOITypes.Phrases)
+                    if (!FixationsService.IsLeagalFirstPassFixations(countedAOIFixations) && currentType == AOITypes.Phrases)
                         continue;
                     // End
-                    if (AOITypes.Words == type)
-                    {
-                        var x = 3;
-                    }
+
 
                     dictionatyKey = participantKey + '\t' + countedAOIFixations.AOI_Group;
                     if (!AOIClass.instancesDictionary.ContainsKey(dictionatyKey))
@@ -64,7 +60,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                                 fixationInAOI.Participant,
                                 countedAOIFixations.AOI_Group,
                                 false,
-                                type
+                                currentType
                                 //if the current fixation's AOI is not bigger then all the previous fixations so we skip it
                                 //prevFixationInAOI.AOI_Group_After_Change < maxAOIGroupUntilNow
                                 )
@@ -79,12 +75,12 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 #endregion First_Pass
                 // For All The Rest
                 fixations.Add(new Fixation() { AOI_Group_After_Change = -2 });
-                int lastChangeIndex = 0, currentIndex = 0, last_AOI = GetAOIByType(fixations[0], type), maxLeagalAOIGroupUntilNow = -1;
+                int lastChangeIndex = 0, currentIndex = 0, last_AOI = GetAOIByType(fixations[0], currentType), maxLeagalAOIGroupUntilNow = -1;
                 Fixation prevFixationInAOI = null;
                 foreach (Fixation fixation in fixations)
                 {
                     
-                    if (GetAOIByType(fixation, type) != last_AOI)
+                    if (GetAOIByType(fixation, currentType) != last_AOI)
                     {
                         // The dictionary key for the current AOI Group for the current Participant
                         dictionatyKey = participantKey + '\t' + last_AOI;
@@ -101,16 +97,16 @@ namespace EM_Analyzer.ExcelsFilesMakers
                                 prevFixationInAOI.Trial,
                                 prevFixationInAOI.Stimulus,
                                 prevFixationInAOI.Participant,
-                                GetAOIByType(prevFixationInAOI, type),
+                                GetAOIByType(prevFixationInAOI, currentType),
                                 //if the current fixation's AOI is not bigger then all the previous fixations so we skip it
-                                GetAOIByType(prevFixationInAOI, type) < maxLeagalAOIGroupUntilNow,
-                                type
+                                GetAOIByType(prevFixationInAOI, currentType) < maxLeagalAOIGroupUntilNow,
+                                currentType
                                 );
                         }
                         else
                         {
                             if (!dictionaryKeysForSorting.Contains(dictionatyKey))
-                                AOIClass.instancesDictionary[dictionatyKey].Skip = GetAOIByType(prevFixationInAOI, type) < maxLeagalAOIGroupUntilNow;
+                                AOIClass.instancesDictionary[dictionatyKey].Skip = GetAOIByType(prevFixationInAOI, currentType) < maxLeagalAOIGroupUntilNow;
                         }
                         if (!dictionaryKeysForSorting.Contains(dictionatyKey))
                             dictionaryKeysForSorting.Add(dictionatyKey);
@@ -120,10 +116,10 @@ namespace EM_Analyzer.ExcelsFilesMakers
                         AOIClass.instancesDictionary[dictionatyKey].Fixations.Add(fixationRange);
 
                         if (maxLeagalAOIGroupUntilNow < last_AOI && 
-                            (FixationsService.IsLeagalFixationsForSkip(fixationRange) || type == AOITypes.Words))
+                            (FixationsService.IsLeagalFixationsForSkip(fixationRange) || currentType == AOITypes.Words))
                             maxLeagalAOIGroupUntilNow = last_AOI;
 
-                        last_AOI = GetAOIByType(fixation, type);
+                        last_AOI = GetAOIByType(fixation, currentType);
                         lastChangeIndex = currentIndex;
 
                         /*
@@ -146,13 +142,13 @@ namespace EM_Analyzer.ExcelsFilesMakers
             List<ExpandoObject> myAlterAois = new List<ExpandoObject>();
 
             ExcelsService.CreateExcelFromStringTable(
-                ConfigurationService.SecondExcelFileName + "_" + Enum.GetName(typeof(AOITypes), type), aoiClasses,
+                ConfigurationService.SecondExcelFileName + "_" + Enum.GetName(typeof(AOITypes), currentType), aoiClasses,
               SecondFileConsideringCoverage.EditExcel);
         }
         
         public static int GetAOIByType(Fixation fixation, AOITypes type)
         {
-            if (type == AOITypes.Phrases)
+            if (currentType == AOITypes.Phrases)
                 return fixation.AOI_Group_After_Change;
             else
                 return fixation.Word_Index;

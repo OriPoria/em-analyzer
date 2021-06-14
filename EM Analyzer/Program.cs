@@ -18,7 +18,6 @@ namespace EM_Analyzer
         [STAThread]
         static void Main(string[] args)
         {
-            Console.WriteLine("Welcome");
             int chosenOption;
             string input;
             bool isOptionOK;
@@ -82,7 +81,8 @@ namespace EM_Analyzer
                     {
                         aoi.CreateAIOClassAfterCoverage();
                     }
-                    ExcelsFilesMakers.SecondFileConsideringCoverage.MakeExcelFile(type);
+                    SecondFileConsideringCoverage.currentType = type;
+                    ExcelsFilesMakers.SecondFileConsideringCoverage.MakeExcelFile();
                     i++;
                 }
 
@@ -146,12 +146,14 @@ namespace EM_Analyzer
             FixationsService.DealWithExceptions();
             foreach (AOITypes type in (AOITypes[]) Enum.GetValues(typeof(AOITypes)))
             {
-                ExcelsFilesMakers.SecondFileAfterProccessing.MakeExcelFile(type);
+                SecondFileAfterProccessing.currentType = type;
+                ExcelsFilesMakers.SecondFileAfterProccessing.MakeExcelFile();
                 Dictionary<string, AOIClass> test = AOIClass.instancesDictionary;
                 AOIClass.instancesDictionary.Clear();
                      if (chosenOption == 1)
                      {
-                         ExcelsFilesMakers.SecondFileConsideringCoverage.MakeExcelFile(type);
+                         SecondFileConsideringCoverage.currentType = type;
+                         ExcelsFilesMakers.SecondFileConsideringCoverage.MakeExcelFile();
                      }
             }
             Console.WriteLine("Second File: " + ConfigurationService.SecondExcelFileName + " Finished!!! ");
