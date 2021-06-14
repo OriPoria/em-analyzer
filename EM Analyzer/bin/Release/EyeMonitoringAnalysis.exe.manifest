@@ -85,7 +85,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>g31YYA90EZUe8q/YMCXG8K88QMIBWg6wtalrrtaFBOM=</dsig:DigestValue>
+        <dsig:DigestValue>GnOqIablyepSEUs0qrqtTsysyfIA5ndkIOPDlyEbGyk=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -125,15 +125,6 @@
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="Configuration.xml" size="1455" writeableType="applicationData">
-    <hash>
-      <dsig:Transforms>
-        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
-      </dsig:Transforms>
-      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>eUg2qPXyMjIv6qreUl8ye1wNhbnju+vtH/EhwLD2+QQ=</dsig:DigestValue>
-    </hash>
-  </file>
   <file name="EyeMonitoringAnalysis.exe.config" size="790">
     <hash>
       <dsig:Transforms>

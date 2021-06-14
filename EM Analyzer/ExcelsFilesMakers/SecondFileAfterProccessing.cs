@@ -74,7 +74,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 #endregion First_Pass
                 // For All The Rest
                 fixations.Add(new Fixation() { AOI_Group_After_Change = -2 });
-                int lastChangeIndex = 0, currentIndex = 0, last_AOI = GetAOIByType(fixations[0], type), maxAOIGroupUntilNow = -1;
+                int lastChangeIndex = 0, currentIndex = 0, last_AOI = GetAOIByType(fixations[0], type), maxLeagalAOIGroupUntilNow = -1;
                 Fixation prevFixationInAOI = null;
                 foreach (Fixation fixation in fixations)
                 {
@@ -98,14 +98,14 @@ namespace EM_Analyzer.ExcelsFilesMakers
                                 prevFixationInAOI.Participant,
                                 GetAOIByType(prevFixationInAOI, type),
                                 //if the current fixation's AOI is not bigger then all the previous fixations so we skip it
-                                GetAOIByType(prevFixationInAOI, type) < maxAOIGroupUntilNow,
+                                GetAOIByType(prevFixationInAOI, type) < maxLeagalAOIGroupUntilNow,
                                 type
                                 );
                         }
                         else
                         {
                             if (!dictionaryKeysForSorting.Contains(dictionatyKey))
-                                AOIClass.instancesDictionary[dictionatyKey].Skip = GetAOIByType(prevFixationInAOI, type) < maxAOIGroupUntilNow;
+                                AOIClass.instancesDictionary[dictionatyKey].Skip = GetAOIByType(prevFixationInAOI, type) < maxLeagalAOIGroupUntilNow;
                         }
                         if (!dictionaryKeysForSorting.Contains(dictionatyKey))
                             dictionaryKeysForSorting.Add(dictionatyKey);
@@ -113,12 +113,13 @@ namespace EM_Analyzer.ExcelsFilesMakers
                         // Adds the new fixation range (with the same AOI Group and the same participant and there is no 
                         // fixations in this range that have another AOI Group.
                         AOIClass.instancesDictionary[dictionatyKey].Fixations.Add(fixationRange);
+
+                        if (maxLeagalAOIGroupUntilNow < last_AOI && FixationsService.IsLeagalFixationsForSkip(fixationRange))
+                            maxLeagalAOIGroupUntilNow = last_AOI;
+
                         last_AOI = GetAOIByType(fixation, type);
                         lastChangeIndex = currentIndex;
 
-
-                        if (maxAOIGroupUntilNow < last_AOI && FixationsService.IsLeagalFixationsForSkip(fixationRange))
-                            maxAOIGroupUntilNow = last_AOI;
                         /*
                          * old skip legality
                          * if (maxAOIGroupUntilNow < last_AOIGroup
