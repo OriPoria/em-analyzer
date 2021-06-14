@@ -146,6 +146,7 @@ namespace EM_Analyzer
             foreach (AOITypes type in (AOITypes[]) Enum.GetValues(typeof(AOITypes)))
             {
                 ExcelsFilesMakers.SecondFileAfterProccessing.MakeExcelFile(type);
+                Dictionary<string, AOIClass> test = AOIClass.instancesDictionary;
                 AOIClass.instancesDictionary.Clear();
                      if (chosenOption == 1)
                      {

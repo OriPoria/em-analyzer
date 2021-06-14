@@ -17,8 +17,10 @@ namespace EM_Analyzer.ExcelsFilesMakers
         /// <summary>
         /// Makes the second excel file after proccessing
         /// </summary>
+        public static AOITypes currentType;
         public static void MakeExcelFile(AOITypes type)
         {
+            currentType = type;
             // Gets all the partisipants.
             List<string> participants = FixationsService.fixationSetToFixationListDictionary.Keys.ToList();
             string dictionatyKey;
@@ -43,10 +45,13 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 foreach (CountedAOIFixations countedAOIFixations in countedAOIFixationsForFirstPass)
                 {
                     // First try with first pass
-                    if (!FixationsService.IsLeagalFirstPassFixations(countedAOIFixations))
+                    if (!FixationsService.IsLeagalFirstPassFixations(countedAOIFixations) && type == AOITypes.Phrases)
                         continue;
                     // End
-
+                    if (AOITypes.Words == type)
+                    {
+                        var x = 3;
+                    }
 
                     dictionatyKey = participantKey + '\t' + countedAOIFixations.AOI_Group;
                     if (!AOIClass.instancesDictionary.ContainsKey(dictionatyKey))
@@ -114,7 +119,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                         // fixations in this range that have another AOI Group.
                         AOIClass.instancesDictionary[dictionatyKey].Fixations.Add(fixationRange);
 
-                        if (maxLeagalAOIGroupUntilNow < last_AOI && FixationsService.IsLeagalFixationsForSkip(fixationRange))
+                        if (maxLeagalAOIGroupUntilNow < last_AOI && 
+                            (FixationsService.IsLeagalFixationsForSkip(fixationRange) || type == AOITypes.Words))
                             maxLeagalAOIGroupUntilNow = last_AOI;
 
                         last_AOI = GetAOIByType(fixation, type);
@@ -576,8 +582,6 @@ namespace EM_Analyzer.ExcelsFilesMakers
                         this.m_Regressions = new List<List<Fixation>>();
                         this.Fixations.ForEach(lst =>
                         {
-                            // TODO: add to the regression lists that after (including) first pass
-
                             this.m_Regressions.Add(lst.ToList());
                         });
                         //this.m_Regressions = new List<List<Fixation>>(this.Fixations);
@@ -607,10 +611,10 @@ namespace EM_Analyzer.ExcelsFilesMakers
                             });
 
                         }
-
-                        // OLD:
-                        //this.m_Regressions.RemoveAll(lst => lst.Count < minimumNumberOfFixationsInARegression);
-                        this.m_Regressions.RemoveAll(lst => !FixationsService.IsLeagalRegressionFixations(lst));
+                        if (currentType == AOITypes.Phrases)
+                            this.m_Regressions.RemoveAll(lst => !FixationsService.IsLeagalRegressionFixations(lst));
+                        else if (currentType == AOITypes.Words)
+                            this.m_Regressions.RemoveAll(lst => lst.Count == 0);
 
 
                         //this.m_Regressions = this.Fixations.GetRange(1, this.Fixations.Count - 1);
