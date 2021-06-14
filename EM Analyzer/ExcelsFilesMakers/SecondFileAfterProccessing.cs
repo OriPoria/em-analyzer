@@ -569,7 +569,9 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
-                    if (this.m_Regressions == null)
+                    if (this.First_Pass_Fixations.Count == 0)
+                        this.m_Regressions = new List<List<Fixation>>();
+                    else if (this.m_Regressions == null)
                     {
                         this.m_Regressions = new List<List<Fixation>>();
                         this.Fixations.ForEach(lst =>
