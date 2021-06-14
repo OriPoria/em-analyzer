@@ -18,6 +18,7 @@ namespace EM_Analyzer
         [STAThread]
         static void Main(string[] args)
         {
+            Console.WriteLine("Welcome");
             int chosenOption;
             string input;
             bool isOptionOK;
