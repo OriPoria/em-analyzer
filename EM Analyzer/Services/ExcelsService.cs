@@ -53,6 +53,7 @@ namespace EM_Analyzer.Services
                 //var ws = wb.Worksheets.Add("Inserting Tables");
                 ExcelWorksheet ws = wb.Workbook.Worksheets.Add("Inserting Tables");
                 String nameFile = fileName;
+                string textDataName = FixationsService.phrasesTextFileName.Substring(0, FixationsService.phrasesTextFileName.IndexOf('_'));
                 String islogs = "Logs";
                 String isFiltered = "AOI - Filtered";
                 if (!nameFile.Contains(islogs))
@@ -74,13 +75,12 @@ namespace EM_Analyzer.Services
                     {
                         if (nameFile.Contains(isFiltered))
                         {
-                            string path = FixationsService.outputPath + "/" + FixationsService.phrasesTextFileName.Substring(0, FixationsService.phrasesTextFileName.IndexOf('.')) + " - Filters";
+                            string path = FixationsService.outputPath + "/" + textDataName + " - Filters";
                             if (!Directory.Exists(path))
                             {
                                 DirectoryInfo di = Directory.CreateDirectory(path);
                             }
-                            FileInfo fi = new FileInfo(path + "/" + fileName + ConfigurationService.ExcelFilesExtension);
-                            wb.SaveAs(fi);
+                            wb.SaveAs(new FileInfo(path + "/" + fileName + ConfigurationService.ExcelFilesExtension));
                         }
                         else
                             wb.SaveAs(new FileInfo(FixationsService.outputPath + "/" + FixationsService.phrasesTextFileName.Substring(0, FixationsService.phrasesTextFileName.IndexOf('.')) + " - " + fileName + ConfigurationService.ExcelFilesExtension));
