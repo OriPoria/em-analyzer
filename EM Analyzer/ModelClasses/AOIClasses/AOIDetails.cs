@@ -176,11 +176,12 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
 
         public double DistanceToAOI(Fixation fixation)
         {
+            // The details of the AOI position is the top left point, width and height
             double right_border, left_border, upper_border, buttom_border, fixation_X, fixation_Y;
-            right_border = X + L / 2;
-            left_border = X - L / 2;
-            buttom_border = Y + H / 2;
-            upper_border = Y - H / 2;
+            right_border = X + L;
+            left_border = X;
+            buttom_border = Y + H;
+            upper_border = Y;
             fixation_X = fixation.Fixation_Position_X;
             fixation_Y = fixation.Fixation_Position_Y;
 

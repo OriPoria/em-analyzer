@@ -52,9 +52,9 @@ namespace EM_Analyzer
 
                     if (openFileDialog.ShowDialog() == DialogResult.OK)
                     {
-                        if (openFileDialog.FileName.EndsWith("phrases.xlsx"))
+                        if (openFileDialog.FileName.EndsWith("_c.xlsx"))
                             phrasesExcelFilePath = openFileDialog.FileName;
-                        else if (openFileDialog.FileName.EndsWith("words.xlsx"))
+                        else if (openFileDialog.FileName.EndsWith("_w.xlsx"))
                             wordsExcelFilePath = openFileDialog.FileName;
                     }
                     else
@@ -164,9 +164,9 @@ namespace EM_Analyzer
 
         }
 
-        private static void ReadTextFiles(string specialFilePath, string wordFilePath)
+        private static void ReadTextFiles(string phraseFilePath, string wordFilePath)
         {
-            string[] lines = File.ReadAllLines(specialFilePath);
+            string[] lines = File.ReadAllLines(phraseFilePath);
 
             lines = lines.Where(line => line.Trim().Count() > 0).ToArray();
 
@@ -191,7 +191,6 @@ namespace EM_Analyzer
             {
                 FixationsService.fixationSetToFixationListDictionary[participant] = FixationsService.fixationSetToFixationListDictionary[participant].GroupBy(fix=>fix.Index).Select(g=>g.First()).ToList();
             }
-            
             string[] wordsLines = File.ReadAllLines(wordFilePath);
             wordsLines = wordsLines.Where(line => line.Trim().Count() > 0).ToArray();
             for (uint j = 1; j < wordsLines.Length; j++)
