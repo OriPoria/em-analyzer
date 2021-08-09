@@ -46,21 +46,23 @@ namespace EM_Analyzer.Services
 
     public class ExcelsService
     {
+        // params:
+        // file name - The type of the excel file, come from the configuration xml file parameter.
         public static void CreateExcelFromStringTable<T>(string fileName, IEnumerable<T> table, Func<ExcelWorksheet, int> editExcelFunc)
         {
             using (var wb = new ExcelPackage())
             {
                 //var ws = wb.Worksheets.Add("Inserting Tables");
                 ExcelWorksheet ws = wb.Workbook.Worksheets.Add("Inserting Tables");
-                String nameFile = fileName;
-                string textDataName = FixationsService.phrasesTextFileName.Substring(0, FixationsService.phrasesTextFileName.IndexOf('_'));
+                string ss = FixationsService.phrasesTextFileName;
+                string textDataName = FixationsService.phrasesTextFileName.Substring(0, FixationsService.phrasesTextFileName.Length - 6);
                 String islogs = "Logs";
                 String isFiltered = "AOI - Filtered";
-                if (!nameFile.Contains(islogs))
+                if (!fileName.Contains(islogs))
                 {
                     ws.View.FreezePanes(2, 4);
                 }  
-                if (nameFile.Contains(isFiltered))
+                if (fileName.Contains(isFiltered))
                 {
                     ws.View.FreezePanes(2, 6);
                 }
@@ -73,7 +75,7 @@ namespace EM_Analyzer.Services
                 {
                     try
                     {
-                        if (nameFile.Contains(isFiltered))
+                        if (fileName.Contains(isFiltered))
                         {
                             string path = FixationsService.outputPath + "/" + textDataName + " - Filters";
                             if (!Directory.Exists(path))
@@ -83,7 +85,7 @@ namespace EM_Analyzer.Services
                             wb.SaveAs(new FileInfo(path + "/" + fileName + ConfigurationService.ExcelFilesExtension));
                         }
                         else
-                            wb.SaveAs(new FileInfo(FixationsService.outputPath + "/" + FixationsService.phrasesTextFileName.Substring(0, FixationsService.phrasesTextFileName.IndexOf('.')) + " - " + fileName + ConfigurationService.ExcelFilesExtension));
+                            wb.SaveAs(new FileInfo(FixationsService.outputPath + "/" + textDataName + " - " + fileName + ConfigurationService.ExcelFilesExtension));
                         dialogResult = DialogResult.Abort;
                     }
                     catch (InvalidOperationException e)

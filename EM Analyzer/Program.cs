@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using static EM_Analyzer.ExcelsFilesMakers.SecondFileAfterProccessing;
+using static EM_Analyzer.ExcelsFilesMakers.SecondFileConsideringCoverage;
 
 namespace EM_Analyzer
 {
@@ -148,13 +149,15 @@ namespace EM_Analyzer
             {
                 SecondFileAfterProccessing.currentType = type;
                 ExcelsFilesMakers.SecondFileAfterProccessing.MakeExcelFile();
-                Dictionary<string, AOIClass> test = AOIClass.instancesDictionary;
-                AOIClass.instancesDictionary.Clear();
                      if (chosenOption == 1)
                      {
                          SecondFileConsideringCoverage.currentType = type;
                          ExcelsFilesMakers.SecondFileConsideringCoverage.MakeExcelFile();
-                     }
+                         AIOClassAfterCoverage.allInstances.Clear();
+
+                    }
+                AOIClass.instancesDictionary.Clear();
+
             }
             Console.WriteLine("Second File: " + ConfigurationService.SecondExcelFileName + " Finished!!! ");
 
@@ -204,16 +207,12 @@ namespace EM_Analyzer
             }
             Dictionary<string, List<Fixation>> fixatioDicTest = FixationsService.fixationSetToFixationListDictionary;
             Dictionary<string, List<WordIndex>> wordsDicTest = FixationsService.wordIndexSetToFixationListDictionary;
-    }
+        }
 
         private static void SortTableByIndex(List<string[]> table)
         {
             table.Sort((a, b) => a[TextFileColumnIndexes.Index].CompareTo(b[TextFileColumnIndexes.Index]));
         }
 
-        private void FirstDataProccessing(List<string[]> fixationTable)
-        {
-
-        }
     }
 }

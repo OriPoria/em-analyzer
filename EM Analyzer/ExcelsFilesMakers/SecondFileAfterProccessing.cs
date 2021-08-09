@@ -48,7 +48,6 @@ namespace EM_Analyzer.ExcelsFilesMakers
                         continue;
                     // End
 
-
                     dictionatyKey = participantKey + '\t' + countedAOIFixations.AOI_Group;
                     if (!AOIClass.instancesDictionary.ContainsKey(dictionatyKey))
                     {

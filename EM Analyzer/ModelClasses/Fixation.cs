@@ -21,6 +21,8 @@ namespace EM_Analyzer.ModelClasses
         public Fixation Previous_Fixation { get; set; }
         [Description("Participant")]
         public string Participant { get; set; }
+        [Description("Word Index")]
+        public int Word_Index { get; set; }
         [Description("AOI Name")]
         public int AOI_Name { get; set; }
         [Description("AOI Group Before Change")]
@@ -31,8 +33,10 @@ namespace EM_Analyzer.ModelClasses
         public bool IsException { get; set; }
         [EpplusIgnore]
         public long AOI_Size { get; set; }
-        [Description("AOI Coverage In Percents")]
-        public double AOI_Coverage_In_Percents { get; set; }
+        /*
+         * [Description("AOI Coverage In Percents")]
+         * public double AOI_Coverage_In_Percents { get; set; }
+         */
         [Description("Index")]
         public long Index { get; set; }
         [Description("Event Duration")]
@@ -43,8 +47,8 @@ namespace EM_Analyzer.ModelClasses
         public double Fixation_Position_Y { get; set; }
         [Description("Average Pupil Diameter")]
         public double Fixation_Average_Pupil_Diameter { get; set; }
-        [Description("Word Index")]
-        public int Word_Index { get; set; }
+        //[Description("Word Index")]
+        //public int Word_Index { get; set; }
         [EpplusIgnore]
         public IAOI AOI_Details
         {
@@ -163,7 +167,7 @@ namespace EM_Analyzer.ModelClasses
                 ExcelLoggerService.AddLog(CreateLogForFieldValidation("Fixation Average Pupil Diameter", arr[TextFileColumnIndexes.Fixation_Average_Pupil_Diameter], lineNumber));
                 isFixationValid = false;
             }
-
+            /*
             try
             {
                 newFixation.AOI_Coverage_In_Percents = double.Parse(arr[TextFileColumnIndexes.AOI_Coverage]);
@@ -177,7 +181,7 @@ namespace EM_Analyzer.ModelClasses
                 ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI_Coverage", arr[TextFileColumnIndexes.AOI_Coverage], lineNumber));
                 isFixationValid = false;
             }
-
+            */
             try
             {
                 newFixation.Index = long.Parse(arr[TextFileColumnIndexes.Index]);
@@ -308,6 +312,10 @@ namespace EM_Analyzer.ModelClasses
         // function that filter fixation if it should be considered as first pass
         public bool ShouldBeSkippedInFirstPass()
         {
+            if (Event_Duration == 734.5)
+            {
+                var x = 3;
+            }
             bool isException = IsException;
             bool isInBoundAndShouldBeSkipped = IsInExceptionBounds && FixationsService.dealingWithInsideExceptions == DealingWithExceptionsEnum.Skip_In_First_Pass;
             bool isOutOfBoundAndShouldBeSkipped = !IsInExceptionBounds && FixationsService.dealingWithOutsideExceptions == DealingWithExceptionsOutBoundsEnum.Skip_In_First_Pass;

@@ -47,6 +47,21 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     return this.m_Mean_Fixation_Duration;
                 }
             }
+            private double m_SD_Fixation_Duration;
+            [Description("SD Fixation Duration")]
+            public double SD_Fixation_Duration
+            {
+                get
+                {
+                    if (this.m_SD_Fixation_Duration == -1)
+                    {
+                        IEnumerable<double> durations = this.Fixations.Select(fix => fix.Event_Duration).ToList();
+                        this.m_SD_Fixation_Duration = StandardDevision.ComputeStandardDevision(durations);
+                    }
+                    return this.m_SD_Fixation_Duration;
+                }
+            }
+
 
 
             private int m_Total_Fixation_Number;
@@ -64,21 +79,34 @@ namespace EM_Analyzer.ExcelsFilesMakers
             }
 
 
-            private double m_Progressive_Fixation_Duration;
-            [Description("Progressive Fixation Duration")]
-            public double Progressive_Fixation_Duration
+            private double m_Mean_Progressive_Fixation_Duration;
+            [Description("Mean Progressive Fixation Duration")]
+            public double Mean_Progressive_Fixation_Duration
             {
                 get
                 {
-                    if (this.m_Progressive_Fixation_Duration == -1)
+                    if (this.m_Mean_Progressive_Fixation_Duration == -1)
                     {
                         double duration_sum = this.Progressive_Fixations.Sum(fix => fix.Event_Duration);
-                        this.m_Progressive_Fixation_Duration = duration_sum / this.Progressive_Fixations.Count;
+                        this.m_Mean_Progressive_Fixation_Duration = duration_sum / this.Progressive_Fixations.Count;
                     }
-                    return this.m_Progressive_Fixation_Duration;
+                    return this.m_Mean_Progressive_Fixation_Duration;
                 }
             }
-
+            private double m_SD_Progressive_Fixation_Duration;
+            [Description("SD Progressive Fixation Duration")]
+            public double SD_Progressive_Fixation_Duration
+            {
+                get
+                {
+                    if (this.m_SD_Progressive_Fixation_Duration == -1)
+                    {
+                        IEnumerable<double> durations = this.Progressive_Fixations.Select(fix => fix.Event_Duration).ToList();
+                        this.m_SD_Progressive_Fixation_Duration = StandardDevision.ComputeStandardDevision(durations);
+                    }
+                    return this.m_SD_Progressive_Fixation_Duration;
+                }
+            }
             [Description("Progressive Fixation Number")]
             public int Progressive_Fixation_Number
             {
@@ -88,50 +116,91 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 }
             }
 
-            private double m_Progressive_Saccade_Length;
-            [Description("Progressive Saccade Length")]
-            public double Progressive_Saccade_Length
+            private double m_Mean_Progressive_Saccade_Length;
+            [Description("Mean Progressive Saccade Length")]
+            public double Mean_Progressive_Saccade_Length
             {
                 get
                 {
-                    if (this.m_Progressive_Saccade_Length == -1)
+                    if (this.m_Mean_Progressive_Saccade_Length == -1)
                     {
-                        this.m_Progressive_Saccade_Length = this.Progressive_Fixations.Sum(fix => fix.DistanceToPreviousFixation()) / this.Progressive_Fixations.Count;
+                        this.m_Mean_Progressive_Saccade_Length = this.Progressive_Fixations.Sum(fix => fix.DistanceToPreviousFixation()) / this.Progressive_Fixations.Count;
                     }
-                    return this.m_Progressive_Saccade_Length;
+                    return this.m_Mean_Progressive_Saccade_Length;
+                }
+            }
+            private double m_SD_Progressive_Saccade_Length;
+            [Description("SD Progressive Saccade Length")]
+            public double SD_Progressive_Saccade_Length
+            {
+                get
+                {
+                    if (this.m_SD_Progressive_Saccade_Length == -1)
+                    {
+                        IEnumerable<double> distances = this.Progressive_Fixations.Select(fix => fix.DistanceToPreviousFixation()).ToList();
+                        this.m_SD_Progressive_Saccade_Length = StandardDevision.ComputeStandardDevision(distances);
+                    }
+                    return this.m_SD_Progressive_Saccade_Length;
                 }
             }
 
-            private double m_Progressive_Saccade_Length_X;
-            [Description("Progressive Saccade Length X")]
-            public double Progressive_Saccade_Length_X
+            private double m_Mean_Progressive_Saccade_Length_X;
+            [Description("Mean Progressive Saccade Length X")]
+            public double Mean_Progressive_Saccade_Length_X
             {
                 get
                 {
-                    if (this.m_Progressive_Saccade_Length_X == -1)
+                    if (this.m_Mean_Progressive_Saccade_Length_X == -1)
                     {
-                        this.m_Progressive_Saccade_Length_X = this.Progressive_Fixations.Sum(fix => Math.Abs(fix.Fixation_Position_X - fix.Previous_Fixation.Fixation_Position_X)) / this.Progressive_Fixations.Count;
+                        this.m_Mean_Progressive_Saccade_Length_X = this.Progressive_Fixations.Sum(fix => Math.Abs(fix.Fixation_Position_X - fix.Previous_Fixation.Fixation_Position_X)) / this.Progressive_Fixations.Count;
                     }
-                    return this.m_Progressive_Saccade_Length_X;
+                    return this.m_Mean_Progressive_Saccade_Length_X;
+                }
+            }
+            private double m_SD_Progressive_Saccade_Length_X;
+            [Description("SD Progressive Saccade Length X")]
+            public double SD_Progressive_Saccade_Length_X
+            {
+                get
+                {
+                    if (this.m_SD_Progressive_Saccade_Length_X == -1)
+                    {
+                        IEnumerable<double> distances = this.Progressive_Fixations.Select(fix => Math.Abs(fix.Fixation_Position_X - fix.Previous_Fixation.Fixation_Position_X)).ToList();
+                        this.m_SD_Progressive_Saccade_Length_X = StandardDevision.ComputeStandardDevision(distances);
+                    }
+                    return this.m_SD_Progressive_Saccade_Length_X;
                 }
             }
 
 
-            private double m_Regressive_Fixation_Duration;
-            [Description("Regressive Fixation Duration")]
-            public double Regressive_Fixation_Duration
+            private double m_Mean_Regressive_Fixation_Duration;
+            [Description("Mean Regressive Fixation Duration")]
+            public double Mean_Regressive_Fixation_Duration
             {
                 get
                 {
-                    if (this.m_Regressive_Fixation_Duration == -1)
+                    if (this.m_Mean_Regressive_Fixation_Duration == -1)
                     {
                         double duration_sum = this.Regressive_Fixations.Sum(fix => fix.Event_Duration);
-                        this.m_Regressive_Fixation_Duration = duration_sum / this.Regressive_Fixations.Count;
+                        this.m_Mean_Regressive_Fixation_Duration = duration_sum / this.Regressive_Fixations.Count;
                     }
-                    return this.m_Regressive_Fixation_Duration;
+                    return this.m_Mean_Regressive_Fixation_Duration;
                 }
             }
-
+            private double m_SD_Regressive_Fixation_Duration;
+            [Description("SD Regressive Fixation Duration")]
+            public double SD_Regressive_Fixation_Duration
+            {
+                get
+                {
+                    if (this.m_SD_Regressive_Fixation_Duration == -1)
+                    {
+                        IEnumerable<double> durations = this.Regressive_Fixations.Select(fix => fix.Event_Duration).ToList();
+                        this.m_SD_Regressive_Fixation_Duration = StandardDevision.ComputeStandardDevision(durations);
+                    }
+                    return this.m_SD_Regressive_Fixation_Duration;
+                }
+            }
             [Description("Regressive Fixation Number")]
             public int Regressive_Fixation_Number
             {
@@ -141,31 +210,59 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 }
             }
 
-            private double m_Regressive_Saccade_Length;
-            [Description("Regressive Saccade Length")]
-            public double Regressive_Saccade_Length
+            private double m_Mean_Regressive_Saccade_Length;
+            [Description("Mean Regressive Saccade Length")]
+            public double Mean_Regressive_Saccade_Length
             {
                 get
                 {
-                    if (this.m_Regressive_Saccade_Length == -1)
+                    if (this.m_Mean_Regressive_Saccade_Length == -1)
                     {
-                        this.m_Regressive_Saccade_Length = this.Regressive_Fixations.Sum(fix => fix.DistanceToPreviousFixation()) / this.Progressive_Fixations.Count;
+                        this.m_Mean_Regressive_Saccade_Length = this.Regressive_Fixations.Sum(fix => fix.DistanceToPreviousFixation()) / this.Regressive_Fixations.Count;
                     }
-                    return this.m_Regressive_Saccade_Length;
+                    return this.m_Mean_Regressive_Saccade_Length;
+                }
+            }
+            private double m_SD_Regressive_Saccade_Length;
+            [Description("SD Regressive Saccade Length")]
+            public double SD_Regressive_Saccade_Length
+            {
+                get
+                {
+                    if (this.m_SD_Regressive_Saccade_Length == -1)
+                    {
+                        IEnumerable<double> distances = this.Regressive_Fixations.Select(fix => fix.DistanceToPreviousFixation()).ToList();
+                        this.m_SD_Regressive_Saccade_Length = StandardDevision.ComputeStandardDevision(distances);
+                    }
+                    return this.m_SD_Regressive_Saccade_Length;
                 }
             }
 
-            private double m_Regressive_Saccade_Length_X;
-            [Description("Regressive Saccade Length X")]
-            public double Regressive_Saccade_Length_X
+            private double m_Mean_Regressive_Saccade_Length_X;
+            [Description("Mean Regressive Saccade Length X")]
+            public double Mean_Regressive_Saccade_Length_X
             {
                 get
                 {
-                    if (this.m_Regressive_Saccade_Length_X == -1)
+                    if (this.m_Mean_Regressive_Saccade_Length_X == -1)
                     {
-                        this.m_Regressive_Saccade_Length_X = this.Regressive_Fixations.Sum(fix => Math.Abs(fix.Fixation_Position_X - fix.Previous_Fixation.Fixation_Position_X)) / this.Progressive_Fixations.Count;
+                        this.m_Mean_Regressive_Saccade_Length_X = this.Regressive_Fixations.Sum(fix => Math.Abs(fix.Fixation_Position_X - fix.Previous_Fixation.Fixation_Position_X)) / this.Regressive_Fixations.Count;
                     }
-                    return this.m_Regressive_Saccade_Length_X;
+                    return this.m_Mean_Regressive_Saccade_Length_X;
+                }
+            }
+            private double m_SD_Regressive_Saccade_Length_X;
+            [Description("SD Regressive Saccade Length X")]
+            public double SD_Regressive_Saccade_Length_X
+            {
+                get
+                {
+                    if (this.m_SD_Regressive_Saccade_Length_X == -1)
+                    {
+                        IEnumerable<double> distances = this.Regressive_Fixations.Select(fix => Math.Abs(fix.Fixation_Position_X - fix.Previous_Fixation.Fixation_Position_X)).ToList();
+                        this.m_SD_Regressive_Saccade_Length_X = StandardDevision.ComputeStandardDevision(distances);
+                    }
+                    return this.m_SD_Regressive_Saccade_Length_X;
                 }
             }
 
@@ -185,6 +282,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     {
                         this.InitializeProgressiveAndRegressiveFixationsList();
                     }
+
                     return this.m_Progressive_Fixations;
                 }
             }
@@ -242,13 +340,20 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
                 this.m_Total_Fixation_Number = -1;
                 this.m_Mean_Fixation_Duration = -1;
-                this.m_Progressive_Fixation_Duration = -1;
-                this.m_Progressive_Saccade_Length = -1;
-                this.m_Progressive_Saccade_Length_X = -1;
+                this.m_SD_Fixation_Duration = -1;
+                this.m_Mean_Progressive_Fixation_Duration = -1;
+                this.m_SD_Progressive_Fixation_Duration = -1;
+                this.m_Mean_Progressive_Saccade_Length = -1;
+                this.m_SD_Progressive_Saccade_Length = -1;
+                this.m_Mean_Progressive_Saccade_Length_X = -1;
+                this.m_SD_Progressive_Saccade_Length_X = -1;
                 this.m_Progressive_Fixations = null;
-                this.m_Regressive_Fixation_Duration = -1;
-                this.m_Regressive_Saccade_Length = -1;
-                this.m_Regressive_Saccade_Length_X = -1;
+                this.m_Mean_Regressive_Fixation_Duration = -1;
+                this.m_SD_Regressive_Fixation_Duration = -1;
+                this.m_Mean_Regressive_Saccade_Length = -1;
+                this.m_SD_Regressive_Saccade_Length = -1;
+                this.m_Mean_Regressive_Saccade_Length_X = -1;
+                this.m_SD_Regressive_Saccade_Length_X = -1;
                 //this.m_StandardDeviation = -1;
                 this.m_Regressive_Fixations = null;
             }
