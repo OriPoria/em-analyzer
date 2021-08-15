@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using EM_Analyzer.Enums;
+using System.Collections.Generic;
 
 namespace EM_Analyzer.ExcelsFilesMakers
 {
@@ -16,7 +17,12 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 names.Add(str);
             return names;
         }
-
+        public static string GetEndOfFileNameByType(AOITypes type)
+        {
+            if (type == AOITypes.Phrases)
+                return "c";
+            return "w";
+        }
 
     }
 }

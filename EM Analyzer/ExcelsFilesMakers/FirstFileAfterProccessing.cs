@@ -27,7 +27,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 if (fixation.AOI_Name != -1)
                 {
-                    if (fixation.AOI_Details.DistanceToAOI(fixation) != 0)
+                    if (fixation.AOI_Phrase_Details.DistanceToAOI(fixation) != 0)
                     {
                         ExcelLoggerService.AddLog(new Log() { FileName = ConfigurationService.FirstExcelFileName, LineNumber = lineNumber+1, Description = "The Fixation Is Not Inside The AOI Name: " + fixation.AOI_Name });
                     }

@@ -32,7 +32,9 @@ namespace EM_Analyzer.ModelClasses
         [Description("Is Exceptional")]
         public bool IsException { get; set; }
         [EpplusIgnore]
-        public long AOI_Size { get; set; }
+        public long AOI_Phrase_Size { get; set; }
+        [EpplusIgnore]
+        public long AOI_Word_Size { get; set; }
         /*
          * [Description("AOI Coverage In Percents")]
          * public double AOI_Coverage_In_Percents { get; set; }
@@ -47,17 +49,21 @@ namespace EM_Analyzer.ModelClasses
         public double Fixation_Position_Y { get; set; }
         [Description("Average Pupil Diameter")]
         public double Fixation_Average_Pupil_Diameter { get; set; }
-        //[Description("Word Index")]
-        //public int Word_Index { get; set; }
+
         [EpplusIgnore]
-        public IAOI AOI_Details
+        public IAOI AOI_Phrase_Details
         {
             get
             {
-//                if (AOIDetails.isAOIIncludeStimulus)
-                    return AOIsService.nameToAOIPhrasesDictionary[AOI_Name + Stimulus];
-//                else
-//                    return AOIsService.nameToAOIDictionary[AOI_Name + ""];
+                return AOIsService.nameToAOIPhrasesDictionary[AOI_Name + Stimulus];
+            }
+        }
+        [EpplusIgnore]
+        public IAOI AOI_Word_Details
+        {
+            get
+            {
+                return AOIsService.nameToAOIWordsDictionary[Word_Index + Stimulus];
             }
         }
 
@@ -117,10 +123,10 @@ namespace EM_Analyzer.ModelClasses
 
             try
             {
-                newFixation.AOI_Size = long.Parse(arr[TextFileColumnIndexes.AOI_Size]);
-                if (newFixation.AOI_Name != -1 && newFixation.AOI_Details.AOI_Size_X < 0)
+                newFixation.AOI_Phrase_Size = long.Parse(arr[TextFileColumnIndexes.AOI_Size]);
+                if (newFixation.AOI_Name != -1 && newFixation.AOI_Phrase_Details.AOI_Size_X < 0)
                 {
-                    newFixation.AOI_Details.AOI_Size_X = newFixation.AOI_Size;
+                    newFixation.AOI_Phrase_Details.AOI_Size_X = newFixation.AOI_Phrase_Size;
                 }
             }
             catch
@@ -130,11 +136,12 @@ namespace EM_Analyzer.ModelClasses
                 //ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI Size", arr[TextFileColumnIndexes.AOI_Size], lineNumber + 1));
             }
 
+
             if (!isAOIValid)
             {
                 newFixation.AOI_Group_After_Change = newFixation.AOI_Group_Before_Change = -1;
                 newFixation.AOI_Name = -1;
-                newFixation.AOI_Size = -1;
+                newFixation.AOI_Phrase_Size = -1;
             }
 
 
@@ -273,6 +280,15 @@ namespace EM_Analyzer.ModelClasses
                 isValid = false;
                 ExcelLoggerService.AddLog(CreateLogForFieldValidation("Index", arr[TextFileColumnIndexes.Index], lineNumber));
             }
+            try
+            {
+                wordIndex.AOI_Word_Size = long.Parse(arr[TextFileColumnIndexes.AOI_Size]);
+            }
+            catch (Exception)
+            {
+                isValid = false;
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI_Size", arr[TextFileColumnIndexes.AOI_Size], lineNumber));
+            }
             if (!isValid)
                 return null;
             
@@ -312,10 +328,6 @@ namespace EM_Analyzer.ModelClasses
         // function that filter fixation if it should be considered as first pass
         public bool ShouldBeSkippedInFirstPass()
         {
-            if (Event_Duration == 734.5)
-            {
-                var x = 3;
-            }
             bool isException = IsException;
             bool isInBoundAndShouldBeSkipped = IsInExceptionBounds && FixationsService.dealingWithInsideExceptions == DealingWithExceptionsEnum.Skip_In_First_Pass;
             bool isOutOfBoundAndShouldBeSkipped = !IsInExceptionBounds && FixationsService.dealingWithOutsideExceptions == DealingWithExceptionsOutBoundsEnum.Skip_In_First_Pass;

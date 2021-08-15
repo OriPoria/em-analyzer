@@ -95,7 +95,8 @@ namespace EM_Analyzer
                 AOIDetails.LoadAllAOIPhraseFromFile(phrasesExcelFilePath);
                 AOIDetails.LoadAllAOIWordFromFile(wordsExcelFilePath);
             });
-            
+
+
             readingExcelFile.Start();
 
             string phrasesTextFilePath = "";

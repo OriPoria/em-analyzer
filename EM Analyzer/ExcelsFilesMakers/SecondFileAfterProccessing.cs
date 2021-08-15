@@ -76,6 +76,11 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 fixations.Add(new Fixation() { AOI_Group_After_Change = -2 });
                 int lastChangeIndex = 0, currentIndex = 0, last_AOI = GetAOIByType(fixations[0], currentType), maxLeagalAOIGroupUntilNow = -1;
                 Fixation prevFixationInAOI = null;
+                if (currentType == AOITypes.Words)
+                {
+                    // clear previous fixations from the calculations by phrases
+                    FixationsService.ClearPreviousFixation(fixations);
+                }
                 foreach (Fixation fixation in fixations)
                 {
                     
@@ -141,7 +146,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             List<ExpandoObject> myAlterAois = new List<ExpandoObject>();
 
             ExcelsService.CreateExcelFromStringTable(
-                ConfigurationService.SecondExcelFileName + "_" + Enum.GetName(typeof(AOITypes), currentType), aoiClasses,
+                ConfigurationService.SecondExcelFileName + "_" + Constans.GetEndOfFileNameByType(currentType), aoiClasses,
               SecondFileConsideringCoverage.EditExcel);
         }
         
@@ -259,7 +264,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                             m_First_Pass_Progressive_Duration = 0;
                         }
                     }
-                    return m_First_Pass_Progressive_Duration;
+                    return Math.Max(0, m_First_Pass_Progressive_Duration);
                 }
             }
 
@@ -440,10 +445,21 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     {
                         List<double> sizes = new List<double>();
                         IEnumerable<IEnumerable<double>> all_sizes = this.Fixations.Select(lst => lst.Select(fix=>{
-                            if (fix.AOI_Name != -1 && !fix.IsInExceptionBounds)
-                                return fix.AOI_Details.AOI_Size_X;
-                            else
-                                return 0;
+                            if (currentType == AOITypes.Phrases)
+                            {
+                                if (fix.AOI_Name != -1 && !fix.IsInExceptionBounds)
+                                    return fix.AOI_Phrase_Details.AOI_Size_X;
+                                else
+                                    return 0;
+                            }
+                            else if (currentType == AOITypes.Words)
+                            {
+                                if (fix.Word_Index != -1 && !fix.IsInExceptionBounds)
+                                    return fix.AOI_Word_Details.AOI_Size_X;
+                                else
+                                    return 0;
+                            }
+                            return 0;
                         }).Distinct());
                         foreach (var lst in all_sizes)
                         {
@@ -469,10 +485,20 @@ namespace EM_Analyzer.ExcelsFilesMakers
                         List<double> coverages = new List<double>();
                         IEnumerable<IEnumerable<double>> all_coverages = this.Fixations.Select(lst => lst.Select(fix =>
                         {
-                            if (fix.AOI_Name != -1 && !fix.IsInExceptionBounds)
-                                return fix.AOI_Details.AOI_Coverage_In_Percents;
-                            else
-                                return 0;
+                            if(currentType == AOITypes.Phrases)
+                            {
+                                if (fix.AOI_Name != -1 && !fix.IsInExceptionBounds)
+                                    return fix.AOI_Phrase_Details.AOI_Coverage_In_Percents;
+                                else
+                                    return 0;
+                            } else if (currentType == AOITypes.Words)
+                            {
+                                if (fix.Word_Index != -1 && !fix.IsInExceptionBounds)
+                                    return fix.AOI_Word_Details.AOI_Coverage_In_Percents;
+                                else
+                                    return 0;
+                            }
+                            return 0;
                         }).Distinct());
                         foreach(var lst in all_coverages)
                         {
@@ -481,7 +507,6 @@ namespace EM_Analyzer.ExcelsFilesMakers
                         coverages=coverages.Distinct().ToList();
                         m_Mean_AOI_Coverage = coverages.Sum();
                     }
-                        //m_Mean_AOI_Coverage = this.Total_AOI_Coverage / this.Total_Fixation_Number;
                     return m_Mean_AOI_Coverage;
                 }
             }
@@ -493,7 +518,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 get
                 {
                     if (this.m_Total_AOI_Size == -1)
-                        this.m_Total_AOI_Size = this.Fixations.Sum(lst => lst.Sum(fix => fix.AOI_Size));
+                        this.m_Total_AOI_Size = this.Fixations.Sum(lst => lst.Sum(fix => fix.AOI_Phrase_Size));
                     return this.m_Total_AOI_Size;
                 }
             }
