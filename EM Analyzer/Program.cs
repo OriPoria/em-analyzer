@@ -57,6 +57,8 @@ namespace EM_Analyzer
                             phrasesExcelFilePath = openFileDialog.FileName;
                         else if (openFileDialog.FileName.EndsWith("_w.xlsx"))
                             wordsExcelFilePath = openFileDialog.FileName;
+                        else
+                            Console.WriteLine("Please upload excel file that ends with _c or _w");
                     }
                     else
                     {
@@ -119,6 +121,9 @@ namespace EM_Analyzer
                             phrasesTextFilePath = openFileDialog.FileName;
                         else if (openFileDialog.FileName.EndsWith("_w.txt"))
                             wordsTextFilePath = openFileDialog.FileName;
+                        else
+                            Console.WriteLine("Please upload text file that ends with _c or _w");
+
                     }
                     else
                     {
@@ -129,6 +134,8 @@ namespace EM_Analyzer
 
 
             readingExcelFile.Join();
+            var x = AOIsService.nameToAOIWordsDictionary;
+            var y = AOIsService.nameToAOIPhrasesDictionary;
             FixationsService.phrasesExcelFileName = phrasesExcelFilePath.Substring(phrasesExcelFilePath.LastIndexOf(@"\") + 1);
             FixationsService.wordsExcelFileName = wordsExcelFilePath.Substring(wordsExcelFilePath.LastIndexOf(@"\") + 1);
             FixationsService.phrasesTextFileName = phrasesTextFilePath.Substring(phrasesTextFilePath.LastIndexOf(@"\") + 1);
@@ -150,15 +157,14 @@ namespace EM_Analyzer
             {
                 SecondFileAfterProccessing.currentType = type;
                 ExcelsFilesMakers.SecondFileAfterProccessing.MakeExcelFile();
-                     if (chosenOption == 1)
-                     {
-                         SecondFileConsideringCoverage.currentType = type;
-                         ExcelsFilesMakers.SecondFileConsideringCoverage.MakeExcelFile();
-                         AIOClassAfterCoverage.allInstances.Clear();
-
-                    }
+                if (chosenOption == 1)
+                {
+                    SecondFileConsideringCoverage.currentType = type;
+                    ExcelsFilesMakers.SecondFileConsideringCoverage.MakeExcelFile();
+                    AIOClassAfterCoverage.allInstances.Clear();
+                }
                 AOIClass.instancesDictionary.Clear();
-
+                AOIClass.maxConditions = 0;
             }
             Console.WriteLine("Second File: " + ConfigurationService.SecondExcelFileName + " Finished!!! ");
 

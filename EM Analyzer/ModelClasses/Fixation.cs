@@ -35,10 +35,8 @@ namespace EM_Analyzer.ModelClasses
         public long AOI_Phrase_Size { get; set; }
         [EpplusIgnore]
         public long AOI_Word_Size { get; set; }
-        /*
-         * [Description("AOI Coverage In Percents")]
-         * public double AOI_Coverage_In_Percents { get; set; }
-         */
+        [Description("AOI Coverage In Percents")]
+        public double AOI_Coverage_In_Percents { get; set; }
         [Description("Index")]
         public long Index { get; set; }
         [Description("Event Duration")]
@@ -64,6 +62,7 @@ namespace EM_Analyzer.ModelClasses
             get
             {
                 return AOIsService.nameToAOIWordsDictionary[Word_Index + Stimulus];
+
             }
         }
 
@@ -174,13 +173,12 @@ namespace EM_Analyzer.ModelClasses
                 ExcelLoggerService.AddLog(CreateLogForFieldValidation("Fixation Average Pupil Diameter", arr[TextFileColumnIndexes.Fixation_Average_Pupil_Diameter], lineNumber));
                 isFixationValid = false;
             }
-            /*
             try
             {
                 newFixation.AOI_Coverage_In_Percents = double.Parse(arr[TextFileColumnIndexes.AOI_Coverage]);
-                if (newFixation.AOI_Name != -1 && newFixation.AOI_Details.AOI_Coverage_In_Percents < 0)
+                if (newFixation.AOI_Name != -1 && newFixation.AOI_Phrase_Details.AOI_Coverage_In_Percents < 0)
                 {
-                    newFixation.AOI_Details.AOI_Coverage_In_Percents = newFixation.AOI_Coverage_In_Percents;
+                    newFixation.AOI_Phrase_Details.AOI_Coverage_In_Percents = newFixation.AOI_Coverage_In_Percents;
                 }
             }
             catch
@@ -188,7 +186,6 @@ namespace EM_Analyzer.ModelClasses
                 ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI_Coverage", arr[TextFileColumnIndexes.AOI_Coverage], lineNumber));
                 isFixationValid = false;
             }
-            */
             try
             {
                 newFixation.Index = long.Parse(arr[TextFileColumnIndexes.Index]);
@@ -288,6 +285,15 @@ namespace EM_Analyzer.ModelClasses
             {
                 isValid = false;
                 ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI_Size", arr[TextFileColumnIndexes.AOI_Size], lineNumber));
+            }
+            try
+            {
+                wordIndex.AOI_Coverage_In_Percents = double.Parse(arr[TextFileColumnIndexes.AOI_Coverage]);
+            }
+            catch
+            {
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI_Coverage", arr[TextFileColumnIndexes.AOI_Coverage], lineNumber));
+                isValid = false;
             }
             if (!isValid)
                 return null;

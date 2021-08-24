@@ -52,7 +52,6 @@ namespace EM_Analyzer.Services
         {
             using (var wb = new ExcelPackage())
             {
-                //var ws = wb.Worksheets.Add("Inserting Tables");
                 ExcelWorksheet ws = wb.Workbook.Worksheets.Add("Inserting Tables");
                 string ss = FixationsService.phrasesTextFileName;
                 string textDataName = FixationsService.phrasesTextFileName.Substring(0, FixationsService.phrasesTextFileName.Length - 6);
@@ -112,7 +111,7 @@ namespace EM_Analyzer.Services
 
 
                 // Move to the next row (it now has the titles)
-                for (int currentRow = firstRowUsed + 1 ; currentRow < ws.Dimension.End.Row ; currentRow++)
+                for (int currentRow = firstRowUsed + 1 ; currentRow <= ws.Dimension.End.Row ; currentRow++)
                 {
                     ExcelRow row = ws.Row(currentRow);
                     ExcelRange range = ws.Cells[currentRow, 1, currentRow, lastColUsed];

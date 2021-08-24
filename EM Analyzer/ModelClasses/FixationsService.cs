@@ -115,6 +115,7 @@ namespace EM_Analyzer.ModelClasses
                     if (x1[i].Word_Index != -1 && x1[i].AOI_Word_Details.AOI_Size_X < 0)
                     {
                         x1[i].AOI_Word_Details.AOI_Size_X = x1[i].AOI_Word_Size;
+                        x1[i].AOI_Word_Details.AOI_Coverage_In_Percents = x2[i].AOI_Coverage_In_Percents;
                     }
                 }
             }

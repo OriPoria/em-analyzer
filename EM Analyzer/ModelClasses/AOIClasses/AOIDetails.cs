@@ -60,7 +60,8 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
 
             try
             {
-                Group = int.Parse(enumerator.Current);
+                if (type == AOITypes.Phrases)
+                    Group = int.Parse(enumerator.Current);
             }
             catch
             {
@@ -166,11 +167,12 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
             foreach (IEnumerable<string> details in table)
             {
                 List<string> detailsStr = details.ToList();
-                detailsStr[2] = detailsStr[1];
-
                 new AOIDetails(detailsStr, lineNumber, AOITypes.Words);
                 lineNumber++;
+                var T = AOIsService.nameToAOIWordsDictionary;
+
             }
+            var x = AOIsService.nameToAOIWordsDictionary;
         }
 
 

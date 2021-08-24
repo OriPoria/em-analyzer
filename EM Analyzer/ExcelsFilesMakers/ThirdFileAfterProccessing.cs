@@ -265,6 +265,21 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     return this.m_SD_Regressive_Saccade_Length_X;
                 }
             }
+            private double m_Pupil_Diameter;
+
+            [Description("Mean Pupil Diameter [mm]")]
+            public double Mean_Pupil_Diameter
+            {
+                get
+                {
+                    if (this.m_Pupil_Diameter == -1)
+                    {
+                        double sum = this.Fixations.Sum(fix => fix.Fixation_Average_Pupil_Diameter);
+                        this.m_Pupil_Diameter = sum / this.Fixations.Count;
+                    }
+                    return this.m_Pupil_Diameter;
+                }
+            }
 
 
 
@@ -301,33 +316,6 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 }
             }
 
-            //private double m_StandardDeviation;
-            //private double StandardDeviation
-            //{
-            //    get
-            //    {
-            //        if(m_StandardDeviation==-1)
-            //        {
-            //            m_StandardDeviation=
-            //        }
-            //        return m_StandardDeviation;
-            //    }
-            //}
-
-            //private double m_Average;
-            //private double StandardDeviation
-            //{
-            //    get
-            //    {
-            //        if (m_StandardDeviation == -1)
-            //        {
-            //            m_StandardDeviation =
-            //        }
-            //        return m_StandardDeviation;
-            //    }
-            //}
-
-            //Average
 
             public ParticipantTrial(string Trial, string Stimulus, string Participant)//, List<Fixation> Fixations)//=null)
             {
@@ -354,6 +342,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 this.m_SD_Regressive_Saccade_Length = -1;
                 this.m_Mean_Regressive_Saccade_Length_X = -1;
                 this.m_SD_Regressive_Saccade_Length_X = -1;
+                this.m_Pupil_Diameter = -1;
                 //this.m_StandardDeviation = -1;
                 this.m_Regressive_Fixations = null;
             }

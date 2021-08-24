@@ -11,5 +11,6 @@ namespace EM_Analyzer
         public long Index { get; set; }
         public int Group{ get; set; }
         public long AOI_Word_Size { get; set; }
+        public double AOI_Coverage_In_Percents { get; set; }
     }
 }
