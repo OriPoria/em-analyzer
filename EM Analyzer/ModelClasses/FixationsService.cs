@@ -3,9 +3,6 @@ using EM_Analyzer.ModelClasses.AOIClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EM_Analyzer.ExcelLogger;
 using System.Windows.Forms;
 
 namespace EM_Analyzer.ModelClasses
@@ -100,25 +97,45 @@ namespace EM_Analyzer.ModelClasses
             List<List<WordIndex>> values = wordIndexSetToFixationListDictionary.Values.ToList();
             values.ForEach(fixationList => fixationList.Sort((a, b) => a.Index.CompareTo(b.Index)));
         }
-        public static void UnifyDictionaryWithWordIndex()
+        // unify the fixations from the phrases text file and put with additional values from the words text file input
+        public static int UnifyDictionaryWithWordIndex()
         {
-            foreach (var item in fixationSetToFixationListDictionary.Keys)
+            foreach (var key in fixationSetToFixationListDictionary.Keys)
             {
-                var x1 = fixationSetToFixationListDictionary[item];
-                var x2 = wordIndexSetToFixationListDictionary[item];
-                for (int i = 0; i < x1.Count; i++)
+                var fixationPhrase = fixationSetToFixationListDictionary[key];
+                var fixationWord = wordIndexSetToFixationListDictionary[key];
+                for (int i = 0; i < fixationPhrase.Count; i++)
                 {
-                    if (x1[i].Index != x2[i].Index)
-                        MessageBox.Show($"error in sort of fixation by index at line {i} at key {item}");
-                    x1[i].Word_Index = x2[i].Group;
-                    x1[i].AOI_Word_Size = x2[i].AOI_Word_Size;
-                    if (x1[i].Word_Index != -1 && x1[i].AOI_Word_Details.AOI_Size_X < 0)
+                    if (fixationPhrase[i].Index != fixationWord[i].Index)
+                        MessageBox.Show($"error in sort of fixation by index at line {i} at key {key}");
+
+                    fixationPhrase[i].Word_Index = fixationWord[i].Group;
+                    fixationPhrase[i].AOI_Word_Size = fixationWord[i].AOI_Word_Size;
+
+                    // check if AOI details objcets exist. actually verfy match of stimulus name in texts and excels inputs
+                    try
                     {
-                        x1[i].AOI_Word_Details.AOI_Size_X = x1[i].AOI_Word_Size;
-                        x1[i].AOI_Word_Details.AOI_Coverage_In_Percents = x2[i].AOI_Coverage_In_Percents;
+                        if (fixationPhrase[i].AOI_Group_After_Change != -1)
+                            _ = fixationPhrase[i].AOI_Phrase_Details;
+                        if (fixationPhrase[i].Word_Index != -1)
+                            _ = fixationPhrase[i].AOI_Word_Details;                            
+                    }
+                    catch (System.Exception e)
+                    {
+                        MessageBox.Show("error in stimulus name in text file and excel");
+                        return -1;
+                    }
+
+                    // set details of the AOI of the word index of the fixation
+                    if (fixationPhrase[i].Word_Index != -1 && fixationPhrase[i].AOI_Word_Details.AOI_Size_X < 0)
+                    {
+                        fixationPhrase[i].AOI_Word_Details.AOI_Size_X = fixationPhrase[i].AOI_Word_Size;
+                        fixationPhrase[i].AOI_Word_Details.AOI_Coverage_In_Percents = fixationWord[i].AOI_Coverage_In_Percents;
                     }
                 }
+
             }
+            return 0;
         }
 
         public static void CleanAllFixationBeforeFirstAOI()

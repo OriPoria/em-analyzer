@@ -7,11 +7,7 @@ using OfficeOpenXml.Table;
 using System;
 using System.Reflection;
 using System.Windows.Forms;
-using System.Diagnostics;
-using System.ComponentModel;
-using System.Threading;
 using EM_Analyzer.ExcelsFilesMakers;
-using System.Text.RegularExpressions;
 
 namespace EM_Analyzer.Services
 {

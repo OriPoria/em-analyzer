@@ -102,7 +102,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                                 prevFixationInAOI.Stimulus,
                                 prevFixationInAOI.Participant,
                                 GetAOIByType(prevFixationInAOI, currentType),
-                                //if the current fixation's AOI is not bigger then all the previous fixations so we skip it
+                                //if the current fixation's AOI is not greater then all the previous fixations so we skip it
                                 GetAOIByType(prevFixationInAOI, currentType) < maxLeagalAOIGroupUntilNow,
                                 currentType
                                 );
@@ -143,7 +143,6 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 fixations.RemoveAt(fixations.Count - 1);
             }
             List<AOIClass> aoiClasses = dictionaryKeysForSorting.Select(key=> AOIClass.instancesDictionary[key]).ToList();
-            List<ExpandoObject> myAlterAois = new List<ExpandoObject>();
 
             ExcelsService.CreateExcelFromStringTable(
                 ConfigurationService.SecondExcelFileName + "_" + Constans.GetEndOfFileNameByType(currentType), aoiClasses,
@@ -510,6 +509,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     return m_Mean_AOI_Coverage;
                 }
             }
+            
+         
 
             private double m_Total_AOI_Size;
             [EpplusIgnore]

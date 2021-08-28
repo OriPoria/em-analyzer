@@ -134,18 +134,19 @@ namespace EM_Analyzer
 
 
             readingExcelFile.Join();
-            var x = AOIsService.nameToAOIWordsDictionary;
-            var y = AOIsService.nameToAOIPhrasesDictionary;
             FixationsService.phrasesExcelFileName = phrasesExcelFilePath.Substring(phrasesExcelFilePath.LastIndexOf(@"\") + 1);
             FixationsService.wordsExcelFileName = wordsExcelFilePath.Substring(wordsExcelFilePath.LastIndexOf(@"\") + 1);
             FixationsService.phrasesTextFileName = phrasesTextFilePath.Substring(phrasesTextFilePath.LastIndexOf(@"\") + 1);
             FixationsService.wordsTextFileName = wordsTextFilePath.Substring(wordsTextFilePath.LastIndexOf(@"\") + 1);
             FixationsService.outputPath = phrasesExcelFilePath.Substring(0, phrasesExcelFilePath.LastIndexOf(@"\"));
-            ReadTextFiles(phrasesTextFilePath, wordsTextFilePath);
+            ReadTextFilePhrase(phrasesTextFilePath);
+            ReadTextFileWord(wordsTextFilePath);
             FixationsService.DealWithSeparatedAOIs();
             FixationsService.SortDictionary();
             FixationsService.SortWordIndexDictionary();
-            FixationsService.UnifyDictionaryWithWordIndex();
+            int status = FixationsService.UnifyDictionaryWithWordIndex();
+            if (status == -1)
+                return;
             if (int.Parse(ConfigurationService.RemoveFixationsAppearedBeforeFirstAOI) == 1)
                 FixationsService.CleanAllFixationBeforeFirstAOI();
             FixationsService.SearchForExceptions();
@@ -174,7 +175,7 @@ namespace EM_Analyzer
 
         }
 
-        private static void ReadTextFiles(string phraseFilePath, string wordFilePath)
+        private static void ReadTextFilePhrase(string phraseFilePath)
         {
             string[] lines = File.ReadAllLines(phraseFilePath);
 
@@ -195,12 +196,12 @@ namespace EM_Analyzer
                     MessageBox.Show("There is a problem with the Text File In Line: " + j + "\n Content: \"" + lines[j] + "\"");
                 }
             }
-            // Deletes Double Fixations (With The Same Index).
+
+        }
+        private static void ReadTextFileWord(string wordFilePath)
+        {
             IEnumerable<string> participants = FixationsService.fixationSetToFixationListDictionary.Keys.ToList();
-            foreach (string participant in participants)
-            {
-                FixationsService.fixationSetToFixationListDictionary[participant] = FixationsService.fixationSetToFixationListDictionary[participant].GroupBy(fix=>fix.Index).Select(g=>g.First()).ToList();
-            }
+
             string[] wordsLines = File.ReadAllLines(wordFilePath);
             wordsLines = wordsLines.Where(line => line.Trim().Count() > 0).ToArray();
             for (uint j = 1; j < wordsLines.Length; j++)
@@ -212,14 +213,8 @@ namespace EM_Analyzer
             {
                 FixationsService.wordIndexSetToFixationListDictionary[participant] = FixationsService.wordIndexSetToFixationListDictionary[participant].GroupBy(fix => fix.Index).Select(g => g.First()).ToList();
             }
-            Dictionary<string, List<Fixation>> fixatioDicTest = FixationsService.fixationSetToFixationListDictionary;
-            Dictionary<string, List<WordIndex>> wordsDicTest = FixationsService.wordIndexSetToFixationListDictionary;
         }
 
-        private static void SortTableByIndex(List<string[]> table)
-        {
-            table.Sort((a, b) => a[TextFileColumnIndexes.Index].CompareTo(b[TextFileColumnIndexes.Index]));
-        }
 
     }
 }

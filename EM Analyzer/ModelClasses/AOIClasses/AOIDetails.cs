@@ -117,11 +117,12 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
             // to add AOI with special name
             if (count >= 8 && enumerator.Current != null) 
             {
+                
                 SpecialNmae = enumerator.Current;
                 if (type == AOITypes.Phrases)
                     groupPhraseToSpecialName[Group] = SpecialNmae;
-                else if (type == AOITypes.Words)
-                    groupWordToSpecialName[Group] = SpecialNmae;
+                else if (count == 9 && type == AOITypes.Words)
+                    groupWordToSpecialName[Name] = SpecialNmae;
 
             }
 
