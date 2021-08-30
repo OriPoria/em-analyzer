@@ -38,36 +38,48 @@ namespace EM_Analyzer
             string phrasesExcelFilePath = "";
             string wordsExcelFilePath = "";
 
-            while (phrasesExcelFilePath == "" || wordsExcelFilePath == "")
-            {
-                using (OpenFileDialog openFileDialog = new OpenFileDialog
-                {
-                    RestoreDirectory = true,
-                    Title = "Open The Excel File: ",
-                    Filter = "Excel files (*.xls*)|*.xls*",
-                    Multiselect = false,
-                    CheckFileExists = true,
-                    CheckPathExists = true
-                })
-                {
+            bool testMode = true;
 
-                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+            if (!testMode)
+            {
+                while (phrasesExcelFilePath == "" || wordsExcelFilePath == "")
+                {
+                    using (OpenFileDialog openFileDialog = new OpenFileDialog
                     {
-                        if (openFileDialog.FileName.EndsWith("_c.xlsx"))
-                            phrasesExcelFilePath = openFileDialog.FileName;
-                        else if (openFileDialog.FileName.EndsWith("_w.xlsx"))
-                            wordsExcelFilePath = openFileDialog.FileName;
+                        RestoreDirectory = true,
+                        Title = "Open The Excel File: ",
+                        Filter = "Excel files (*.xls*)|*.xls*",
+                        Multiselect = false,
+                        CheckFileExists = true,
+                        CheckPathExists = true
+                    })
+                    {
+
+                        if (openFileDialog.ShowDialog() == DialogResult.OK)
+                        {
+                            if (openFileDialog.FileName.EndsWith("_c.xlsx"))
+                                phrasesExcelFilePath = openFileDialog.FileName;
+                            else if (openFileDialog.FileName.EndsWith("_w.xlsx"))
+                                wordsExcelFilePath = openFileDialog.FileName;
+                            else
+                                Console.WriteLine("Please upload excel file that ends with _c or _w");
+                        }
                         else
-                            Console.WriteLine("Please upload excel file that ends with _c or _w");
-                    }
-                    else
-                    {
-                        return;
+                        {
+                            return;
+                        }
+
                     }
 
                 }
-
             }
+            // Test mode- choose ahead the files
+            else
+            {
+                phrasesExcelFilePath = @"C:\Users\oripo\Desktop\work\EyeTracker\AOI_boundaries-ELIZABETH_1_p1_c.xlsx";
+                wordsExcelFilePath = @"C:\Users\oripo\Desktop\work\EyeTracker\AOI_boundaries-ELIZABETH_1_p1_w.xlsx";
+            }
+
 
 
             if (chosenOption == 3)
@@ -103,34 +115,44 @@ namespace EM_Analyzer
 
             string phrasesTextFilePath = "";
             string wordsTextFilePath = "";
-            while (phrasesTextFilePath == "" || wordsTextFilePath == "")
+            if (!testMode)
             {
-                using (OpenFileDialog openFileDialog = new OpenFileDialog
+                while (phrasesTextFilePath == "" || wordsTextFilePath == "")
                 {
-                    RestoreDirectory = true,
-                    Title = "Open The Text File: ",
-                    Filter = "Text files (*.txt)|*.txt",
-                    Multiselect = false,
-                    CheckFileExists = true,
-                    CheckPathExists = true
-                })
-                {
-                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    using (OpenFileDialog openFileDialog = new OpenFileDialog
                     {
-                        if (openFileDialog.FileName.EndsWith("_c.txt"))
-                            phrasesTextFilePath = openFileDialog.FileName;
-                        else if (openFileDialog.FileName.EndsWith("_w.txt"))
-                            wordsTextFilePath = openFileDialog.FileName;
-                        else
-                            Console.WriteLine("Please upload text file that ends with _c or _w");
+                        RestoreDirectory = true,
+                        Title = "Open The Text File: ",
+                        Filter = "Text files (*.txt)|*.txt",
+                        Multiselect = false,
+                        CheckFileExists = true,
+                        CheckPathExists = true
+                    })
+                    {
+                        if (openFileDialog.ShowDialog() == DialogResult.OK)
+                        {
+                            if (openFileDialog.FileName.EndsWith("_c.txt"))
+                                phrasesTextFilePath = openFileDialog.FileName;
+                            else if (openFileDialog.FileName.EndsWith("_w.txt"))
+                                wordsTextFilePath = openFileDialog.FileName;
+                            else
+                                Console.WriteLine("Please upload text file that ends with _c or _w");
 
-                    }
-                    else
-                    {
-                        return;
+                        }
+                        else
+                        {
+                            return;
+                        }
                     }
                 }
             }
+            // Test mode- choose ahead the files
+            else
+            {
+                phrasesTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\par64_20lines_c.txt";
+                wordsTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\par64_20lines_w.txt";
+            }
+
 
 
             readingExcelFile.Join();
