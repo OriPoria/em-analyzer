@@ -184,10 +184,10 @@ namespace EM_Analyzer
             foreach (AOITypes type in (AOITypes[]) Enum.GetValues(typeof(AOITypes)))
             {
                 SecondFileAfterProccessing.currentType = type;
+                SecondFileConsideringCoverage.currentType = type;
                 ExcelsFilesMakers.SecondFileAfterProccessing.MakeExcelFile();
                 if (chosenOption == 1)
                 {
-                    SecondFileConsideringCoverage.currentType = type;
                     ExcelsFilesMakers.SecondFileConsideringCoverage.MakeExcelFile();
                     AIOClassAfterCoverage.allInstances.Clear();
                 }
