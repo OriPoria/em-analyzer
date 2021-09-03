@@ -19,26 +19,31 @@ namespace EM_Analyzer
         [STAThread]
         static void Main(string[] args)
         {
-            int chosenOption;
+            int chosenOption = 1;
             string input;
             bool isOptionOK;
-            do
+            bool testMode = true;
+            if (!testMode)
             {
-                Console.WriteLine("Choose An Option: ");
-                Console.WriteLine("1. Do The Full Process (Get Both The AOI And The Fixations And Create All The Excel Files).");
-                Console.WriteLine("2. Do The Process Without Filtering Exceptions.");
-                Console.WriteLine("3. Only Filtering Exceptions.");
-                input = Console.ReadLine();
-                isOptionOK = int.TryParse(input, out chosenOption);
-                if (!isOptionOK)
-                    Console.WriteLine("Please Choose A Valid Option!!!");
-            } while (!isOptionOK);
+                do
+                {
+                    Console.WriteLine("Choose An Option: ");
+                    Console.WriteLine("1. Do The Full Process (Get Both The AOI And The Fixations And Create All The Excel Files).");
+                    Console.WriteLine("2. Do The Process Without Filtering Exceptions.");
+                    Console.WriteLine("3. Only Filtering Exceptions.");
+                    input = Console.ReadLine();
+                    isOptionOK = int.TryParse(input, out chosenOption);
+                    if (!isOptionOK)
+                        Console.WriteLine("Please Choose A Valid Option!!!");
+                } while (!isOptionOK);
 
-            
+
+            }
+
             string phrasesExcelFilePath = "";
             string wordsExcelFilePath = "";
 
-            bool testMode = true;
+            
 
             if (!testMode)
             {
@@ -149,8 +154,8 @@ namespace EM_Analyzer
             // Test mode- choose ahead the files
             else
             {
-                phrasesTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\par64_20lines_c.txt";
-                wordsTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\par64_20lines_w.txt";
+                phrasesTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\2pars_c.txt";
+                wordsTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\2pars_w.txt";
             }
 
 
