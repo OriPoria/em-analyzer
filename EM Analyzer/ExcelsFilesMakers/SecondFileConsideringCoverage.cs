@@ -136,7 +136,6 @@ namespace EM_Analyzer.ExcelsFilesMakers
         }
         public static int EditExcel(ExcelWorksheet ws)
         {
-            int numberCols = 29;
             ws.InsertColumn(Constans.startCondsInx, AOIClass.maxConditions);
             for (int i = Constans.startCondsInx; i < Constans.startCondsInx + AOIClass.maxConditions; i++)
                 ws.Cells[1, i].Value = $"Cond{i - 6}";
@@ -154,6 +153,13 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
                 }
 
+            }
+            // removes frequency and length column
+            if (currentType == AOITypes.Phrases)
+            {
+                int numberCols = ws.Dimension.Columns;
+                ws.DeleteColumn(numberCols);
+                ws.DeleteColumn(numberCols - 1);
             }
             return 0;
         }
