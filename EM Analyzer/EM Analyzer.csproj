@@ -113,6 +113,7 @@
     <Compile Include="Interfaces\IAOIClassForConsideringCoverage.cs" />
     <Compile Include="Math\StandardDevision.cs" />
     <Compile Include="ModelClasses\AOIClasses\AOIsService.cs" />
+    <Compile Include="ModelClasses\AOIClasses\AOIWordDetails.cs" />
     <Compile Include="ModelClasses\AOIClasses\IAOI.cs" />
     <Compile Include="ModelClasses\AOIClasses\AOIDetails.cs" />
     <Compile Include="ModelClasses\AOIClasses\SeparatedAOI.cs" />
@@ -159,7 +160,6 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
-
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
       <Visible>False</Visible>

@@ -107,7 +107,7 @@ namespace EM_Analyzer.Services
 
 
                 // Move to the next row (it now has the titles)
-                for (int currentRow = firstRowUsed + 1 ; currentRow <= ws.Dimension.End.Row ; currentRow++)
+                for (int currentRow = firstRowUsed ; currentRow <= ws.Dimension.End.Row ; currentRow++)
                 {
                     ExcelRow row = ws.Row(currentRow);
                     ExcelRange range = ws.Cells[currentRow, 1, currentRow, lastColUsed];

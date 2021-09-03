@@ -112,7 +112,7 @@ namespace EM_Analyzer
             readingExcelFile = new Thread(() =>
             {
                 AOIDetails.LoadAllAOIPhraseFromFile(phrasesExcelFilePath);
-                AOIDetails.LoadAllAOIWordFromFile(wordsExcelFilePath);
+                AOIWordDetails.LoadAllAOIWordFromFile(wordsExcelFilePath);
             });
 
 
