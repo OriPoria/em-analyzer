@@ -181,14 +181,14 @@ namespace EM_Analyzer
             ExcelsFilesMakers.FirstFileAfterProccessing.MakeExcelFile();
             Console.WriteLine("First File: " + ConfigurationService.FirstExcelFileName + " Finished!!! ");
             FixationsService.DealWithExceptions();
-            foreach (AOITypes type in (AOITypes[]) Enum.GetValues(typeof(AOITypes)))
+            foreach (AOITypes type in (AOITypes[])Enum.GetValues(typeof(AOITypes)))
             {
                 SecondFileAfterProccessing.currentType = type;
                 SecondFileConsideringCoverage.currentType = type;
                 ExcelsFilesMakers.SecondFileAfterProccessing.MakeExcelFile();
                 if (chosenOption == 1)
                 {
-                    ExcelsFilesMakers.SecondFileConsideringCoverage.MakeExcelFile();
+                    SecondFileConsideringCoverage.MakeExcelFile();
                     AIOClassAfterCoverage.allInstances.Clear();
                 }
                 AOIClass.instancesDictionary.Clear();
