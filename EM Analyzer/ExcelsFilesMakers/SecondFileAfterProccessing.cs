@@ -543,6 +543,24 @@ namespace EM_Analyzer.ExcelsFilesMakers
             
             [EpplusIgnore]
             public List<Fixation> First_Pass_Fixations { get; set; }
+            public int Length
+            {
+                get
+                {
+                    if (Fixations[0][0].Word_Index != -1)
+                        return Fixations[0][0].AOI_Word_Details.Length;
+                    return 0;
+                }
+            }
+            public int Frequency
+            {
+                get
+                {
+                    if (Fixations[0][0].Word_Index != -1)
+                        return Fixations[0][0].AOI_Word_Details.Frequency;
+                    return 0;
+                }
+            }
 
             private List<Fixation> m_Fixations_Progressive_First_Pass;
             private List<Fixation> Fixations_Progressive_First_Pass
