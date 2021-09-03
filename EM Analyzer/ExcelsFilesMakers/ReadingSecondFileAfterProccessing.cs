@@ -91,7 +91,6 @@ namespace EM_Analyzer.ExcelsFilesMakers
         [Description("AOI Coverage [%]")]
         public double Mean_AOI_Coverage { get; set; }
 
-
         public void CreateAIOClassAfterCoverage()
         {
             new AIOClassAfterCoverage(this);
