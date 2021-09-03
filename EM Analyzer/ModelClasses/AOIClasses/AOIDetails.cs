@@ -33,7 +33,7 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
         public double AOI_Size_X { get; set; }
         public string SpecialNmae { get; set; }
 
-        public AOIDetails(IEnumerable<string> details, uint lineNumber, AOITypes type)
+        public AOIDetails(IEnumerable<string> details, uint lineNumber)
         {
             AOI_Coverage_In_Percents = -1;
             AOI_Size_X = -1;
@@ -60,8 +60,7 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
 
             try
             {
-                if (type == AOITypes.Phrases)
-                    Group = int.Parse(enumerator.Current);
+                Group = int.Parse(enumerator.Current);
             }
             catch
             {
@@ -119,25 +118,15 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
             {
                 
                 SpecialNmae = enumerator.Current;
-                if (type == AOITypes.Phrases)
-                    groupPhraseToSpecialName[Group] = SpecialNmae;
-                else if (count == 9 && type == AOITypes.Words)
-                    groupWordToSpecialName[Name] = SpecialNmae;
+                groupPhraseToSpecialName[Group] = SpecialNmae;
 
             }
 
             if (IsProper)
             {
                 DictionaryKey = Name + DictionaryKey;
-                if (type == AOITypes.Phrases)
-                {
-                    AOIsService.nameToAOIPhrasesDictionary[DictionaryKey] = this;
-                    nameToAOIPhrasesDetailsDictionary[DictionaryKey] = this;
-                } else if (type == AOITypes.Words)
-                {
-                    AOIsService.nameToAOIWordsDictionary[DictionaryKey] = this;
-                    nameToAOIWordsDetailsDictionary[DictionaryKey] = this;
-                }
+                AOIsService.nameToAOIPhrasesDictionary[DictionaryKey] = this;
+                nameToAOIPhrasesDetailsDictionary[DictionaryKey] = this;
             }
             
 
@@ -146,14 +135,11 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
         public static void LoadAllAOIPhraseFromFile(string fileName)
         {
             List<IEnumerable<string>> table = ExcelsService.ReadExcelFile<string>(fileName);
-//            isAOIIncludeStimulus = false;
-            IEnumerable<string> first = table.FirstOrDefault();
-//            if (first.Count() >= 7)
-//                isAOIIncludeStimulus = true;
-            uint lineNumber = 1;
+            uint lineNumber = 0;
             foreach (IEnumerable<string> details in table)
             {
-                new AOIDetails(details, lineNumber, AOITypes.Phrases);
+                if (lineNumber != 0)
+                    new AOIDetails(details, lineNumber);
                 lineNumber++;
             }
         }
@@ -168,12 +154,11 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
             foreach (IEnumerable<string> details in table)
             {
                 List<string> detailsStr = details.ToList();
-                new AOIDetails(detailsStr, lineNumber, AOITypes.Words);
+                new AOIDetails(detailsStr, lineNumber);
                 lineNumber++;
                 var T = AOIsService.nameToAOIWordsDictionary;
 
             }
-            var x = AOIsService.nameToAOIWordsDictionary;
         }
 
 
