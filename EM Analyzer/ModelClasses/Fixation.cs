@@ -57,7 +57,7 @@ namespace EM_Analyzer.ModelClasses
             }
         }
         [EpplusIgnore]
-        public IAOI AOI_Word_Details
+        public AOIWordDetails AOI_Word_Details
         {
             get
             {
