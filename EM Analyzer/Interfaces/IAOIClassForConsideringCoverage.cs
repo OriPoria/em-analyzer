@@ -65,5 +65,7 @@ namespace EM_Analyzer.Interfaces
         double Mean_AOI_Size { get; }
         [Description("AOI Coverage [%]")]
         double Mean_AOI_Coverage { get; }
+        int Length { get; }
+        int Frequency { get; }
     }
 }
