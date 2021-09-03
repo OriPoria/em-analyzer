@@ -61,7 +61,7 @@ namespace EM_Analyzer.ModelClasses
         {
             get
             {
-                return AOIsService.nameToAOIWordsDictionary[Word_Index + Stimulus];
+                return AOIWordDetails.nameToAOIWordsDetailsDictionary[Word_Index + Stimulus];
 
             }
         }
