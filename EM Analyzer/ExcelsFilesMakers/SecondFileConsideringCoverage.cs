@@ -499,6 +499,20 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 allInstances.Add(this);
                 this.AOIForExcel = new AIOClassAfterCoverageForExcel(this);
             }
+            public int Length
+            {
+                get
+                {
+                    return AOI.Length;
+                }
+            }
+            public int Frequency
+            {
+                get
+                {
+                    return AOI.Frequency;
+                }
+            }
 
         }
 
