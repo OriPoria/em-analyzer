@@ -126,14 +126,6 @@ namespace EM_Analyzer.ExcelsFilesMakers
                         last_AOI = GetAOIByType(fixation, currentType);
                         lastChangeIndex = currentIndex;
 
-                        /*
-                         * old skip legality
-                         * if (maxAOIGroupUntilNow < last_AOIGroup
-                            && fixationRange.Count() > minimumNumberOfFixationsForSkip)
-                            maxAOIGroupUntilNow = last_AOIGroup;
-                         * 
-                         */
-
                     }
                     else
                         fixation.Previous_Fixation = prevFixationInAOI;
@@ -146,7 +138,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
             ExcelsService.CreateExcelFromStringTable(
                 ConfigurationService.SecondExcelFileName + "_" + Constans.GetEndOfFileNameByType(currentType), aoiClasses,
-              SecondFileConsideringCoverage.EditExcel);
+              SecondFileConsideringCoverage.EditExcel); 
         }
         
         public static int GetAOIByType(Fixation fixation, AOITypes type)
@@ -446,14 +438,14 @@ namespace EM_Analyzer.ExcelsFilesMakers
                         IEnumerable<IEnumerable<double>> all_sizes = this.Fixations.Select(lst => lst.Select(fix=>{
                             if (currentType == AOITypes.Phrases)
                             {
-                                if (fix.AOI_Name != -1 && !fix.IsInExceptionBounds)
+                                if (fix.AOI_Name > 0 && !fix.IsInExceptionBounds)
                                     return fix.AOI_Phrase_Details.AOI_Size_X;
                                 else
                                     return 0;
                             }
                             else if (currentType == AOITypes.Words)
                             {
-                                if (fix.Word_Index != -1 && !fix.IsInExceptionBounds)
+                                if (fix.Word_Index > 0 && !fix.IsInExceptionBounds)
                                     return fix.AOI_Word_Details.AOI_Size_X;
                                 else
                                     return 0;
@@ -486,13 +478,13 @@ namespace EM_Analyzer.ExcelsFilesMakers
                         {
                             if(currentType == AOITypes.Phrases)
                             {
-                                if (fix.AOI_Name != -1 && !fix.IsInExceptionBounds)
+                                if (fix.AOI_Name > 0 && !fix.IsInExceptionBounds)
                                     return fix.AOI_Phrase_Details.AOI_Coverage_In_Percents;
                                 else
                                     return 0;
                             } else if (currentType == AOITypes.Words)
                             {
-                                if (fix.Word_Index != -1 && !fix.IsInExceptionBounds)
+                                if (fix.Word_Index > 0 && !fix.IsInExceptionBounds)
                                     return fix.AOI_Word_Details.AOI_Coverage_In_Percents;
                                 else
                                     return 0;
@@ -547,7 +539,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
-                    if (Fixations[0][0].Word_Index != -1)
+                    if (Fixations[0][0].Word_Index > 0)
                         return Fixations[0][0].AOI_Word_Details.Length;
                     return 0;
                 }
@@ -556,7 +548,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
-                    if (Fixations[0][0].Word_Index != -1)
+                    if (Fixations[0][0].Word_Index > 0)
                         return Fixations[0][0].AOI_Word_Details.Frequency;
                     return 0;
                 }
@@ -623,11 +615,6 @@ namespace EM_Analyzer.ExcelsFilesMakers
                         {
                             this.m_Regressions.Add(lst.ToList());
                         });
-                        //this.m_Regressions = new List<List<Fixation>>(this.Fixations);
-
-                        // OLD:
-                        // this.m_Regressions.ForEach(lst => lst.RemoveAll(fix => this.First_Pass_Fixations.Contains(fix)));
-                        // NEW:
                         int firstPassIndex = -1;
                         int i = 0;
                         if (this.First_Pass_Fixations.Count > 0)

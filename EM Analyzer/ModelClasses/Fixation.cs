@@ -101,29 +101,27 @@ namespace EM_Analyzer.ModelClasses
             try
             {
                 newFixation.AOI_Group_After_Change = newFixation.AOI_Group_Before_Change = int.Parse(arr[TextFileColumnIndexes.AOI_Group]);
+
             }
             catch
             {
                 isAOIValid = false;
-                //Console.Write("not valid");
-                //ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI Group", arr[TextFileColumnIndexes.AOI_Group], lineNumber + 1));
             }
 
             try
             {
                 newFixation.AOI_Name = int.Parse(arr[TextFileColumnIndexes.AOI_Name]);
+
             }
             catch
             {
                 isAOIValid = false;
-                //Console.Write("not valid");
-                //ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI Name", arr[TextFileColumnIndexes.AOI_Name], lineNumber + 1));
             }
 
             try
             {
                 newFixation.AOI_Phrase_Size = long.Parse(arr[TextFileColumnIndexes.AOI_Size]);
-                if (newFixation.AOI_Name != -1 && newFixation.AOI_Phrase_Details.AOI_Size_X < 0)
+                if (newFixation.AOI_Name != 0 && newFixation.AOI_Name != -1 && newFixation.AOI_Phrase_Details.AOI_Size_X < 0)
                 {
                     newFixation.AOI_Phrase_Details.AOI_Size_X = newFixation.AOI_Phrase_Size;
                 }
@@ -131,8 +129,6 @@ namespace EM_Analyzer.ModelClasses
             catch
             {
                 isAOIValid = false;
-                //Console.Write("not valid");
-                //ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI Size", arr[TextFileColumnIndexes.AOI_Size], lineNumber + 1));
             }
 
 
@@ -176,7 +172,7 @@ namespace EM_Analyzer.ModelClasses
             try
             {
                 newFixation.AOI_Coverage_In_Percents = double.Parse(arr[TextFileColumnIndexes.AOI_Coverage]);
-                if (newFixation.AOI_Name != -1 && newFixation.AOI_Phrase_Details.AOI_Coverage_In_Percents < 0)
+                if (newFixation.AOI_Name != 0 && newFixation.AOI_Name != -1 && newFixation.AOI_Phrase_Details.AOI_Coverage_In_Percents < 0)
                 {
                     newFixation.AOI_Phrase_Details.AOI_Coverage_In_Percents = newFixation.AOI_Coverage_In_Percents;
                 }
@@ -209,6 +205,13 @@ namespace EM_Analyzer.ModelClasses
                 FixationsService.fixationSetToFixationListDictionary[dictionatyKey] = new List<Fixation>();
             FixationsService.fixationSetToFixationListDictionary[dictionatyKey].Add(newFixation);
 
+            // set the minimum AOI name of every Fixations Set
+            if (!FixationsService.minimumAOIGroupOfFixationSet.ContainsKey(dictionatyKey))
+                FixationsService.minimumAOIGroupOfFixationSet[dictionatyKey] = int.MaxValue;
+            if (newFixation.AOI_Group_Before_Change > 0 && newFixation.AOI_Group_Before_Change < FixationsService.minimumAOIGroupOfFixationSet[dictionatyKey])
+                FixationsService.minimumAOIGroupOfFixationSet[dictionatyKey] = newFixation.AOI_Group_Before_Change;
+
+
             return newFixation;
 
         }
@@ -237,14 +240,11 @@ namespace EM_Analyzer.ModelClasses
 
             try
             {
-                char[] c = { ' ' };
-                wordIndex.Group = int.Parse(arr[TextFileColumnIndexes.AOI_Name].Split(c)[1]);
+                wordIndex.Group = int.Parse(arr[TextFileColumnIndexes.AOI_Group]);
             }
             catch
             {
                 wordIndex.Group = -1;
-//                isValid = false;
-                //ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI Name", arr[TextFileColumnIndexes.AOI_Name], lineNumber + 1));
             }
             try
             {

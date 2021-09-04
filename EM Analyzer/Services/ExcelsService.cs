@@ -49,7 +49,6 @@ namespace EM_Analyzer.Services
             using (var wb = new ExcelPackage())
             {
                 ExcelWorksheet ws = wb.Workbook.Worksheets.Add("Inserting Tables");
-                string ss = FixationsService.phrasesTextFileName;
                 string textDataName = FixationsService.phrasesTextFileName.Substring(0, FixationsService.phrasesTextFileName.Length - 6);
                 String islogs = "Logs";
                 String isFiltered = "AOI - Filtered";

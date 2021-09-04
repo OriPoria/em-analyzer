@@ -150,8 +150,10 @@ namespace EM_Analyzer.ExcelsFilesMakers
                         ws.Cells[i, j].Value = sNames[k];
                         k++;
                     }
-
                 }
+                // change figure AOI group label from 0 to "figure"
+                if (ws.Cells[i, Constans.aoiSecondFileGroupCol].Value.ToString() == "0")
+                    ws.Cells[i, Constans.aoiSecondFileGroupCol].Value = "figure";
 
             }
             // removes frequency and length column

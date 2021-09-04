@@ -22,7 +22,7 @@ namespace EM_Analyzer
             int chosenOption = 1;
             string input;
             bool isOptionOK;
-            bool testMode = true;
+            bool testMode = false;
             if (!testMode)
             {
                 do
@@ -44,7 +44,6 @@ namespace EM_Analyzer
             string wordsExcelFilePath = "";
 
             
-
             if (!testMode)
             {
                 while (phrasesExcelFilePath == "" || wordsExcelFilePath == "")
@@ -85,8 +84,6 @@ namespace EM_Analyzer
                 wordsExcelFilePath = @"C:\Users\oripo\Desktop\work\EyeTracker\AOI_boundaries-ELIZABETH_1_p1_w.xlsx";
             }
 
-
-
             if (chosenOption == 3)
             {
                 FixationsService.phrasesTextFileName = phrasesExcelFilePath.Substring(phrasesExcelFilePath.LastIndexOf(@"\") + 1);
@@ -102,7 +99,7 @@ namespace EM_Analyzer
                         aoi.CreateAIOClassAfterCoverage();
                     }
                     SecondFileConsideringCoverage.currentType = type;
-                    ExcelsFilesMakers.SecondFileConsideringCoverage.MakeExcelFile();
+                    SecondFileConsideringCoverage.MakeExcelFile();
                     i++;
                 }
 
@@ -117,7 +114,6 @@ namespace EM_Analyzer
 
 
             readingExcelFile.Start();
-
             string phrasesTextFilePath = "";
             string wordsTextFilePath = "";
             if (!testMode)
@@ -142,7 +138,6 @@ namespace EM_Analyzer
                                 wordsTextFilePath = openFileDialog.FileName;
                             else
                                 Console.WriteLine("Please upload text file that ends with _c or _w");
-
                         }
                         else
                         {
@@ -158,8 +153,6 @@ namespace EM_Analyzer
                 wordsTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\2pars_w.txt";
             }
 
-
-
             readingExcelFile.Join();
             FixationsService.phrasesExcelFileName = phrasesExcelFilePath.Substring(phrasesExcelFilePath.LastIndexOf(@"\") + 1);
             FixationsService.wordsExcelFileName = wordsExcelFilePath.Substring(wordsExcelFilePath.LastIndexOf(@"\") + 1);
@@ -174,18 +167,20 @@ namespace EM_Analyzer
             int status = FixationsService.UnifyDictionaryWithWordIndex();
             if (status == -1)
                 return;
-            if (int.Parse(ConfigurationService.RemoveFixationsAppearedBeforeFirstAOI) == 1)
-                FixationsService.CleanAllFixationBeforeFirstAOI();
+            if (int.Parse(ConfigurationService.RemoveFixationsAppearedBeforeFirstAOI) == 2)
+                FixationsService.CleanAllFixationBeforeFirstAOIInText(); 
+            else if (int.Parse(ConfigurationService.RemoveFixationsAppearedBeforeFirstAOI) == 3)
+                FixationsService.CleanAllFixationBeforeFirstAOIInPage();
             FixationsService.SearchForExceptions();
 
-            ExcelsFilesMakers.FirstFileAfterProccessing.MakeExcelFile();
+            FirstFileAfterProccessing.MakeExcelFile();
             Console.WriteLine("First File: " + ConfigurationService.FirstExcelFileName + " Finished!!! ");
             FixationsService.DealWithExceptions();
             foreach (AOITypes type in (AOITypes[])Enum.GetValues(typeof(AOITypes)))
             {
                 SecondFileAfterProccessing.currentType = type;
                 SecondFileConsideringCoverage.currentType = type;
-                ExcelsFilesMakers.SecondFileAfterProccessing.MakeExcelFile();
+                SecondFileAfterProccessing.MakeExcelFile();
                 if (chosenOption == 1)
                 {
                     SecondFileConsideringCoverage.MakeExcelFile();
@@ -196,10 +191,8 @@ namespace EM_Analyzer
             }
             Console.WriteLine("Second File: " + ConfigurationService.SecondExcelFileName + " Finished!!! ");
 
-            ExcelsFilesMakers.ThirdFileAfterProccessing.MakeExcelFile();
+            ThirdFileAfterProccessing.MakeExcelFile();
             Console.WriteLine("Third File: " + ConfigurationService.ThirdExcelFileName + " Finished!!! ");
-
-
         }
 
         private static void ReadTextFilePhrase(string phraseFilePath)
@@ -210,7 +203,7 @@ namespace EM_Analyzer
 
             FixationsService.tableColumns = lines[0].Split('\t').Select(column=>column.Trim().ToLower()).ToList();
             FixationsService.InitializeColumnIndexes();
-            //i begin from 1, the first line is categors
+            // i begin from 1, the first line is categors
             for (uint j = 1; j < lines.Length; j++)
             {
                 string[] currentRow = lines[j].Split('\t');
@@ -223,8 +216,8 @@ namespace EM_Analyzer
                     MessageBox.Show("There is a problem with the Text File In Line: " + j + "\n Content: \"" + lines[j] + "\"");
                 }
             }
-
         }
+
         private static void ReadTextFileWord(string wordFilePath)
         {
             IEnumerable<string> participants = FixationsService.fixationSetToFixationListDictionary.Keys.ToList();

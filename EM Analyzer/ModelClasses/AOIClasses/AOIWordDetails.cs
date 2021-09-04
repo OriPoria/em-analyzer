@@ -164,7 +164,6 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
                 List<string> detailsStr = details.ToList();
                 new AOIWordDetails(detailsStr, lineNumber);
                 lineNumber++;
-                var T = AOIsService.nameToAOIWordsDictionary;
 
             }
         }

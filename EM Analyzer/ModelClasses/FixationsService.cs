@@ -17,6 +17,8 @@ namespace EM_Analyzer.ModelClasses
     class FixationsService
     {
         public static Dictionary<string, List<Fixation>> fixationSetToFixationListDictionary = new Dictionary<string, List<Fixation>>();
+        public static Dictionary<string, int> minimumAOIGroupOfFixationSet = new Dictionary<string, int>();
+
         public static Dictionary<string, List<WordIndex>> wordIndexSetToFixationListDictionary = new Dictionary<string, List<WordIndex>>();
         public static string phrasesTextFileName = "";
         public static string wordsTextFileName = "";
@@ -109,15 +111,19 @@ namespace EM_Analyzer.ModelClasses
                     if (fixationPhrase[i].Index != fixationWord[i].Index)
                         MessageBox.Show($"error in sort of fixation by index at line {i} at key {key}");
 
-                    fixationPhrase[i].Word_Index = fixationWord[i].Group;
+                    // if this is a fixation on figure -> if we set the figure fixation to 0.
+                    if (fixationPhrase[i].AOI_Group_Before_Change == 0)
+                        fixationPhrase[i].Word_Index = 0;
+                    else 
+                        fixationPhrase[i].Word_Index = fixationWord[i].Group;
                     fixationPhrase[i].AOI_Word_Size = fixationWord[i].AOI_Word_Size;
 
                     // check if AOI details objcets exist. actually verfy match of stimulus name in texts and excels inputs
                     try
                     {
-                        if (fixationPhrase[i].AOI_Group_After_Change != -1)
+                        if (fixationPhrase[i].AOI_Group_After_Change > 0)
                             _ = fixationPhrase[i].AOI_Phrase_Details;
-                        if (fixationPhrase[i].Word_Index != -1)
+                        if (fixationPhrase[i].Word_Index > 0)
                             _ = fixationPhrase[i].AOI_Word_Details;                            
                     }
                     catch (System.Exception e)
@@ -127,7 +133,7 @@ namespace EM_Analyzer.ModelClasses
                     }
 
                     // set details of the AOI of the word index of the fixation
-                    if (fixationPhrase[i].Word_Index != -1 && fixationPhrase[i].AOI_Word_Details.AOI_Size_X < 0)
+                    if (fixationPhrase[i].Word_Index > 0 && fixationPhrase[i].AOI_Word_Details.AOI_Size_X < 0)
                     {
                         fixationPhrase[i].AOI_Word_Details.AOI_Size_X = fixationPhrase[i].AOI_Word_Size;
                         fixationPhrase[i].AOI_Word_Details.AOI_Coverage_In_Percents = fixationWord[i].AOI_Coverage_In_Percents;
@@ -135,10 +141,11 @@ namespace EM_Analyzer.ModelClasses
                 }
 
             }
+            var z = fixationSetToFixationListDictionary;
             return 0;
         }
 
-        public static void CleanAllFixationBeforeFirstAOI()
+        public static void CleanAllFixationBeforeFirstAOIInText()
         {
             List<Fixation>[] values = fixationSetToFixationListDictionary.Values.ToArray();
             foreach (List<Fixation> fixationList in values)
@@ -147,6 +154,20 @@ namespace EM_Analyzer.ModelClasses
                 int firstFixaitionAtFirstAOI = fixationList.FindIndex(fix => fix.AOI_Group_Before_Change == 1);
                 if (firstFixaitionAtFirstAOI > 0)
                     fixationList.RemoveRange(0, firstFixaitionAtFirstAOI);
+            }
+        }
+        public static void CleanAllFixationBeforeFirstAOIInPage()
+        {
+            List<Fixation>[] values = fixationSetToFixationListDictionary.Values.ToArray();
+            List<string> keys = fixationSetToFixationListDictionary.Keys.ToList();
+            int i = 0;
+            foreach (List<Fixation> fixationList in values)
+            {
+                int firstAOI = minimumAOIGroupOfFixationSet[keys[i]];
+                int firstFixaitionAtFirstAOI = fixationList.FindIndex(fix => fix.AOI_Group_Before_Change == firstAOI);
+                if (firstFixaitionAtFirstAOI > 0)
+                    fixationList.RemoveRange(0, firstFixaitionAtFirstAOI);
+                i++;
             }
         }
         public static bool IsLeagalFirstPassFixations(CountedAOIFixations countedAOIFixations)

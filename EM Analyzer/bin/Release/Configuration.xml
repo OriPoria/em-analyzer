@@ -11,6 +11,9 @@
   <Minimum_Number_Of_Fixations_For_First_Pass>2</Minimum_Number_Of_Fixations_For_First_Pass>
   <Minimum_Duration_Of_Fixation_For_First_Pass>150</Minimum_Duration_Of_Fixation_For_First_Pass>
   
+  <Minimum_Number_Of_Fixations_For_Skip>2</Minimum_Number_Of_Fixations_For_Skip>
+  <Minimum_Duration_Of_Fixation_For_Skip>150</Minimum_Duration_Of_Fixation_For_Skip>
+  
   <Number_Of_Fixations_In_AOI_For_Exception>4</Number_Of_Fixations_In_AOI_For_Exception>
   
   <Number_Of_Fixations_Out_Of_AOI_For_Exception>1</Number_Of_Fixations_Out_Of_AOI_For_Exception>
@@ -21,14 +24,12 @@
 
   <!--
     Remove_Fixations_Appeared_Before_First_AOI:
-      No = 0,
-      Yes = 1
+      No = 1,
+      First Page = 2,
+	  Every Page = 3
   -->
   <Remove_Fixations_Appeared_Before_First_AOI>1</Remove_Fixations_Appeared_Before_First_AOI>
   
-  
-  <Minimum_Number_Of_Fixations_For_Skip>2</Minimum_Number_Of_Fixations_For_Skip>
-  <Minimum_Duration_Of_Fixation_For_Skip>150</Minimum_Duration_Of_Fixation_For_Skip>
 
   <Standard_Deviation>2.5</Standard_Deviation>
   

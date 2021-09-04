@@ -8,6 +8,9 @@ namespace EM_Analyzer.ExcelsFilesMakers
         public static int startCondsInx = 7;
         public static int PossibleConds = 35;
         public static int aoiTargetCol = 6;
+        public static int aoiSecondFileGroupCol = 5;
+        public static int wordIndexFirstFileCol = 4;
+
 
         public static List<string> parseSpecialName(string s)
         {
