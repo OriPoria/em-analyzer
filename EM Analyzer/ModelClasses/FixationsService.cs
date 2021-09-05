@@ -166,7 +166,7 @@ namespace EM_Analyzer.ModelClasses
                 int fixationsNumber = fixationList.Count;
                 for (i = 0; i < fixationsNumber; i++)
                 {
-                    eventDurationSum += fixationList[0].Event_Duration;
+                    eventDurationSum += fixationList[i].Event_Duration;
                     if (eventDurationSum > timeLimit)
                     {
                         fixationList.RemoveRange(i, fixationsNumber - i);
