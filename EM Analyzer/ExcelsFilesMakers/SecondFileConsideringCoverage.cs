@@ -603,7 +603,10 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
             [Description("Pupil Diameter [mm]")]
             public string Pupil_Diameter { get; set; }
-
+            [Description("Length")]
+            public int Length { get => AOIAfterCoverage.Length; }
+            [Description("Frequency")]
+            public int Frequency { get => AOIAfterCoverage.Frequency; }
             public AIOClassAfterCoverageForExcel(AIOClassAfterCoverage AOIClassAfterCoverage)
             {
                 this.AOIAfterCoverage = AOIClassAfterCoverage;
