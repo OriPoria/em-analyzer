@@ -21,6 +21,16 @@
   <!-- Second_File_Filtering_denominator :enter the value-denominator-  with nothing = 0 ,Mean_AOI_Size = 1,Mean_AOI_Coverage = 2-->
   <Second_File_Filtering_denominator>0</Second_File_Filtering_denominator>
 
+  <!--
+    Remove_Fixations_Appeared_Before_First_AOI:
+      Preview = 1,
+      Full = 2
+  -->
+  <Analyze_Extent>2</Analyze_Extent>
+  <PreviewLimit>
+	<Fixed_Time>800</Fixed_Time>
+	<Proportional_Time>20</Proportional_Time>
+  </PreviewLimit>
 
   <!--
     Remove_Fixations_Appeared_Before_First_AOI:

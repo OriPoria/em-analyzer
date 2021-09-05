@@ -15,11 +15,7 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
     {
         public static Dictionary<string, AOIDetails> nameToAOIPhrasesDetailsDictionary = new Dictionary<string, AOIDetails>();
         public static Dictionary<int, string> groupPhraseToSpecialName = new Dictionary<int, string>();
-        
-        public static Dictionary<string, AOIDetails> nameToAOIWordsDetailsDictionary = new Dictionary<string, AOIDetails>();
-        public static Dictionary<int, string> groupWordToSpecialName = new Dictionary<int, string>();
-
-        //        public static bool isAOIIncludeStimulus = false;
+       
         public string Stimulus { get; set; }
         public int Name { get; set; }
         public int Group { get; set; }

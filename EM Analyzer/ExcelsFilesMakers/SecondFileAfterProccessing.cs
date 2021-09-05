@@ -660,7 +660,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 if (type == AOITypes.Phrases)
                     this.AOI_Target = AOIDetails.groupPhraseToSpecialName.ContainsKey(AOI_Group) ? AOIDetails.groupPhraseToSpecialName[AOI_Group] : null;
                 else
-                    this.AOI_Target = AOIDetails.groupWordToSpecialName.ContainsKey(AOI_Group) ? AOIDetails.groupWordToSpecialName[AOI_Group] : null;
+                    this.AOI_Target = AOIWordDetails.groupWordToSpecialName.ContainsKey(AOI_Group) ? AOIWordDetails.groupWordToSpecialName[AOI_Group] : null;
                 if (this.AOI_Target != null)
                 {
                     List<string> sNames = Constans.parseSpecialName(AOI_Target);

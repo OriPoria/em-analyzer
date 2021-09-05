@@ -49,7 +49,7 @@ namespace EM_Analyzer.Services
             using (var wb = new ExcelPackage())
             {
                 ExcelWorksheet ws = wb.Workbook.Worksheets.Add("Inserting Tables");
-                string textDataName = FixationsService.phrasesTextFileName.Substring(0, FixationsService.phrasesTextFileName.Length - 6);
+
                 String islogs = "Logs";
                 String isFiltered = "AOI - Filtered";
                 if (!fileName.Contains(islogs))
@@ -71,7 +71,7 @@ namespace EM_Analyzer.Services
                     {
                         if (fileName.Contains(isFiltered))
                         {
-                            string path = FixationsService.outputPath + "/" + textDataName + " - Filters";
+                            string path = FixationsService.outputPath + "/" + FixationsService.outputTextString + " - Filters";
                             if (!Directory.Exists(path))
                             {
                                 DirectoryInfo di = Directory.CreateDirectory(path);
@@ -79,7 +79,8 @@ namespace EM_Analyzer.Services
                             wb.SaveAs(new FileInfo(path + "/" + fileName + ConfigurationService.ExcelFilesExtension));
                         }
                         else
-                            wb.SaveAs(new FileInfo(FixationsService.outputPath + "/" + textDataName + " - " + fileName + ConfigurationService.ExcelFilesExtension));
+                            wb.SaveAs(new FileInfo(FixationsService.outputPath + "/" + FixationsService.outputTextString
+                                + " - " + fileName + ConfigurationService.ExcelFilesExtension));
                         dialogResult = DialogResult.Abort;
                     }
                     catch (InvalidOperationException e)

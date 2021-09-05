@@ -45,6 +45,7 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
 
             try
             {
+                // the index of word column
                 Name = int.Parse(enumerator.Current);
             }
             catch
@@ -56,7 +57,7 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
 
             try
             {
-
+                // group has no usage
             }
             catch
             {
@@ -113,7 +114,7 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
             if ((count == 10 && includeFrequency) || (count == 9 && !includeFrequency))
             {
                 SpecialNmae = enumerator.Current;
-                groupWordToSpecialName[Group] = SpecialNmae;
+                groupWordToSpecialName[Name] = SpecialNmae;
                 enumerator.MoveNext();
             }
 

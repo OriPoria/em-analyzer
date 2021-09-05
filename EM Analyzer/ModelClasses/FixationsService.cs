@@ -19,12 +19,19 @@ namespace EM_Analyzer.ModelClasses
         public static Dictionary<string, List<Fixation>> fixationSetToFixationListDictionary = new Dictionary<string, List<Fixation>>();
         public static Dictionary<string, int> minimumAOIGroupOfFixationSet = new Dictionary<string, int>();
 
+        public static int Fixed_Time = int.Parse(ConfigurationService.FixedTime);
+        public static double Proportional_Time = double.Parse(ConfigurationService.ProportionalTime);
+
         public static Dictionary<string, List<WordIndex>> wordIndexSetToFixationListDictionary = new Dictionary<string, List<WordIndex>>();
+
         public static string phrasesTextFileName = "";
         public static string wordsTextFileName = "";
         public static string phrasesExcelFileName = "";
         public static string wordsExcelFileName = "";
         public static string outputPath = "";
+        public static string outputTextString = "";
+
+
         public static List<string> tableColumns;
         public static DealingWithExceptionsEnum dealingWithInsideExceptions = (DealingWithExceptionsEnum)int.Parse(ConfigurationService.DealingWithExceptionsInsideTheLimit);
         public static DealingWithExceptionsOutBoundsEnum dealingWithOutsideExceptions = (DealingWithExceptionsOutBoundsEnum)int.Parse(ConfigurationService.DealingWithExceptionsOutsideTheLimit);
@@ -47,6 +54,10 @@ namespace EM_Analyzer.ModelClasses
 
         public static List<CountedAOIFixations> ConvertFixationListToCoutedListByPhrase(List<Fixation> fixations)
         {
+            if (fixations.Count == 0)
+            {
+                var x = 3;
+            }
             List<CountedAOIFixations> countedAOIFixations = new List<CountedAOIFixations>();
             Fixation prevFixation = fixations.First();
             CountedAOIFixations currentCountedAOIFixations = new CountedAOIFixations() { AOI_Group = fixations.First().AOI_Group_After_Change, Count = 0, Fixations = new List<Fixation>() };
@@ -141,10 +152,30 @@ namespace EM_Analyzer.ModelClasses
                 }
 
             }
-            var z = fixationSetToFixationListDictionary;
             return 0;
         }
-
+        public static void CleanFixationsForPreview()
+        {
+            List<Fixation>[] values = fixationSetToFixationListDictionary.Values.ToArray();
+            int tempInt = 1;
+            foreach (List<Fixation> fixationList in values)
+            {
+                double timeLimit = tempInt == 1 ? Fixed_Time : fixationList.Sum(fix => fix.Event_Duration) * (Proportional_Time / 100);
+                double eventDurationSum = 0;
+                int i = 0;
+                int fixationsNumber = fixationList.Count;
+                for (i = 0; i < fixationsNumber; i++)
+                {
+                    eventDurationSum += fixationList[0].Event_Duration;
+                    if (eventDurationSum > timeLimit)
+                    {
+                        fixationList.RemoveRange(i, fixationsNumber - i);
+                        break;
+                    }
+                }
+            }
+            RemoveEmptyValuesFromFixationSetDictionary();
+        }
         public static void CleanAllFixationBeforeFirstAOIInText()
         {
             List<Fixation>[] values = fixationSetToFixationListDictionary.Values.ToArray();
@@ -156,6 +187,7 @@ namespace EM_Analyzer.ModelClasses
                     fixationList.RemoveRange(0, firstFixaitionAtFirstAOI);
             }
         }
+
         public static void CleanAllFixationBeforeFirstAOIInPage()
         {
             List<Fixation>[] values = fixationSetToFixationListDictionary.Values.ToArray();
@@ -416,6 +448,15 @@ namespace EM_Analyzer.ModelClasses
                     }
                 }
             }
+        }
+
+        public static void RemoveEmptyValuesFromFixationSetDictionary()
+        {
+            List<string> todelete = fixationSetToFixationListDictionary.Keys.
+                Where(k => fixationSetToFixationListDictionary[k].Count == 0).ToList();
+            todelete.ForEach(k => fixationSetToFixationListDictionary.Remove(k));
+            var x = fixationSetToFixationListDictionary;
+
         }
         public static void ClearPreviousFixation(List<Fixation> fixations)
         {

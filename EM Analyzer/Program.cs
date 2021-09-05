@@ -152,13 +152,13 @@ namespace EM_Analyzer
                 phrasesTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\2pars_c.txt";
                 wordsTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\2pars_w.txt";
             }
-
             readingExcelFile.Join();
             FixationsService.phrasesExcelFileName = phrasesExcelFilePath.Substring(phrasesExcelFilePath.LastIndexOf(@"\") + 1);
             FixationsService.wordsExcelFileName = wordsExcelFilePath.Substring(wordsExcelFilePath.LastIndexOf(@"\") + 1);
             FixationsService.phrasesTextFileName = phrasesTextFilePath.Substring(phrasesTextFilePath.LastIndexOf(@"\") + 1);
             FixationsService.wordsTextFileName = wordsTextFilePath.Substring(wordsTextFilePath.LastIndexOf(@"\") + 1);
             FixationsService.outputPath = phrasesExcelFilePath.Substring(0, phrasesExcelFilePath.LastIndexOf(@"\"));
+            FixationsService.outputTextString = FixationsService.phrasesTextFileName.Substring(0, FixationsService.phrasesTextFileName.Length - 6);
             ReadTextFilePhrase(phrasesTextFilePath);
             ReadTextFileWord(wordsTextFilePath);
             FixationsService.DealWithSeparatedAOIs();
@@ -167,12 +167,26 @@ namespace EM_Analyzer
             int status = FixationsService.UnifyDictionaryWithWordIndex();
             if (status == -1)
                 return;
-            if (int.Parse(ConfigurationService.RemoveFixationsAppearedBeforeFirstAOI) == 2)
-                FixationsService.CleanAllFixationBeforeFirstAOIInText(); 
-            else if (int.Parse(ConfigurationService.RemoveFixationsAppearedBeforeFirstAOI) == 3)
-                FixationsService.CleanAllFixationBeforeFirstAOIInPage();
-            FixationsService.SearchForExceptions();
+            /*
+             * After UnifyDictionaryWithWordIndex function, FixationsService.fixationSetToFixationListDictionary hold 
+             * the fixations with all the details, include AOI's and word index
+             */
 
+            // if AnalyzeExtent is 1-> create only preview of fixations
+            if (int.Parse(ConfigurationService.AnalyzeExtent) == 1)
+            {
+                FixationsService.outputTextString += " - Preview";
+                FixationsService.CleanFixationsForPreview();
+            }
+            // if AnalyzeExtent is 2-> create full outputs
+            else if (int.Parse(ConfigurationService.AnalyzeExtent) == 2)
+            {
+                if (int.Parse(ConfigurationService.RemoveFixationsAppearedBeforeFirstAOI) == 2)
+                    FixationsService.CleanAllFixationBeforeFirstAOIInText();
+                else if (int.Parse(ConfigurationService.RemoveFixationsAppearedBeforeFirstAOI) == 3)
+                    FixationsService.CleanAllFixationBeforeFirstAOIInPage();
+            }
+            FixationsService.SearchForExceptions();
             FirstFileAfterProccessing.MakeExcelFile();
             Console.WriteLine("First File: " + ConfigurationService.FirstExcelFileName + " Finished!!! ");
             FixationsService.DealWithExceptions();

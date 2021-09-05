@@ -33,7 +33,11 @@ namespace EM_Analyzer.ModelClasses
         public const string Minimum_Duration_Of_Fixation_For_Skip = "Minimum_Duration_Of_Fixation_For_Skip";
         
         public const string Second_File_Filtering_denominator = "Second_File_Filtering_denominator";
-        //Logs_Excel_File_Name
+
+        public const string Analyze_Extent = "Analyze_Extent";
+        public const string Fixed_Time = "Fixed_Time";
+        public const string Proportional_Time = "Proportional_Time";
+
 
         static XmlDocument doc = new XmlDocument();
 
@@ -68,5 +72,9 @@ namespace EM_Analyzer.ModelClasses
         public static string MinimumNumberOfFixationsForSkip {  get { return GetValue(Minimum_Number_Of_Fixations_For_Skip); } }
         public static string MinimumDurationOfFixationForSkip { get { return GetValue(Minimum_Duration_Of_Fixation_For_Skip); } }
         public static string SecondFileFilteringDenominator { get { return GetValue(Second_File_Filtering_denominator); } }
+        public static string AnalyzeExtent { get { return GetValue(Analyze_Extent); } }
+        public static string FixedTime { get { return GetValue(Fixed_Time); } }
+        public static string ProportionalTime { get { return GetValue(Proportional_Time); } }
+
     }
 }
