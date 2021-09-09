@@ -42,7 +42,6 @@ namespace EM_Analyzer
 
             string phrasesExcelFilePath = "";
             string wordsExcelFilePath = "";
-
             
             if (!testMode)
             {

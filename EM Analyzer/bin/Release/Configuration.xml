@@ -22,15 +22,20 @@
   <Second_File_Filtering_denominator>0</Second_File_Filtering_denominator>
 
   <!--
-    Remove_Fixations_Appeared_Before_First_AOI:
+    Analyze_Extent:
       Preview = 1,
       Full = 2
   -->
-  <Analyze_Extent>2</Analyze_Extent>
-  <PreviewLimit>
-	<Fixed_Time>800</Fixed_Time>
-	<Proportional_Time>20</Proportional_Time>
-  </PreviewLimit>
+  <Analyze_Extent>1</Analyze_Extent>
+  
+  <!--
+  Preview_Limit:
+	Fixed_Time_In_sec = 1,
+	Percentage_of_Participant_Time = 2
+  -->
+  <Preview_Limit>1</Preview_Limit>
+	<Fixed_Time_In_sec>800.4</Fixed_Time_In_sec>
+	<Percentage_of_Participant_Time>20</Percentage_of_Participant_Time>
 
   <!--
     Remove_Fixations_Appeared_Before_First_AOI:
@@ -38,7 +43,7 @@
       First Page = 2,
 	  Every Page = 3
   -->
-  <Remove_Fixations_Appeared_Before_First_AOI>1</Remove_Fixations_Appeared_Before_First_AOI>
+  <Remove_Fixations_Appeared_Before_First_AOI>3</Remove_Fixations_Appeared_Before_First_AOI>
   
 
   <Standard_Deviation>2.5</Standard_Deviation>

@@ -19,8 +19,9 @@ namespace EM_Analyzer.ModelClasses
         public static Dictionary<string, List<Fixation>> fixationSetToFixationListDictionary = new Dictionary<string, List<Fixation>>();
         public static Dictionary<string, int> minimumAOIGroupOfFixationSet = new Dictionary<string, int>();
 
-        public static int Fixed_Time = int.Parse(ConfigurationService.FixedTime);
-        public static double Proportional_Time = double.Parse(ConfigurationService.ProportionalTime);
+        public static int Preview_Limit = int.Parse(ConfigurationService.PreviewLimit);
+        public static double Fixed_Time = double.Parse(ConfigurationService.FixedTimeInSec);
+        public static double Proportional_Time = double.Parse(ConfigurationService.PercentageOfParticipantTime);
 
         public static Dictionary<string, List<WordIndex>> wordIndexSetToFixationListDictionary = new Dictionary<string, List<WordIndex>>();
 
@@ -157,10 +158,9 @@ namespace EM_Analyzer.ModelClasses
         public static void CleanFixationsForPreview()
         {
             List<Fixation>[] values = fixationSetToFixationListDictionary.Values.ToArray();
-            int tempInt = 1;
             foreach (List<Fixation> fixationList in values)
             {
-                double timeLimit = tempInt == 1 ? Fixed_Time : fixationList.Sum(fix => fix.Event_Duration) * (Proportional_Time / 100);
+                double timeLimit = Preview_Limit == 1 ? Fixed_Time : fixationList.Sum(fix => fix.Event_Duration) * (Proportional_Time / 100);
                 double eventDurationSum = 0;
                 int i = 0;
                 int fixationsNumber = fixationList.Count;

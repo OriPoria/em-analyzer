@@ -35,8 +35,10 @@ namespace EM_Analyzer.ModelClasses
         public const string Second_File_Filtering_denominator = "Second_File_Filtering_denominator";
 
         public const string Analyze_Extent = "Analyze_Extent";
-        public const string Fixed_Time = "Fixed_Time";
-        public const string Proportional_Time = "Proportional_Time";
+
+        public const string Preview_Limit = "Preview_Limit";
+        public const string Fixed_Time_In_sec = "Fixed_Time_In_sec";
+        public const string Percentage_of_Participant_Time = "Percentage_of_Participant_Time";
 
 
         static XmlDocument doc = new XmlDocument();
@@ -73,8 +75,9 @@ namespace EM_Analyzer.ModelClasses
         public static string MinimumDurationOfFixationForSkip { get { return GetValue(Minimum_Duration_Of_Fixation_For_Skip); } }
         public static string SecondFileFilteringDenominator { get { return GetValue(Second_File_Filtering_denominator); } }
         public static string AnalyzeExtent { get { return GetValue(Analyze_Extent); } }
-        public static string FixedTime { get { return GetValue(Fixed_Time); } }
-        public static string ProportionalTime { get { return GetValue(Proportional_Time); } }
+        public static string PreviewLimit { get { return GetValue(Preview_Limit); } }
+        public static string FixedTimeInSec { get { return GetValue(Fixed_Time_In_sec); } }
+        public static string PercentageOfParticipantTime { get { return GetValue(Percentage_of_Participant_Time); } }
 
     }
 }
