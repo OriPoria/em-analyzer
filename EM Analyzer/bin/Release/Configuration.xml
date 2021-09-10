@@ -26,7 +26,7 @@
       Preview = 1,
       Full = 2
   -->
-  <Analyze_Extent>1</Analyze_Extent>
+  <Analyze_Extent>2</Analyze_Extent>
   
   <!--
   Preview_Limit:

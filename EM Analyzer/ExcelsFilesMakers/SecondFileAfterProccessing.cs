@@ -686,10 +686,6 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
             }
 
-            public string GetDictionaryKey()
-            {
-                return this.Participant + '\t' + this.Trial + '\t' + this.Stimulus + '\t' + this.AOI_Group;
-            }
 
 
         }

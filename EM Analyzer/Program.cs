@@ -22,7 +22,7 @@ namespace EM_Analyzer
             int chosenOption = 1;
             string input;
             bool isOptionOK;
-            bool testMode = false;
+            bool testMode = true;
             if (!testMode)
             {
                 do
@@ -79,8 +79,8 @@ namespace EM_Analyzer
             // Test mode- choose ahead the files
             else
             {
-                phrasesExcelFilePath = @"C:\Users\oripo\Desktop\work\EyeTracker\AOI_boundaries-ELIZABETH_1_p1_c.xlsx";
-                wordsExcelFilePath = @"C:\Users\oripo\Desktop\work\EyeTracker\AOI_boundaries-ELIZABETH_1_p1_w.xlsx";
+                phrasesExcelFilePath = @"C:\Users\oripo\Desktop\work\EyeTracker\AOI_boundaries-ELIZABETH_1_c.xlsx";
+                wordsExcelFilePath = @"C:\Users\oripo\Desktop\work\EyeTracker\AOI_boundaries-ELIZABETH_1_w.xlsx";
             }
 
             if (chosenOption == 3)
@@ -148,8 +148,8 @@ namespace EM_Analyzer
             // Test mode- choose ahead the files
             else
             {
-                phrasesTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\2pars_c.txt";
-                wordsTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\2pars_w.txt";
+                phrasesTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\20lines_1stimulus_c.txt";
+                wordsTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\20lines_1stimulus_w.txt";
             }
             readingExcelFile.Join();
             FixationsService.phrasesExcelFileName = phrasesExcelFilePath.Substring(phrasesExcelFilePath.LastIndexOf(@"\") + 1);
