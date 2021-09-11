@@ -450,7 +450,22 @@ namespace EM_Analyzer.ModelClasses
                 }
             }
         }
+        public static Dictionary<string, List<Fixation>> GetFixationSetDictionayByText() {
+            Dictionary<string, List<Fixation>> fixationsTextParticipant = new Dictionary<string, List<Fixation>>();
 
+            // grouping the fixations of each participant from all the trials (pages)
+            fixationsTextParticipant = fixationSetToFixationListDictionary.GroupBy(ExtractParticipantTextKey)
+                    .ToDictionary(group => group.Key,
+                                group => {
+                                    List<List<Fixation>> values = new List<List<Fixation>>();
+                                    var dic = group.ToDictionary(pair => pair.Key, pair => pair.Value);
+                                    foreach (var item in dic.Values)
+                                        values.Add(item);
+                                    return values.SelectMany(fixList => fixList).ToList();
+                                });
+            SortDictionary();
+            return fixationsTextParticipant;
+        }
         public static void RemoveEmptyValuesFromFixationSetDictionary()
         {
             List<string> todelete = fixationSetToFixationListDictionary.Keys.
