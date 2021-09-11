@@ -43,7 +43,7 @@
       First Page = 2,
 	  Every Page = 3
   -->
-  <Remove_Fixations_Appeared_Before_First_AOI>3</Remove_Fixations_Appeared_Before_First_AOI>
+  <Remove_Fixations_Appeared_Before_First_AOI>1</Remove_Fixations_Appeared_Before_First_AOI>
   
 
   <Standard_Deviation>2.5</Standard_Deviation>

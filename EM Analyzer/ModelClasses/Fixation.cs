@@ -16,6 +16,11 @@ namespace EM_Analyzer.ModelClasses
         public string Trial { get; set; }
         [Description("Stimulus")]
         public string Stimulus { get; set; }
+        [EpplusIgnore]
+        public string[] Stimulus_Tokens { get; set; }
+        [EpplusIgnore]
+        public int Page { get; set; }
+
         //[XLColumn(Ignore = true)]
         [EpplusIgnore]
         public Fixation Previous_Fixation { get; set; }
@@ -53,7 +58,7 @@ namespace EM_Analyzer.ModelClasses
         {
             get
             {
-                return AOIsService.nameToAOIPhrasesDictionary[AOI_Name + Stimulus];
+                return AOIsService.nameToAOIPhrasesDictionary[AOI_Name + Stimulus_Tokens[0]];
             }
         }
         [EpplusIgnore]
@@ -61,7 +66,7 @@ namespace EM_Analyzer.ModelClasses
         {
             get
             {
-                return AOIWordDetails.nameToAOIWordsDetailsDictionary[Word_Index + Stimulus];
+                return AOIWordDetails.nameToAOIWordsDetailsDictionary[Word_Index + Stimulus_Tokens[0]];
 
             }
         }
@@ -82,8 +87,26 @@ namespace EM_Analyzer.ModelClasses
             {
                 Trial = arr[TextFileColumnIndexes.Trial].Trim(),
                 Stimulus = arr[TextFileColumnIndexes.Stimulus].Trim(),
-                Participant = arr[TextFileColumnIndexes.Participant].Trim()
+                Participant = arr[TextFileColumnIndexes.Participant].Trim(),
             };
+            try
+            {
+                newFixation.Stimulus_Tokens = newFixation.Stimulus.Split(' ');
+            }
+            catch
+            {
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Page Tokens", arr[TextFileColumnIndexes.Event_Duration], lineNumber));
+                isFixationValid = false;
+            }
+            try
+            {
+                newFixation.Page = int.Parse(newFixation.Stimulus_Tokens[newFixation.Stimulus_Tokens.Length - 1]);
+            }
+            catch
+            {
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Page", arr[TextFileColumnIndexes.Event_Duration], lineNumber));
+                isFixationValid = false;
+            }
 
             try
             {
@@ -213,75 +236,6 @@ namespace EM_Analyzer.ModelClasses
 
 
             return newFixation;
-
-        }
-        public static WordIndex CreateWordIndexFromStringArray(string[] arr, uint lineNumber)
-        {
-            Fixation newFixation = new Fixation
-            {
-                Trial = arr[TextFileColumnIndexes.Trial].Trim(),
-                Stimulus = arr[TextFileColumnIndexes.Stimulus].Trim(),
-                Participant = arr[TextFileColumnIndexes.Participant].Trim()
-            };
-            WordIndex wordIndex = new WordIndex();
-            bool isValid = true;
-            try
-            {
-                newFixation.Event_Duration = double.Parse(arr[TextFileColumnIndexes.Event_Duration]);
-                if (newFixation.Event_Duration < minimumDuration || newFixation.Event_Duration > maximumDuration)
-                    return null;
-            }
-
-            catch
-            {
-                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Event Duration", arr[TextFileColumnIndexes.Event_Duration], lineNumber));
-                isValid = false;
-            }
-
-            try
-            {
-                wordIndex.Group = int.Parse(arr[TextFileColumnIndexes.AOI_Group]);
-            }
-            catch
-            {
-                wordIndex.Group = -1;
-            }
-            try
-            {
-                wordIndex.Index = long.Parse(arr[TextFileColumnIndexes.Index]);
-            }
-            catch
-            {
-                isValid = false;
-                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Index", arr[TextFileColumnIndexes.Index], lineNumber));
-            }
-            try
-            {
-                wordIndex.AOI_Word_Size = long.Parse(arr[TextFileColumnIndexes.AOI_Size]);
-            }
-            catch (Exception)
-            {
-                isValid = false;
-                ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI_Size", arr[TextFileColumnIndexes.AOI_Size], lineNumber));
-            }
-            try
-            {
-                wordIndex.AOI_Coverage_In_Percents = double.Parse(arr[TextFileColumnIndexes.AOI_Coverage]);
-            }
-            catch
-            {
-                ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI_Coverage", arr[TextFileColumnIndexes.AOI_Coverage], lineNumber));
-                isValid = false;
-            }
-            if (!isValid)
-                return null;
-            
-            string dictionatyKey = newFixation.GetDictionaryKey();
-            if (!FixationsService.wordIndexSetToFixationListDictionary.ContainsKey(dictionatyKey))
-                FixationsService.wordIndexSetToFixationListDictionary[dictionatyKey] = new List<WordIndex>();
-            FixationsService.wordIndexSetToFixationListDictionary[dictionatyKey].Add(wordIndex);
-
-            return wordIndex;
 
         }
         public string GetDictionaryKey()

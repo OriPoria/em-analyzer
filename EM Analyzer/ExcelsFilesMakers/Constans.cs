@@ -5,11 +5,11 @@ namespace EM_Analyzer.ExcelsFilesMakers
 {
     public class Constans
     {
-        public static int startCondsInx = 7;
-        public static int PossibleConds = 35;
-        public static int aoiTargetCol = 6;
-        public static int aoiSecondFileGroupCol = 5;
-        public static int wordIndexFirstFileCol = 4;
+        public static int secondFileStartCondsInx = 6;
+        public static int secondFilePossibleConds = 35;
+        public static int secondFileAoiTargetCol = 5;
+        public static int secondFileAoiGroupCol = 4;
+        public static int firstFileWordIndexCol = 4;
 
 
         public static List<string> parseSpecialName(string s)

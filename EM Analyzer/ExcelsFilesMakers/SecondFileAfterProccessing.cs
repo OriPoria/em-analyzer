@@ -54,7 +54,6 @@ namespace EM_Analyzer.ExcelsFilesMakers
                         Fixation fixationInAOI = countedAOIFixations.Fixations.First();
                         AOIClass.instancesDictionary[dictionatyKey] =
                             new AOIClass(
-                                fixationInAOI.Trial,
                                 fixationInAOI.Stimulus,
                                 fixationInAOI.Participant,
                                 countedAOIFixations.AOI_Group,
@@ -98,7 +97,6 @@ namespace EM_Analyzer.ExcelsFilesMakers
                         {
                             AOIClass.instancesDictionary[dictionatyKey] =
                             new AOIClass(
-                                prevFixationInAOI.Trial,
                                 prevFixationInAOI.Stimulus,
                                 prevFixationInAOI.Participant,
                                 GetAOIByType(prevFixationInAOI, currentType),
@@ -157,8 +155,6 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
             [Description("Participant")]
             public string Participant { get; set; }
-            [Description("Trial")]
-            public string Trial { get; set; }
             [Description("Stimulus")]
             public string Stimulus { get; set; }
             [Description("Text Name")]
@@ -651,9 +647,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
             }
 
 
-            public AOIClass(string Trial, string Stimulus, string Participant, int AOI_Group, bool Skip, AOITypes type)
+            public AOIClass( string Stimulus, string Participant, int AOI_Group, bool Skip, AOITypes type)
             {
-                this.Trial = Trial;
                 this.Stimulus = Stimulus;
                 this.Participant = Participant;
                 this.AOI_Group = AOI_Group;

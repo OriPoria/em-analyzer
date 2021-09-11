@@ -44,8 +44,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
             for (int i = 2; i <= ws.Dimension.Rows; i++)
             {
                 // change figure AOI group label from 0 to "figure"
-                if (ws.Cells[i, Constans.wordIndexFirstFileCol].Value.ToString() == "0")
-                    ws.Cells[i, Constans.wordIndexFirstFileCol].Value = "figure";
+                if (ws.Cells[i, Constans.firstFileWordIndexCol].Value.ToString() == "0")
+                    ws.Cells[i, Constans.firstFileWordIndexCol].Value = "figure";
 
             }
             return 0;

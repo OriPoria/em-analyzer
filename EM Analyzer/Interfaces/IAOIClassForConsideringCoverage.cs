@@ -11,8 +11,7 @@ namespace EM_Analyzer.Interfaces
     {
         [Description("Participant")]
         string Participant { get; }
-        [Description("Trial")]
-        string Trial { get; }
+
         [Description("Stimulus")]
         string Stimulus { get; }
         [Description("Text Name")]

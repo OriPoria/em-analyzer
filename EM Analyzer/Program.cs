@@ -148,8 +148,8 @@ namespace EM_Analyzer
             // Test mode- choose ahead the files
             else
             {
-                phrasesTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\20lines_1stimulus_c.txt";
-                wordsTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\20lines_1stimulus_w.txt";
+                phrasesTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\20lines_c.txt";
+                wordsTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\20lines_w.txt";
             }
             readingExcelFile.Join();
             FixationsService.phrasesExcelFileName = phrasesExcelFilePath.Substring(phrasesExcelFilePath.LastIndexOf(@"\") + 1);
@@ -170,6 +170,7 @@ namespace EM_Analyzer
              * After UnifyDictionaryWithWordIndex function, FixationsService.fixationSetToFixationListDictionary hold 
              * the fixations with all the details, include AOI's and word index
              */
+            var x = FixationsService.fixationSetToFixationListDictionary;
 
             // if AnalyzeExtent is 1-> create only preview of fixations
             if (int.Parse(ConfigurationService.AnalyzeExtent) == 1)
@@ -240,7 +241,7 @@ namespace EM_Analyzer
             for (uint j = 1; j < wordsLines.Length; j++)
             {
                 string[] columns = wordsLines[j].Split('\t');
-                Fixation.CreateWordIndexFromStringArray(columns, j);
+                WordIndex.CreateWordIndexFromStringArray(columns, j);
             }
             foreach (string participant in participants)
             {

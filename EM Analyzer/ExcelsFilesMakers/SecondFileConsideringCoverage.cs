@@ -136,24 +136,24 @@ namespace EM_Analyzer.ExcelsFilesMakers
         }
         public static int EditExcel(ExcelWorksheet ws)
         {
-            ws.InsertColumn(Constans.startCondsInx, AOIClass.maxConditions);
-            for (int i = Constans.startCondsInx; i < Constans.startCondsInx + AOIClass.maxConditions; i++)
-                ws.Cells[1, i].Value = $"Cond{i - 6}";
+            ws.InsertColumn(Constans.secondFileStartCondsInx, AOIClass.maxConditions);
+            for (int i = Constans.secondFileStartCondsInx; i < Constans.secondFileStartCondsInx + AOIClass.maxConditions; i++)
+                ws.Cells[1, i].Value = $"Cond{i - Constans.secondFileStartCondsInx + 1}";
             for (int i = 2; i <= ws.Dimension.Rows; i++)
             {
-                if (ws.Cells[i, Constans.aoiTargetCol].Value != null)
+                if (ws.Cells[i, Constans.secondFileAoiTargetCol].Value != null)
                 {
-                    List<string> sNames = Constans.parseSpecialName(ws.Cells[i, Constans.aoiTargetCol].Value.ToString());
+                    List<string> sNames = Constans.parseSpecialName(ws.Cells[i, Constans.secondFileAoiTargetCol].Value.ToString());
                     int k = 0;
-                    for (int j = Constans.startCondsInx; j < sNames.Count + Constans.startCondsInx; j++)
+                    for (int j = Constans.secondFileStartCondsInx; j < sNames.Count + Constans.secondFileStartCondsInx; j++)
                     {
                         ws.Cells[i, j].Value = sNames[k];
                         k++;
                     }
                 }
                 // change figure AOI group label from 0 to "figure"
-                if (ws.Cells[i, Constans.aoiSecondFileGroupCol].Value.ToString() == "0")
-                    ws.Cells[i, Constans.aoiSecondFileGroupCol].Value = "figure";
+                if (ws.Cells[i, Constans.secondFileAoiGroupCol].Value.ToString() == "0")
+                    ws.Cells[i, Constans.secondFileAoiGroupCol].Value = "figure";
 
             }
             // removes frequency and length column
@@ -226,8 +226,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
             [Description("Participant")]
             public string Participant { get => AOI.Participant; }
-            [Description("Trial")]
-            public string Trial { get => AOI.Trial; }
+
             [Description("Stimulus")]
             public string Stimulus { get => AOI.Stimulus; }
             [Description("Text Name")]
@@ -532,8 +531,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
             [Description("Participant")]
             public string Participant { get => AOIAfterCoverage.Participant; }
-            [Description("Trial")]
-            public string Trial { get => AOIAfterCoverage.Trial; }
+
             [Description("Stimulus")]
             public string Stimulus { get => AOIAfterCoverage.Stimulus; }
             [Description("Text Name")]
@@ -614,7 +612,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
             public static bool operator == (AIOClassAfterCoverageForExcel lhs, AIOClassAfterCoverageForExcel rhs)
             {
-                if (lhs.Participant == rhs.Participant && lhs.Trial == rhs.Trial && lhs.Stimulus == rhs.Stimulus
+                if (lhs.Participant == rhs.Participant && lhs.Stimulus == rhs.Stimulus
                     && lhs.Text_Name == rhs.Text_Name && lhs.AOI_Group == rhs.AOI_Group && lhs.Total_Fixation_Duration == rhs.Total_Fixation_Duration &&
                     lhs.Total_Fixation_Number == rhs.Total_Fixation_Number && lhs.First_Fixation_Duration == rhs.First_Fixation_Duration && lhs.First_Pass_Duration == rhs.First_Pass_Duration
                         && lhs.First_Pass_Number == rhs.First_Pass_Number && lhs.First_Pass_Progressive_Duration == rhs.First_Pass_Progressive_Duration && lhs.First_Pass_Progressive_Number == rhs.First_Pass_Progressive_Number &&
@@ -629,7 +627,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             }
             public static bool operator != (AIOClassAfterCoverageForExcel lhs, AIOClassAfterCoverageForExcel rhs)
             {
-                if (lhs.Participant == rhs.Participant && lhs.Trial == rhs.Trial && lhs.Stimulus == rhs.Stimulus
+                if (lhs.Participant == rhs.Participant  && lhs.Stimulus == rhs.Stimulus
                    && lhs.Text_Name == rhs.Text_Name && lhs.AOI_Group == rhs.AOI_Group && lhs.Total_Fixation_Duration == rhs.Total_Fixation_Duration &&
                    lhs.Total_Fixation_Number == rhs.Total_Fixation_Number && lhs.First_Fixation_Duration == rhs.First_Fixation_Duration && lhs.First_Pass_Duration == rhs.First_Pass_Duration
                        && lhs.First_Pass_Number == rhs.First_Pass_Number && lhs.First_Pass_Progressive_Duration == rhs.First_Pass_Progressive_Duration && lhs.First_Pass_Progressive_Number == rhs.First_Pass_Progressive_Number &&
