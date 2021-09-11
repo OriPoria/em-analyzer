@@ -33,9 +33,9 @@
 	Fixed_Time_In_sec = 1,
 	Percentage_of_Participant_Time = 2
   -->
-  <Preview_Limit>1</Preview_Limit>
+  <Preview_Limit>2</Preview_Limit>
 	<Fixed_Time_In_sec>5.4</Fixed_Time_In_sec>
-	<Percentage_of_Participant_Time>20</Percentage_of_Participant_Time>
+	<Percentage_of_Participant_Time>90</Percentage_of_Participant_Time>
 
   <!--
     Remove_Fixations_Appeared_Before_First_AOI:

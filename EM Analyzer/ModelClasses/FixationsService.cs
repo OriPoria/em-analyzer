@@ -159,9 +159,9 @@ namespace EM_Analyzer.ModelClasses
         public static void CleanFixationsForPreview()
         {
             IEnumerable<IGrouping<string, KeyValuePair<string, List<Fixation>>>> fixationsGroupingByParticipant = fixationSetToFixationListDictionary.GroupBy(x => x.Value[0].Participant);
-            foreach (IGrouping<string, KeyValuePair<string, List<Fixation>>> grouping in fixationsGroupingByParticipant)
+            foreach (IGrouping<string, KeyValuePair<string, List<Fixation>>> participantFixations in fixationsGroupingByParticipant)
             {
-                List<Fixation> fixationList = grouping.SelectMany(x => x.Value).ToList();
+                List<Fixation> fixationList = participantFixations.SelectMany(x => x.Value).ToList();
                 // timeLimit determains by the Preview_Limit parameter
                 double timeLimit = Preview_Limit == 1 ? (Fixed_Time * 1000) : fixationList.Sum(fix => fix.Event_Duration) * (Proportional_Time / 100);
                 double eventDurationSum = 0;
@@ -172,7 +172,7 @@ namespace EM_Analyzer.ModelClasses
                     eventDurationSum += fixationList[i].Event_Duration;
                     if (eventDurationSum > timeLimit)
                     {
-                        foreach (var item in grouping)
+                        foreach (var item in participantFixations)
                             item.Value.RemoveAll(fix => fix.Text_Index > i);
                         break;
                     }
