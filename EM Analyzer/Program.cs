@@ -170,7 +170,6 @@ namespace EM_Analyzer
              * After UnifyDictionaryWithWordIndex function, FixationsService.fixationSetToFixationListDictionary hold 
              * the fixations with all the details, include AOI's and word index
              */
-            var x = FixationsService.fixationSetToFixationListDictionary;
 
             // if AnalyzeExtent is 1-> create only preview of fixations
             if (int.Parse(ConfigurationService.AnalyzeExtent) == 1)

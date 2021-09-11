@@ -157,9 +157,10 @@ namespace EM_Analyzer.ModelClasses
         }
         public static void CleanFixationsForPreview()
         {
-            List<Fixation>[] values = fixationSetToFixationListDictionary.Values.ToArray();
-            foreach (List<Fixation> fixationList in values)
+            List<Fixation>[] values = fixationsSetToFixationListByTextDictionary.Values.ToArray();
+            foreach (KeyValuePair<string, List<Fixation>> keyValuePair in fixationsSetToFixationListByTextDictionary)
             {
+                List<Fixation> fixationList = keyValuePair.Value;
                 // timeLimit determains by the Preview_Limit parameter
                 double timeLimit = Preview_Limit == 1 ? (Fixed_Time * 1000) : fixationList.Sum(fix => fix.Event_Duration) * (Proportional_Time / 100);
                 double eventDurationSum = 0;
@@ -418,13 +419,16 @@ namespace EM_Analyzer.ModelClasses
                     if (needsToAddToNextAOI)
                     {
                         AddCountedAOIToAnother(countedAOIFixationsArray, index, index + 1);
-                        //index++;
                     }
                 }
             }
             return index;
         }
+        public static void SetTextIndex()
+        {
+            List<Fixation>[] values = fixationSetToFixationListDictionary.Values.GroupBy(x => x[0].Participant).Select(g => g.First()).ToList();
 
+        }
         public static void DealWithExceptions()
         {
             List<Fixation>[] values = fixationSetToFixationListDictionary.Values.ToArray();
@@ -449,22 +453,6 @@ namespace EM_Analyzer.ModelClasses
                     }
                 }
             }
-        }
-        public static Dictionary<string, List<Fixation>> GetFixationSetDictionayByText() {
-            Dictionary<string, List<Fixation>> fixationsTextParticipant = new Dictionary<string, List<Fixation>>();
-
-            // grouping the fixations of each participant from all the trials (pages)
-            fixationsTextParticipant = fixationSetToFixationListDictionary.GroupBy(ExtractParticipantTextKey)
-                    .ToDictionary(group => group.Key,
-                                group => {
-                                    List<List<Fixation>> values = new List<List<Fixation>>();
-                                    var dic = group.ToDictionary(pair => pair.Key, pair => pair.Value);
-                                    foreach (var item in dic.Values)
-                                        values.Add(item);
-                                    return values.SelectMany(fixList => fixList).ToList();
-                                });
-            SortDictionary();
-            return fixationsTextParticipant;
         }
         public static void RemoveEmptyValuesFromFixationSetDictionary()
         {

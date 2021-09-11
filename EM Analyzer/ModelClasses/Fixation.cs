@@ -45,6 +45,8 @@ namespace EM_Analyzer.ModelClasses
         [Description("Index")]
         public long Index { get; set; }
         [Description("Event Duration")]
+        [EpplusIgnore]
+        public long Text_Index { get; set; }
         public double Event_Duration { get; set; }
         [Description("Position X")]
         public double Fixation_Position_X { get; set; }
