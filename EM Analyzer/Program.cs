@@ -166,6 +166,7 @@ namespace EM_Analyzer
             int status = FixationsService.UnifyDictionaryWithWordIndex();
             if (status == -1)
                 return;
+            FixationsService.SetTextIndex();
             /*
              * After UnifyDictionaryWithWordIndex function, FixationsService.fixationSetToFixationListDictionary hold 
              * the fixations with all the details, include AOI's and word index

@@ -16,6 +16,7 @@ namespace EM_Analyzer.ModelClasses
     }
     class FixationsService
     {
+        // fixationSetToFixationListDictionary is the main dictionary that holds all the fixations
         public static Dictionary<string, List<Fixation>> fixationSetToFixationListDictionary = new Dictionary<string, List<Fixation>>();
         public static Dictionary<string, int> minimumAOIGroupOfFixationSet = new Dictionary<string, int>();
 
@@ -157,10 +158,10 @@ namespace EM_Analyzer.ModelClasses
         }
         public static void CleanFixationsForPreview()
         {
-            List<Fixation>[] values = fixationsSetToFixationListByTextDictionary.Values.ToArray();
-            foreach (KeyValuePair<string, List<Fixation>> keyValuePair in fixationsSetToFixationListByTextDictionary)
+            IEnumerable<IGrouping<string, KeyValuePair<string, List<Fixation>>>> fixationsGroupingByParticipant = fixationSetToFixationListDictionary.GroupBy(x => x.Value[0].Participant);
+            foreach (IGrouping<string, KeyValuePair<string, List<Fixation>>> grouping in fixationsGroupingByParticipant)
             {
-                List<Fixation> fixationList = keyValuePair.Value;
+                List<Fixation> fixationList = grouping.SelectMany(x => x.Value).ToList();
                 // timeLimit determains by the Preview_Limit parameter
                 double timeLimit = Preview_Limit == 1 ? (Fixed_Time * 1000) : fixationList.Sum(fix => fix.Event_Duration) * (Proportional_Time / 100);
                 double eventDurationSum = 0;
@@ -171,7 +172,8 @@ namespace EM_Analyzer.ModelClasses
                     eventDurationSum += fixationList[i].Event_Duration;
                     if (eventDurationSum > timeLimit)
                     {
-                        fixationList.RemoveRange(i, fixationsNumber - i);
+                        foreach (var item in grouping)
+                            item.Value.RemoveAll(fix => fix.Text_Index > i);
                         break;
                     }
                 }
@@ -426,8 +428,24 @@ namespace EM_Analyzer.ModelClasses
         }
         public static void SetTextIndex()
         {
-            List<Fixation>[] values = fixationSetToFixationListDictionary.Values.GroupBy(x => x[0].Participant).Select(g => g.First()).ToList();
 
+            fixationSetToFixationListDictionary.GroupBy(x => x.Value[0].Participant)
+                    .ToDictionary(group => group.Key,
+                                group => {
+                                    List<List<Fixation>> values = new List<List<Fixation>>();
+                                    var dic = group.ToDictionary(pair => pair.Key, pair => pair.Value);
+                                    long index = 1;
+                                    foreach (var item in dic.Values)
+                                    {
+                                        foreach (var fixation in item)
+                                        {
+                                            fixation.Text_Index = index;
+                                            index++;
+                                        }
+                                        values.Add(item);
+                                    }
+                                    return values.SelectMany(fixList => fixList).ToList();
+                                });
         }
         public static void DealWithExceptions()
         {
