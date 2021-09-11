@@ -20,18 +20,21 @@ namespace EM_Analyzer.ExcelsFilesMakers
         public static AOITypes currentType;
         public static void MakeExcelFile()
         {
-            // Gets all the partisipants.
-            List<string> fixationsKeys = FixationsService.fixationSetToFixationListDictionary.Keys.ToList();
+            IEnumerable<IGrouping<string, KeyValuePair<string, List<Fixation>>>> fixationsGroupingByParticipant = FixationsService.fixationSetToFixationListDictionary.GroupBy(x => x.Value[0].Participant);
             string dictionatyKey;
             //int minimumEventDurationInForSkipInms = int.Parse(ConfigurationService.MinimumEventDurationInForSkipInms);
             int minimumNumberOfFixationsForSkip = int.Parse(ConfigurationService.MinimumNumberOfFixationsForSkip);
             List<string> dictionaryKeysForSorting = new List<string>();
-            foreach (string participantKey in fixationsKeys)
+            foreach (IGrouping<string, KeyValuePair<string, List<Fixation>>> participantFixations in fixationsGroupingByParticipant)
             {
+                string participantKey = participantFixations.Key;
                 // Gets the current fixations list
-                List<Fixation> fixations = FixationsService.fixationSetToFixationListDictionary[participantKey];
+                List<Fixation> fixations = participantFixations.SelectMany(x => x.Value).ToList();
+
+                // remove the fixations in figure object?
                 if (currentType == AOITypes.Words)
                     fixations.RemoveAll(fix => fix.AOI_Name == 0);
+
                 List<Fixation> fixationsForFirstPass = fixations.ToList();
                 // Make filter per fixation
                 fixationsForFirstPass.RemoveAll(fix => fix.ShouldBeSkippedInFirstPass());
