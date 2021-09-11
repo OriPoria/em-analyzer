@@ -56,10 +56,6 @@ namespace EM_Analyzer.ModelClasses
 
         public static List<CountedAOIFixations> ConvertFixationListToCoutedListByPhrase(List<Fixation> fixations)
         {
-            if (fixations.Count == 0)
-            {
-                var x = 3;
-            }
             List<CountedAOIFixations> countedAOIFixations = new List<CountedAOIFixations>();
             Fixation prevFixation = fixations.First();
             CountedAOIFixations currentCountedAOIFixations = new CountedAOIFixations() { AOI_Group = fixations.First().AOI_Group_After_Change, Count = 0, Fixations = new List<Fixation>() };

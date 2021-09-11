@@ -125,8 +125,10 @@ namespace EM_Analyzer.ModelClasses
 
             try
             {
-                newFixation.AOI_Group_After_Change = newFixation.AOI_Group_Before_Change = int.Parse(arr[TextFileColumnIndexes.AOI_Group]);
-
+                if (arr[TextFileColumnIndexes.AOI_Group] == "figure")
+                    newFixation.AOI_Group_After_Change = newFixation.AOI_Group_Before_Change = 0;
+                else
+                    newFixation.AOI_Group_After_Change = newFixation.AOI_Group_Before_Change = int.Parse(arr[TextFileColumnIndexes.AOI_Group]);
             }
             catch
             {
@@ -135,7 +137,10 @@ namespace EM_Analyzer.ModelClasses
 
             try
             {
-                newFixation.AOI_Name = int.Parse(arr[TextFileColumnIndexes.AOI_Name]);
+                if (arr[TextFileColumnIndexes.AOI_Name] == "figure")
+                    newFixation.AOI_Name = 0;
+                else
+                    newFixation.AOI_Name = int.Parse(arr[TextFileColumnIndexes.AOI_Name]);
 
             }
             catch

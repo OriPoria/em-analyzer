@@ -21,15 +21,17 @@ namespace EM_Analyzer.ExcelsFilesMakers
         public static void MakeExcelFile()
         {
             // Gets all the partisipants.
-            List<string> participants = FixationsService.fixationSetToFixationListDictionary.Keys.ToList();
+            List<string> fixationsKeys = FixationsService.fixationSetToFixationListDictionary.Keys.ToList();
             string dictionatyKey;
             //int minimumEventDurationInForSkipInms = int.Parse(ConfigurationService.MinimumEventDurationInForSkipInms);
             int minimumNumberOfFixationsForSkip = int.Parse(ConfigurationService.MinimumNumberOfFixationsForSkip);
             List<string> dictionaryKeysForSorting = new List<string>();
-            foreach (string participantKey in participants)
+            foreach (string participantKey in fixationsKeys)
             {
                 // Gets the current fixations list
                 List<Fixation> fixations = FixationsService.fixationSetToFixationListDictionary[participantKey];
+                if (currentType == AOITypes.Words)
+                    fixations.RemoveAll(fix => fix.AOI_Name == 0);
                 List<Fixation> fixationsForFirstPass = fixations.ToList();
                 // Make filter per fixation
                 fixationsForFirstPass.RemoveAll(fix => fix.ShouldBeSkippedInFirstPass());
