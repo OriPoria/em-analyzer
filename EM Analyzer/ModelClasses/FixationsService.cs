@@ -160,7 +160,8 @@ namespace EM_Analyzer.ModelClasses
             List<Fixation>[] values = fixationSetToFixationListDictionary.Values.ToArray();
             foreach (List<Fixation> fixationList in values)
             {
-                double timeLimit = Preview_Limit == 1 ? Fixed_Time : fixationList.Sum(fix => fix.Event_Duration) * (Proportional_Time / 100);
+                // timeLimit determains by the Preview_Limit parameter
+                double timeLimit = Preview_Limit == 1 ? (Fixed_Time * 1000) : fixationList.Sum(fix => fix.Event_Duration) * (Proportional_Time / 100);
                 double eventDurationSum = 0;
                 int i = 0;
                 int fixationsNumber = fixationList.Count;

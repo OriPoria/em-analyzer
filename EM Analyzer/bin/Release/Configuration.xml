@@ -34,7 +34,7 @@
 	Percentage_of_Participant_Time = 2
   -->
   <Preview_Limit>1</Preview_Limit>
-	<Fixed_Time_In_sec>800.4</Fixed_Time_In_sec>
+	<Fixed_Time_In_sec>8.4</Fixed_Time_In_sec>
 	<Percentage_of_Participant_Time>20</Percentage_of_Participant_Time>
 
   <!--
