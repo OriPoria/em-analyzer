@@ -52,7 +52,7 @@ namespace EM_Analyzer.ModelClasses
 
         public static double exceptionsLimit = double.Parse(ConfigurationService.DealingWithExceptionsLimitInPixels);
 
-        //public static bool IsFixationShouldBeSkippedInFirstPass(Fixation)
+        public static int Number_Of_Fixations_To_Remove_Before_First_AOI = int.Parse(ConfigurationService.NumberOfFixationsToRemoveBeforeFirstAOI);
 
         public static List<CountedAOIFixations> ConvertFixationListToCoutedListByPhrase(List<Fixation> fixations)
         {
@@ -181,26 +181,38 @@ namespace EM_Analyzer.ModelClasses
             List<Fixation>[] values = fixationSetToFixationListDictionary.Values.ToArray();
             foreach (List<Fixation> fixationList in values)
             {
+                var y = Number_Of_Fixations_To_Remove_Before_First_AOI;
+                if (fixationList[0].Trial.EndsWith("001") && fixationList.Count > Number_Of_Fixations_To_Remove_Before_First_AOI)
+                {
+                    int firstFixaitionAtFirstAOI = fixationList.FindIndex(fix => fix.AOI_Group_Before_Change == 1);
+                    if (firstFixaitionAtFirstAOI > 0)
+                        fixationList.RemoveRange(0, firstFixaitionAtFirstAOI);
 
-                int firstFixaitionAtFirstAOI = fixationList.FindIndex(fix => fix.AOI_Group_Before_Change == 1);
-                if (firstFixaitionAtFirstAOI > 0)
-                    fixationList.RemoveRange(0, firstFixaitionAtFirstAOI);
+                }
             }
         }
 
         public static void CleanAllFixationBeforeFirstAOIInPage()
         {
-            List<Fixation>[] values = fixationSetToFixationListDictionary.Values.ToArray();
-            List<string> keys = fixationSetToFixationListDictionary.Keys.ToList();
-            int i = 0;
-            foreach (List<Fixation> fixationList in values)
+            IEnumerable<IGrouping<string, KeyValuePair<string, List<Fixation>>>> fixationsGroupingByParticipant = fixationSetToFixationListDictionary.GroupBy(x => x.Value[0].Participant);
+            foreach (IGrouping<string, KeyValuePair<string, List<Fixation>>> participantFixations in fixationsGroupingByParticipant)
             {
-                int firstAOI = minimumAOIGroupOfFixationSet[keys[i]];
-                int firstFixaitionAtFirstAOI = fixationList.FindIndex(fix => fix.AOI_Group_Before_Change == firstAOI);
-                if (firstFixaitionAtFirstAOI > 0)
-                    fixationList.RemoveRange(0, firstFixaitionAtFirstAOI);
-                i++;
+                string singleParticipantKey = participantFixations.Key;
+                HashSet<int> seenPages = new HashSet<int>();
+                foreach (KeyValuePair<string, List<Fixation>> fixationsPair in participantFixations)
+                {
+                    int firstAOI = minimumAOIGroupOfFixationSet[fixationsPair.Key];
+                    if (!seenPages.Contains(fixationsPair.Value[0].Page) &&
+                        fixationsPair.Value.Count > Number_Of_Fixations_To_Remove_Before_First_AOI)
+                    {
+                        int firstFixaitionAtFirstAOI = fixationsPair.Value.FindIndex(fix => fix.AOI_Group_Before_Change == firstAOI);
+                        if (firstFixaitionAtFirstAOI > 0)
+                            fixationsPair.Value.RemoveRange(0, firstFixaitionAtFirstAOI);
+                    }
+                    seenPages.Add(fixationsPair.Value[0].Page);
+                }
             }
+            var y = fixationSetToFixationListDictionary;
         }
         public static bool IsLeagalFirstPassFixations(CountedAOIFixations countedAOIFixations)
         {

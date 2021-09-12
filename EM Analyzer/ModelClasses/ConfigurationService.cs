@@ -25,6 +25,7 @@ namespace EM_Analyzer.ModelClasses
         public const string Dealing_With_Exceptions_Inside_The_Limit = "Dealing_With_Exceptions_Inside_The_Limit";
         public const string Dealing_With_Exceptions_Outside_The_Limit = "Dealing_With_Exceptions_Outside_The_Limit";
         public const string Remove_Fixations_Appeared_Before_First_AOI = "Remove_Fixations_Appeared_Before_First_AOI";
+        public const string Number_Of_Fixations_To_Remove_Before_First_AOI = "Number_Of_Fixations_To_Remove_Before_First_AOI";
         public const string Standard_Deviation = "Standard_Deviation";
         public const string Excel_Files_Extension = "Excel_Files_Extension";
         public const string Logs_Excel_File_Name = "Logs_Excel_File_Name";
@@ -68,6 +69,7 @@ namespace EM_Analyzer.ModelClasses
         public static string DealingWithExceptionsInsideTheLimit { get { return GetValue(Dealing_With_Exceptions_Inside_The_Limit); } }
         public static string DealingWithExceptionsOutsideTheLimit { get { return GetValue(Dealing_With_Exceptions_Outside_The_Limit); } }
         public static string RemoveFixationsAppearedBeforeFirstAOI { get { return GetValue(Remove_Fixations_Appeared_Before_First_AOI); } }
+        public static string NumberOfFixationsToRemoveBeforeFirstAOI { get { return GetValue(Number_Of_Fixations_To_Remove_Before_First_AOI); } }
         public static string StandardDeviation { get { return GetValue(Standard_Deviation); } }
         public static string ExcelFilesExtension { get { return GetValue(Excel_Files_Extension); } }
         public static string LogsExcelFileName { get { return GetValue(Logs_Excel_File_Name); } }

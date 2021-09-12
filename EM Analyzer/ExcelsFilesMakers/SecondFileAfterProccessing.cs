@@ -32,9 +32,6 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 List<Fixation> fixations = participantFixations.SelectMany(x => x.Value).ToList();
 
                 // remove the fixations in figure object?
-                if (currentType == AOITypes.Words)
-                    fixations.RemoveAll(fix => fix.AOI_Name == 0);
-
                 List<Fixation> fixationsForFirstPass = fixations.ToList();
                 // Make filter per fixation
                 fixationsForFirstPass.RemoveAll(fix => fix.ShouldBeSkippedInFirstPass());
@@ -78,7 +75,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 #endregion First_Pass
                 // For All The Rest
                 fixations.Add(new Fixation() { AOI_Group_After_Change = -2 });
-                int lastChangeIndex = 0, currentIndex = 0, last_AOI = GetAOIByType(fixations[0], currentType), maxLeagalAOIGroupUntilNow = -1;
+                int lastChangeIndex = 0, currentIndex = 0, last_AOI = GetAOIByType(fixations[0]), maxLeagalAOIGroupUntilNow = -1;
                 Fixation prevFixationInAOI = null;
                 if (currentType == AOITypes.Words)
                 {
@@ -88,7 +85,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 foreach (Fixation fixation in fixations)
                 {
                     
-                    if (GetAOIByType(fixation, currentType) != last_AOI)
+                    if (GetAOIByType(fixation) != last_AOI)
                     {
                         // The dictionary key for the current AOI Group for the current Participant
                         dictionatyKey = participantKey + '\t' + last_AOI;
@@ -104,16 +101,16 @@ namespace EM_Analyzer.ExcelsFilesMakers
                             new AOIClass(
                                 prevFixationInAOI.Stimulus,
                                 prevFixationInAOI.Participant,
-                                GetAOIByType(prevFixationInAOI, currentType),
+                                GetAOIByType(prevFixationInAOI),
                                 //if the current fixation's AOI is not greater then all the previous fixations so we skip it
-                                GetAOIByType(prevFixationInAOI, currentType) < maxLeagalAOIGroupUntilNow,
+                                GetAOIByType(prevFixationInAOI) < maxLeagalAOIGroupUntilNow,
                                 currentType
                                 );
                         }
                         else
                         {
                             if (!dictionaryKeysForSorting.Contains(dictionatyKey))
-                                AOIClass.instancesDictionary[dictionatyKey].Skip = GetAOIByType(prevFixationInAOI, currentType) < maxLeagalAOIGroupUntilNow;
+                                AOIClass.instancesDictionary[dictionatyKey].Skip = GetAOIByType(prevFixationInAOI) < maxLeagalAOIGroupUntilNow;
                         }
                         if (!dictionaryKeysForSorting.Contains(dictionatyKey))
                             dictionaryKeysForSorting.Add(dictionatyKey);
@@ -126,7 +123,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                             (FixationsService.IsLeagalFixationsForSkip(fixationRange) || currentType == AOITypes.Words))
                             maxLeagalAOIGroupUntilNow = last_AOI;
 
-                        last_AOI = GetAOIByType(fixation, currentType);
+                        last_AOI = GetAOIByType(fixation);
                         lastChangeIndex = currentIndex;
 
                     }
@@ -138,13 +135,17 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 fixations.RemoveAt(fixations.Count - 1);
             }
             List<AOIClass> aoiClasses = dictionaryKeysForSorting.Select(key=> AOIClass.instancesDictionary[key]).ToList();
-
+            
+            // not to show the figure in words output
+            if (currentType == AOITypes.Words)
+                aoiClasses.RemoveAll(aoi => aoi.AOI_Group == 0);
+            
             ExcelsService.CreateExcelFromStringTable(
                 ConfigurationService.SecondExcelFileName + "_" + Constans.GetEndOfFileNameByType(currentType), aoiClasses,
               SecondFileConsideringCoverage.EditExcel); 
         }
         
-        public static int GetAOIByType(Fixation fixation, AOITypes type)
+        public static int GetAOIByType(Fixation fixation)
         {
             if (currentType == AOITypes.Phrases)
                 return fixation.AOI_Group_After_Change;
@@ -532,15 +533,16 @@ namespace EM_Analyzer.ExcelsFilesMakers
             [EpplusIgnore]
             public List<List<Fixation>> Fixations { get; set; }
 
-            //private List<Fixation> m_First_Pass_Fixations;
-            
             [EpplusIgnore]
             public List<Fixation> First_Pass_Fixations { get; set; }
+
+            // Length and Frequency should be calculated only for the AOI's by Words output, otherwise they are 0
+            // and we delete them in the Excel itself
             public int Length
             {
                 get
                 {
-                    if (Fixations[0][0].Word_Index > 0)
+                    if (currentType == AOITypes.Words && AOI_Group > 0)
                         return Fixations[0][0].AOI_Word_Details.Length;
                     return 0;
                 }
@@ -549,7 +551,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
-                    if (Fixations[0][0].Word_Index > 0)
+                    if (currentType == AOITypes.Words && AOI_Group > 0)
                         return Fixations[0][0].AOI_Word_Details.Frequency;
                     return 0;
                 }
@@ -643,9 +645,6 @@ namespace EM_Analyzer.ExcelsFilesMakers
                         else if (currentType == AOITypes.Words)
                             this.m_Regressions.RemoveAll(lst => lst.Count == 0);
 
-
-                        //this.m_Regressions = this.Fixations.GetRange(1, this.Fixations.Count - 1);
-                        //this.m_Regressions = this.m_Regressions.Where(lst => lst.Count >= minimumNumberOfFixationsInARegression);
                     }
                     return this.m_Regressions;
                 }
