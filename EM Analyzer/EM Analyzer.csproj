@@ -106,6 +106,7 @@
     <Compile Include="ExcelLoggerService\Log.cs" />
     <Compile Include="ExcelsFilesMakers\Constans.cs" />
     <Compile Include="ExcelsFilesMakers\FirstFileAfterProccessing.cs" />
+    <Compile Include="ExcelsFilesMakers\FourthFileAfterProccessing.cs" />
     <Compile Include="ExcelsFilesMakers\ReadingSecondFileAfterProccessing.cs" />
     <Compile Include="ExcelsFilesMakers\SecondFileAfterProccessing.cs" />
     <Compile Include="ExcelsFilesMakers\SecondFileConsideringCoverage.cs" />
