@@ -50,6 +50,10 @@ namespace EM_Analyzer.ModelClasses
         public static int Minimum_Number_Of_Fixations_For_Regression = int.Parse(ConfigurationService.MinimumNumberOfFixationsForRegression);
         public static double Minimum_Duration_Of_Fixation_For_Regression = double.Parse(ConfigurationService.MinimumDurationOfFixationForRegression);
 
+        public static int Minimum_Number_Of_Fixations_For_Page_Visit = int.Parse(ConfigurationService.MinimumNumberOfFixationsForPageVisit);
+        public static double Minimum_Duration_Of_Fixation_For_Page_Visit = double.Parse(ConfigurationService.MinimumDurationOfFixationForPageVisit);
+
+
         public static double exceptionsLimit = double.Parse(ConfigurationService.DealingWithExceptionsLimitInPixels);
 
         public static int Number_Of_Fixations_To_Remove_Before_First_AOI = int.Parse(ConfigurationService.NumberOfFixationsToRemoveBeforeFirstAOI);
@@ -248,6 +252,18 @@ namespace EM_Analyzer.ModelClasses
                 if (fixation.Event_Duration > Minimum_Duration_Of_Fixation_For_Regression)
                     counter += 1;
                 if (counter >= Minimum_Number_Of_Fixations_For_Regression)
+                    return true;
+            }
+            return false;
+        }
+        public static bool IsLeagalPageVistFixations(List<Fixation> fixations)
+        {
+            int counter = 0;
+            foreach (Fixation fixation in fixations)
+            {
+                if (fixation.Event_Duration > Minimum_Duration_Of_Fixation_For_Page_Visit)
+                    counter += 1;
+                if (counter >= Minimum_Number_Of_Fixations_For_Page_Visit)
                     return true;
             }
             return false;
