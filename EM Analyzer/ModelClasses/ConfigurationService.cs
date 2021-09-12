@@ -16,7 +16,10 @@ namespace EM_Analyzer.ModelClasses
 
         public const string Minimum_Number_Of_Fixations_For_First_Pass = "Minimum_Number_Of_Fixations_For_First_Pass";
         public const string Minimum_Duration_Of_Fixation_For_First_Pass = "Minimum_Duration_Of_Fixation_For_First_Pass";
-        
+
+        public const string Minimum_Number_Of_Fixations_For_Page_Visit = "Minimum_Number_Of_Fixations_For_Page_Visit";
+        public const string Minimum_Duration_Of_Fixation_For_Page_Visit = "Minimum_Duration_Of_Fixation_For_Page_Visit";
+
         public const string First_Excel_File_Name = "First_Excel_File_Name";//Considered_Second_Excel_File_Name
         public const string Second_Excel_File_Name = "Second_Excel_File_Name";
         public const string Considered_Second_Excel_File_Name = "Considered_Second_Excel_File_Name";
