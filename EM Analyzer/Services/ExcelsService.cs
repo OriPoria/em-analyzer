@@ -50,8 +50,8 @@ namespace EM_Analyzer.Services
             {
                 ExcelWorksheet ws = wb.Workbook.Worksheets.Add("Inserting Tables");
 
-                String islogs = "Logs";
-                String isFiltered = "AOI - Filtered";
+                string islogs = "Logs";
+                string isFiltered = "AOI - Filtered";
                 if (!fileName.Contains(islogs))
                 {
                     ws.View.FreezePanes(2, 4);
@@ -59,6 +59,10 @@ namespace EM_Analyzer.Services
                 if (fileName.Contains(isFiltered))
                 {
                     ws.View.FreezePanes(2, 6);
+                }
+                if (fileName.Contains(ConfigurationService.FourthExcelFileName))
+                {
+                    ws.View.FreezePanes(2, 3);
                 }
                 ExcelRangeBase range = ws.Cells[1, 1].LoadFromCollectionFiltered(table);
 

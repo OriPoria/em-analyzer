@@ -1,4 +1,5 @@
-﻿using EM_Analyzer.ModelClasses;
+﻿using EM_Analyzer.Interfaces;
+using EM_Analyzer.ModelClasses;
 using EM_Analyzer.Services;
 using System;
 using System.Collections.Generic;
@@ -22,10 +23,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
         }
 
 
-        private class ParticipantTrial
+        private class ParticipantTrial : ITrialClassForConsideringCoverage
         {
-            ////[XLColumn(Ignore = true)]
-            //public static Dictionary<string, ParticipantTrial> instancesDictionary = new Dictionary<string, ParticipantTrial>();
             [Description("Participant")]
             public string Participant { get; set; }
             [Description("Trial")]
@@ -283,12 +282,10 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
 
 
-            //[XLColumn(Ignore = true)]
             [EpplusIgnore]
             public List<Fixation> Fixations { get; set; }
 
             private List<Fixation> m_Progressive_Fixations;
-            //[XLColumn(Ignore = true)]
             private List<Fixation> Progressive_Fixations
             {
                 get
@@ -303,7 +300,6 @@ namespace EM_Analyzer.ExcelsFilesMakers
             }
 
             private List<Fixation> m_Regressive_Fixations;
-            //[XLColumn(Ignore = true)]
             private List<Fixation> Regressive_Fixations
             {
                 get
@@ -317,14 +313,17 @@ namespace EM_Analyzer.ExcelsFilesMakers
             }
 
 
-            public ParticipantTrial(string Trial, string Stimulus, string Participant)//, List<Fixation> Fixations)//=null)
+            public ParticipantTrial(string Trial, string Stimulus, string Participant)
             {
                 this.Trial = Trial;
                 this.Stimulus = Stimulus;
                 this.Participant = Participant;
+
+                /*
+                 Critical Point: Removes all the fixations with no AOI Group (after dealing with exceptions) !
+                 */
                 this.Fixations = FixationsService.fixationSetToFixationListDictionary[this.Participant + '\t' + this.Trial + '\t' + this.Stimulus];
-                // Removes all the fixations with no AOI Group (after dealing with exceptions).
-                this.Fixations.RemoveAll(fix => fix.AOI_Group_After_Change == -1);
+                this.Fixations.RemoveAll(fix => fix.AOI_Group_After_Change < 1);
 
                 this.m_Total_Fixation_Number = -1;
                 this.m_Mean_Fixation_Duration = -1;
@@ -343,8 +342,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 this.m_Mean_Regressive_Saccade_Length_X = -1;
                 this.m_SD_Regressive_Saccade_Length_X = -1;
                 this.m_Pupil_Diameter = -1;
-                //this.m_StandardDeviation = -1;
                 this.m_Regressive_Fixations = null;
+
             }
             
 

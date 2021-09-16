@@ -27,6 +27,7 @@ namespace EM_Analyzer.ModelClasses
         public const string Second_Excel_File_Name = "Second_Excel_File_Name";
         public const string Considered_Second_Excel_File_Name = "Considered_Second_Excel_File_Name";
         public const string Third_Excel_File_Name = "Third_Excel_File_Name";
+        public const string Fourth_Excel_File_Name = "Fourth_Excel_File_Name";
         public const string Dealing_With_Exceptions_Limit_In_Pixels = "Dealing_With_Exceptions_Limit_In_Pixels";
         public const string Dealing_With_Exceptions_Inside_The_Limit = "Dealing_With_Exceptions_Inside_The_Limit";
         public const string Dealing_With_Exceptions_Outside_The_Limit = "Dealing_With_Exceptions_Outside_The_Limit";
@@ -61,6 +62,7 @@ namespace EM_Analyzer.ModelClasses
         public static string SecondExcelFileName { get { return GetValue(Second_Excel_File_Name); } }
         public static string ConsideredSecondExcelFileName { get { return GetValue(Considered_Second_Excel_File_Name); } }
         public static string ThirdExcelFileName { get { return GetValue(Third_Excel_File_Name); } }
+        public static string FourthExcelFileName { get { return GetValue(Fourth_Excel_File_Name); } }
         public static string MinimumEventDurationInms { get { return GetValue(Minimum_Event_Duration_In_ms); } }
         public static string MaximumEventDurationInms { get { return GetValue(Maximum_Event_Duration_In_ms); } }
         public static string MinimumNumberOfFixationsForRegression { get { return GetValue(Minimum_Number_Of_Fixations_For_Regression); } }

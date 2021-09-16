@@ -15,12 +15,12 @@ namespace EM_Analyzer.ExcelsFilesMakers
     public class SecondFileConsideringCoverage
     {
         private delegate double NumericExpression(AIOClassAfterCoverage value);
-        //private delegate void SettingValue(AIOClassAfterCoverageForExcel AOI, double value);
         private delegate void SettingValue(AIOClassAfterCoverageForExcel AOI, string value);
         public static AOITypes currentType;
 
         private static List<NumericExpression> GetNumericExpressions()
         {
+            // list of functions that get AIOClassAfterCoverage as parameter and return double
             List<NumericExpression> filteringsExpressions = new List<NumericExpression>
             {
                 aoi => aoi.Total_Fixation_Duration,
@@ -52,7 +52,6 @@ namespace EM_Analyzer.ExcelsFilesMakers
             List<SettingValue> settingExpressions = new List<SettingValue>
             {
                 (aoi, value) => aoi.Total_Fixation_Duration = value,
-                //(aoi, value) => aoi.Total_Fixation_Duration = String.Format("{0:0.0000000000000}", value),
                 (aoi, value) => aoi.Total_Fixation_Number = value,
                 (aoi, value) => aoi.First_Fixation_Duration = value,
                 (aoi, value) => aoi.First_Pass_Duration = value,
@@ -70,9 +69,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 (aoi, value) => aoi.Regression_Number = value,
                 (aoi, value) => aoi.Regression_Duration = value,
                 (aoi, value) => aoi.First_Regression_Duration = value,
-                (aoi, value) => aoi.Pupil_Diameter = value,
-                //(aoi, value) => aoi.Mean_AOI_Size = value
-             
+                (aoi, value) => aoi.Pupil_Diameter = value,             
             };
             return settingExpressions;
         }
@@ -110,10 +107,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI" + "_" + Constans.GetEndOfFileNameByType(currentType), byAOIGroup, EditExcel);
 
 
-            //List<AIOClassAfterCoverageForExcel> by_AIO_And_Participant = new List<AIOClassAfterCoverageForExcel>(byParticipant.Count + byAOIGroup.Count);
             HashSet<AIOClassAfterCoverageForExcel> by_AIO_And_Participant = new HashSet<AIOClassAfterCoverageForExcel>();
-            //by_AIO_And_Participant.AddRange(byParticipant);
-            //by_AIO_And_Participant.AddRange(byAOIGroup);
             by_AIO_And_Participant.UnionWith(byParticipant);
             by_AIO_And_Participant.UnionWith(byAOIGroup);
             ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI and Participant" + "_" + Constans.GetEndOfFileNameByType(currentType), by_AIO_And_Participant, EditExcel);
@@ -130,7 +124,6 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     }
                 }
             }
-            //List<AIOClassAfterCoverageForExcel> by_AIO_and_Participant = (List<AIOClassAfterCoverageForExcel>)and;
             ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI or Participant" + "_" + Constans.GetEndOfFileNameByType(currentType), by_AIO_Or_Participant, EditExcel);
             
         }
@@ -499,13 +492,6 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     return AOI.Mean_AOI_Coverage;
                 }
             }
-
-            public AIOClassAfterCoverage(IAOIClassForConsideringCoverage AOI)
-            {
-                this.AOI = AOI;
-                allInstances.Add(this);
-                this.AOIForExcel = new AIOClassAfterCoverageForExcel(this);
-            }
             public int Length
             {
                 get
@@ -519,6 +505,12 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     return AOI.Frequency;
                 }
+            }
+            public AIOClassAfterCoverage(IAOIClassForConsideringCoverage AOI)
+            {
+                this.AOI = AOI;
+                allInstances.Add(this);
+                this.AOIForExcel = new AIOClassAfterCoverageForExcel(this);
             }
 
         }

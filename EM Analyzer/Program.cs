@@ -22,7 +22,7 @@ namespace EM_Analyzer
             int chosenOption = 1;
             string input;
             bool isOptionOK;
-            bool testMode = true;
+            bool testMode = false;
             if (!testMode)
             {
                 do
@@ -161,14 +161,15 @@ namespace EM_Analyzer
             ReadTextFilePhrase(phrasesTextFilePath);
             ReadTextFileWord(wordsTextFilePath);
             FixationsService.DealWithSeparatedAOIs();
-            FixationsService.SortDictionary();
-            FixationsService.SortWordIndexDictionary();
+            FixationsService.SortDictionaryByFixationsIndex();
+            FixationsService.SortWordIndexDictionaryByFixationsIndex();
             int status = FixationsService.UnifyDictionaryWithWordIndex();
             if (status == -1)
                 return;
             FixationsService.SetTextIndex();
+            FixationsService.SortDictionary();
             /*
-             * After UnifyDictionaryWithWordIndex function, FixationsService.fixationSetToFixationListDictionary hold 
+             * After SortDictionary function, FixationsService.fixationSetToFixationListDictionary hold 
              * the fixations with all the details, include AOI's and word index
              */
 
@@ -205,8 +206,14 @@ namespace EM_Analyzer
             }
             Console.WriteLine("Second File: " + ConfigurationService.SecondExcelFileName + " Finished!!! ");
 
+            /*
+             * From ThirdFileAfterProccessing we remove all the fixations with AOI < 1 -> those without AOI for calculations
+             */
             ThirdFileAfterProccessing.MakeExcelFile();
             Console.WriteLine("Third File: " + ConfigurationService.ThirdExcelFileName + " Finished!!! ");
+
+            FourthFileAfterProccessing.MakeExcelFile();
+            Console.WriteLine("Fourth File: " + ConfigurationService.ThirdExcelFileName + " Finished!!! ");
         }
 
         private static void ReadTextFilePhrase(string phraseFilePath)

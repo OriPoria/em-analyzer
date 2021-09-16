@@ -45,7 +45,13 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 // change figure AOI group label from 0 to "figure"
                 if (ws.Cells[i, Constans.firstFileWordIndexCol].Value.ToString() == "0")
+                {
                     ws.Cells[i, Constans.firstFileWordIndexCol].Value = "figure";
+                    ws.Cells[i, Constans.firstFileAOINameCol].Value = "figure";
+                    ws.Cells[i, Constans.firstFileAOIGroupBeforeChangeCol].Value = "figure";
+                }
+                if (ws.Cells[i, Constans.firstFileAOIGroupAfterChangeCol].Value.ToString() == "0")
+                    ws.Cells[i, Constans.firstFileAOIGroupAfterChangeCol].Value = "figure";
 
             }
             return 0;

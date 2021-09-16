@@ -151,7 +151,7 @@ namespace EM_Analyzer.ModelClasses
             try
             {
                 newFixation.AOI_Phrase_Size = long.Parse(arr[TextFileColumnIndexes.AOI_Size]);
-                if (newFixation.AOI_Name != 0 && newFixation.AOI_Name != -1 && newFixation.AOI_Phrase_Details.AOI_Size_X < 0)
+                if (newFixation.AOI_Name > 0 && newFixation.AOI_Phrase_Details.AOI_Size_X < 0)
                 {
                     newFixation.AOI_Phrase_Details.AOI_Size_X = newFixation.AOI_Phrase_Size;
                 }

@@ -57,6 +57,7 @@ namespace EM_Analyzer.ModelClasses
         public static double exceptionsLimit = double.Parse(ConfigurationService.DealingWithExceptionsLimitInPixels);
 
         public static int Number_Of_Fixations_To_Remove_Before_First_AOI = int.Parse(ConfigurationService.NumberOfFixationsToRemoveBeforeFirstAOI);
+        public static int minimumFixationsInTrialToRemoveFixation = 10;
 
         public static List<CountedAOIFixations> ConvertFixationListToCoutedListByPhrase(List<Fixation> fixations)
         {
@@ -102,12 +103,12 @@ namespace EM_Analyzer.ModelClasses
             }
             return countedAOIFixations;
         }
-        public static void SortDictionary()
+        public static void SortDictionaryByFixationsIndex()
         {
             List<List<Fixation>> values = fixationSetToFixationListDictionary.Values.ToList();
             values.ForEach(fixationList => fixationList.Sort((a, b) => a.Index.CompareTo(b.Index)));
         }
-        public static void SortWordIndexDictionary()
+        public static void SortWordIndexDictionaryByFixationsIndex()
         {
             List<List<WordIndex>> values = wordIndexSetToFixationListDictionary.Values.ToList();
             values.ForEach(fixationList => fixationList.Sort((a, b) => a.Index.CompareTo(b.Index)));
@@ -183,14 +184,17 @@ namespace EM_Analyzer.ModelClasses
         public static void CleanAllFixationBeforeFirstAOIInText()
         {
             List<Fixation>[] values = fixationSetToFixationListDictionary.Values.ToArray();
-            foreach (List<Fixation> fixationList in values)
+            var x = minimumAOIGroupOfFixationSet;
+            foreach (KeyValuePair<string,List<Fixation>> keyValuePair in fixationSetToFixationListDictionary)
             {
-                var y = Number_Of_Fixations_To_Remove_Before_First_AOI;
-                if (fixationList[0].Trial.EndsWith("001") && fixationList.Count > Number_Of_Fixations_To_Remove_Before_First_AOI)
+                string participantKey = keyValuePair.Key;
+                List<Fixation> fixationList = keyValuePair.Value;
+                int firstAOI = minimumAOIGroupOfFixationSet[participantKey];
+                if (fixationList[0].Trial.EndsWith("001") && fixationList.Count > minimumFixationsInTrialToRemoveFixation)
                 {
-                    int firstFixaitionAtFirstAOI = fixationList.FindIndex(fix => fix.AOI_Group_Before_Change == 1);
+                    int firstFixaitionAtFirstAOI = fixationList.FindIndex(fix => fix.AOI_Group_Before_Change == firstAOI);
                     if (firstFixaitionAtFirstAOI > 0)
-                        fixationList.RemoveRange(0, firstFixaitionAtFirstAOI);
+                        fixationList.RemoveRange(0, Math.Min(firstFixaitionAtFirstAOI, Number_Of_Fixations_To_Remove_Before_First_AOI));
 
                 }
             }
@@ -207,11 +211,11 @@ namespace EM_Analyzer.ModelClasses
                 {
                     int firstAOI = minimumAOIGroupOfFixationSet[fixationsPair.Key];
                     if (!seenPages.Contains(fixationsPair.Value[0].Page) &&
-                        fixationsPair.Value.Count > Number_Of_Fixations_To_Remove_Before_First_AOI)
+                        fixationsPair.Value.Count > minimumFixationsInTrialToRemoveFixation)
                     {
                         int firstFixaitionAtFirstAOI = fixationsPair.Value.FindIndex(fix => fix.AOI_Group_Before_Change == firstAOI);
                         if (firstFixaitionAtFirstAOI > 0)
-                            fixationsPair.Value.RemoveRange(0, firstFixaitionAtFirstAOI);
+                            fixationsPair.Value.RemoveRange(0, Math.Min(firstFixaitionAtFirstAOI, Number_Of_Fixations_To_Remove_Before_First_AOI));
                     }
                     seenPages.Add(fixationsPair.Value[0].Page);
                 }
@@ -368,10 +372,12 @@ namespace EM_Analyzer.ModelClasses
 
         private static void AddCountedAOIToAnother(List<CountedAOIFixations> countedAOIFixationsArray, int FromIndex, int ToIndex)
         {
-            IAOI aoiAddingTo = countedAOIFixationsArray[ToIndex].Fixations.First().AOI_Phrase_Details;
+            // TODO: compare with old version to check there is no critical change
+            Fixation firstFixation = countedAOIFixationsArray[ToIndex].Fixations.First();
+            IAOI aoiAddingTo = firstFixation.AOI_Name > 0 ? firstFixation.AOI_Phrase_Details : null;
             countedAOIFixationsArray[FromIndex].Fixations.ForEach(fix =>
             {
-                fix.IsInExceptionBounds = countedAOIFixationsArray[ToIndex].Fixations.First().AOI_Name != -1 && (aoiAddingTo.DistanceToAOI(fix) <= exceptionsLimit);
+                fix.IsInExceptionBounds = countedAOIFixationsArray[ToIndex].Fixations.First().AOI_Name > 0 && (aoiAddingTo.DistanceToAOI(fix) <= exceptionsLimit);
                 if (fix.IsInExceptionBounds && dealingWithInsideExceptions == DealingWithExceptionsEnum.Change_AOI_Group)
                     fix.AOI_Group_After_Change = countedAOIFixationsArray[ToIndex].AOI_Group;
             });
@@ -387,7 +393,7 @@ namespace EM_Analyzer.ModelClasses
             bool needsToAddToNextAOI = index < countedAOIFixationsArray.Count - 1 && countedAOIFixationsArray[index + 1].Count >= Number_Of_Fixations_In_Of_AOI_For_Exception && countedAOIFixationsArray[index + 1].AOI_Group != -1;
             if (needsToAddToPrevAOI || needsToAddToNextAOI)
                 currrentCountedAOIFixations.Fixations.ForEach(fix => fix.IsException = true);
-            // TODO: Dealing With Exceptional limits !!!!!!!!!!!!!!!!!!!!
+            // TODO: Dealing With Exceptional limits !
             if (needsToAddToPrevAOI && needsToAddToNextAOI)
             {
                 CountedAOIFixations prev = countedAOIFixationsArray[index - 1], next = countedAOIFixationsArray[index + 1];
@@ -402,7 +408,6 @@ namespace EM_Analyzer.ModelClasses
                         fix.IsInExceptionBounds = prev.Fixations.First().AOI_Name != -1 && (aoiAddingTo.DistanceToAOI(fix) <= exceptionsLimit);
                         if (fix.IsInExceptionBounds && dealingWithInsideExceptions == DealingWithExceptionsEnum.Change_AOI_Group)
                             fix.AOI_Group_After_Change = prev.AOI_Group;
-                            //ExcelLoggerService.AddLog(log: new Log() { FileName = "Hanaka_reduced - First", LineNumber = (uint)fix.Index, Description = "The Fixation Is Not Inside The AOI " + fix.AOI_Group_Before_Change });
                     });
                     prev.Count += currrentCountedAOIFixations.Count;
                     prev.Fixations.AddRange(currrentCountedAOIFixations.Fixations);
@@ -452,7 +457,6 @@ namespace EM_Analyzer.ModelClasses
         }
         public static void SetTextIndex()
         {
-
             fixationSetToFixationListDictionary.GroupBy(x => x.Value[0].Participant)
                     .ToDictionary(group => group.Key,
                                 group => {
@@ -470,6 +474,14 @@ namespace EM_Analyzer.ModelClasses
                                     }
                                     return values.SelectMany(fixList => fixList).ToList();
                                 });
+        }
+        // final sort of dictionay of fixations
+        public static void SortDictionary()
+        {
+            Dictionary<string, List<Fixation>> sortedFixationSet = new Dictionary<string, List<Fixation>>();
+            foreach (string key in fixationSetToFixationListDictionary.Keys.OrderBy(x => x.Split('\t')[0]).ThenBy(y => y.Split('\t')[1]))
+                sortedFixationSet[key] = fixationSetToFixationListDictionary[key];
+            fixationSetToFixationListDictionary = sortedFixationSet;
         }
         public static void DealWithExceptions()
         {

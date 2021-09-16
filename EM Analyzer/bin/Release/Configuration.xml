@@ -14,6 +14,9 @@
   <Minimum_Number_Of_Fixations_For_Skip>2</Minimum_Number_Of_Fixations_For_Skip>
   <Minimum_Duration_Of_Fixation_For_Skip>150</Minimum_Duration_Of_Fixation_For_Skip>
   
+  <Minimum_Number_Of_Fixations_For_Page_Visit>2</Minimum_Number_Of_Fixations_For_Page_Visit>
+  <Minimum_Duration_Of_Fixation_For_Page_Visit>150</Minimum_Duration_Of_Fixation_For_Page_Visit>
+  
   <Number_Of_Fixations_In_AOI_For_Exception>4</Number_Of_Fixations_In_AOI_For_Exception>
   
   <Number_Of_Fixations_Out_Of_AOI_For_Exception>1</Number_Of_Fixations_Out_Of_AOI_For_Exception>
@@ -43,7 +46,7 @@
       First Page = 2,
 	  Every Page = 3
   -->
-  <Remove_Fixations_Appeared_Before_First_AOI>3</Remove_Fixations_Appeared_Before_First_AOI>
+  <Remove_Fixations_Appeared_Before_First_AOI>1</Remove_Fixations_Appeared_Before_First_AOI>
   <Number_Of_Fixations_To_Remove_Before_First_AOI>10</Number_Of_Fixations_To_Remove_Before_First_AOI>
 
   <Standard_Deviation>2.5</Standard_Deviation>
@@ -52,7 +55,8 @@
     <First_Excel_File_Name>Fixation</First_Excel_File_Name>
     <Second_Excel_File_Name>AOI</Second_Excel_File_Name>
     <Considered_Second_Excel_File_Name>AOI - Filtered</Considered_Second_Excel_File_Name>
-    <Third_Excel_File_Name>Text</Third_Excel_File_Name>
+    <Third_Excel_File_Name>Page</Third_Excel_File_Name>
+	<Fourth_Excel_File_Name>Text</Fourth_Excel_File_Name>
 
     <Logs_Excel_File_Name>Logs</Logs_Excel_File_Name>
     <Excel_Files_Extension>.xlsx</Excel_Files_Extension>

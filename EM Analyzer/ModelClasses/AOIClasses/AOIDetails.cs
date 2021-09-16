@@ -35,7 +35,6 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
             AOI_Size_X = -1;
             IsProper = true;
             IEnumerator<string> enumerator = details.GetEnumerator();
-            //string dictionaryKey = "";
 
             enumerator.MoveNext();
             int count = details.Count();
@@ -142,10 +141,8 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
         public static void LoadAllAOIWordFromFile(string fileName)
         {
             List<IEnumerable<string>> table = ExcelsService.ReadExcelFile<string>(fileName);
-            //            isAOIIncludeStimulus = false;
             IEnumerable<string> first = table.FirstOrDefault();
-            //            if (first.Count() >= 7)
-            //                isAOIIncludeStimulus = true;
+
             uint lineNumber = 1;
             foreach (IEnumerable<string> details in table)
             {

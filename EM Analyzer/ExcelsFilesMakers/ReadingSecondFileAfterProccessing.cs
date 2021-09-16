@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static EM_Analyzer.ExcelsFilesMakers.SecondFileConsideringCoverage;
 using EM_Analyzer.Interfaces;
 
@@ -97,10 +93,6 @@ namespace EM_Analyzer.ExcelsFilesMakers
             new AIOClassAfterCoverage(this);
         }
 
-        public AIOClassFromExcel()
-        {
-
-        }
 
     }
 }

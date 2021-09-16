@@ -10,6 +10,9 @@ namespace EM_Analyzer.ExcelsFilesMakers
         public static int secondFileAoiTargetCol = 5;
         public static int secondFileAoiGroupCol = 4;
         public static int firstFileWordIndexCol = 4;
+        public static int firstFileAOINameCol = 5;
+        public static int firstFileAOIGroupBeforeChangeCol = 6;
+        public static int firstFileAOIGroupAfterChangeCol = 7;
 
 
         public static List<string> parseSpecialName(string s)
