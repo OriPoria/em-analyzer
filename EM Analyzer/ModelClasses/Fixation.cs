@@ -127,6 +127,11 @@ namespace EM_Analyzer.ModelClasses
 
             try
             {
+                /*
+                 * If the group is a text so we set the IsStringAOI to be true
+                 * If the group column is empty it means this is a fixation on white space -> without defined AOI
+                 * If the string of the group is a number (int) we asign the group to be that string and IsStringAOI is false
+                 */
                 int result;
                 if (int.TryParse(arr[TextFileColumnIndexes.AOI_Group], out result))
                 {

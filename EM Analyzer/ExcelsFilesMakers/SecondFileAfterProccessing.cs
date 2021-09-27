@@ -105,7 +105,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                                 prevFixationInAOI.Participant,
                                 GetAOIByType(prevFixationInAOI),
                                 //if the current fixation's AOI is not greater then all the previous fixations so we skip it
-                                int.Parse(GetAOIByType(prevFixationInAOI)) < maxLeagalAOIGroupUntilNow,
+                                prevFixationInAOI.IsStringAOI ? false : int.Parse(GetAOIByType(prevFixationInAOI)) < maxLeagalAOIGroupUntilNow,
                                 currentType
                                 );
                         }
