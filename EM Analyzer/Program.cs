@@ -22,7 +22,7 @@ namespace EM_Analyzer
             int chosenOption = 1;
             string input;
             bool isOptionOK;
-            bool testMode = false;
+            bool testMode = true;
             if (!testMode)
             {
                 do
@@ -148,8 +148,8 @@ namespace EM_Analyzer
             // Test mode- choose ahead the files
             else
             {
-                phrasesTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\20lines_c.txt";
-                wordsTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\20lines_w.txt";
+                phrasesTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\small_20lines_c.txt";
+                wordsTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\small_20lines_w.txt";
             }
             readingExcelFile.Join();
             FixationsService.phrasesExcelFileName = phrasesExcelFilePath.Substring(phrasesExcelFilePath.LastIndexOf(@"\") + 1);

@@ -16,7 +16,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
         [Description("Text Name")]
         public string Text_Name { get; set; }
         [Description("AOI Group")]
-        public int AOI_Group { get; set; }
+        public string AOI_Group { get; set; }
         [Description("AOI Target")]
         public string AOI_Target { get; set; }
         public List<string> List_Of_Strings { get; set; }

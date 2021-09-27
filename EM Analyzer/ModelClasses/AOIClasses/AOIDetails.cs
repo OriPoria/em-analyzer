@@ -14,11 +14,11 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
     public class AOIDetails : IAOI
     {
         public static Dictionary<string, AOIDetails> nameToAOIPhrasesDetailsDictionary = new Dictionary<string, AOIDetails>();
-        public static Dictionary<int, string> groupPhraseToSpecialName = new Dictionary<int, string>();
+        public static Dictionary<string, string> groupPhraseToSpecialName = new Dictionary<string, string>();
        
         public string Stimulus { get; set; }
         public int Name { get; set; }
-        public int Group { get; set; }
+        public string Group { get; set; }
         public double X { get; set; }
         public double Y { get; set; }
         public double H { get; set; }
@@ -55,7 +55,7 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
 
             try
             {
-                Group = int.Parse(enumerator.Current);
+                Group = enumerator.Current;
             }
             catch
             {

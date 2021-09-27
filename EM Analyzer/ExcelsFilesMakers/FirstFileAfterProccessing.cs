@@ -11,6 +11,7 @@ using EM_Analyzer.Services;
 using System.Threading;
 using EM_Analyzer.ExcelLogger;
 using OfficeOpenXml;
+using OfficeOpenXml.Style;
 
 namespace EM_Analyzer.ExcelsFilesMakers
 {
@@ -43,16 +44,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
             for (int i = 2; i <= ws.Dimension.Rows; i++)
             {
-                // change figure AOI group label from 0 to "figure"
-                if (ws.Cells[i, Constans.firstFileWordIndexCol].Value.ToString() == "0")
-                {
-                    ws.Cells[i, Constans.firstFileWordIndexCol].Value = "figure";
-                    ws.Cells[i, Constans.firstFileAOINameCol].Value = "figure";
-                    ws.Cells[i, Constans.firstFileAOIGroupBeforeChangeCol].Value = "figure";
-                }
-                if (ws.Cells[i, Constans.firstFileAOIGroupAfterChangeCol].Value.ToString() == "0")
-                    ws.Cells[i, Constans.firstFileAOIGroupAfterChangeCol].Value = "figure";
-
+                ws.Cells[i, Constans.firstFileAOIGroupBeforeChangeCol].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                ws.Cells[i, Constans.firstFileAOIGroupAfterChangeCol].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
             }
             return 0;
         }

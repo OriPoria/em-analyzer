@@ -95,7 +95,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 filteringsExpressions,
                 settingExpressions,
                 standardDevisionAllowed,
-                aoi => aoi.AOI_Group == -1);
+                aoi => aoi.AOI_Group == "-1");
             ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By Participant" + "_" + Constans.GetEndOfFileNameByType(currentType), byParticipant, EditExcel);
 
             List<AIOClassAfterCoverageForExcel> byAOIGroup = DeleteOutOfStdValues(
@@ -103,7 +103,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 filteringsExpressions,
                 settingExpressions,
                 standardDevisionAllowed,
-                aoi => aoi.AOI_Group == -1);
+                aoi => aoi.AOI_Group == "-1");
             ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI" + "_" + Constans.GetEndOfFileNameByType(currentType), byAOIGroup, EditExcel);
 
 
@@ -225,7 +225,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             [Description("Text Name")]
             public string Text_Name { get => AOI.Text_Name; }
             [Description("AOI Group")]
-            public int AOI_Group { get => AOI.AOI_Group; }
+            public string AOI_Group { get => AOI.AOI_Group; }
             [Description("AOI Target")]
             public string AOI_Target { get => AOI.AOI_Target; }
 
@@ -530,7 +530,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             public string Text_Name { get => AOIAfterCoverage.Text_Name; }
 
             [Description("AOI Group")]
-            public int AOI_Group { get => AOIAfterCoverage.AOI_Group; }
+            public string AOI_Group { get => AOIAfterCoverage.AOI_Group; }
             [Description("AOI Target")]
             public string AOI_Target { get => AOIAfterCoverage.AOI_Target; }
 

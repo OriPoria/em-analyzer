@@ -11,12 +11,12 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
     public class AOIWordDetails : IAOI
     {
         public static Dictionary<string, AOIWordDetails> nameToAOIWordsDetailsDictionary = new Dictionary<string, AOIWordDetails>();
-        public static Dictionary<int, string> groupWordToSpecialName = new Dictionary<int, string>();
+        public static Dictionary<string, string> groupWordToSpecialName = new Dictionary<string, string>();
 
         private static bool includeFrequency = false;
         public string Stimulus { get; set; }
         public int Name { get; set; }
-        public int Group { get; set; }
+        public string Group { get; set; }
         public double X { get; set; }
         public double Y { get; set; }
         public double H { get; set; }
@@ -114,7 +114,7 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
             if ((count == 10 && includeFrequency) || (count == 9 && !includeFrequency))
             {
                 SpecialNmae = enumerator.Current;
-                groupWordToSpecialName[Name] = SpecialNmae;
+                groupWordToSpecialName[Name.ToString()] = SpecialNmae;
                 enumerator.MoveNext();
             }
 

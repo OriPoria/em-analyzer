@@ -17,7 +17,7 @@ namespace EM_Analyzer.Interfaces
         [Description("Text Name")]
         string Text_Name { get; }
         [Description("AOI Group")]
-        int AOI_Group { get; }
+        string AOI_Group { get; }
         [Description("AOI Target")]
         string AOI_Target { get;  }
         [Description("Total Fixation Duration")]

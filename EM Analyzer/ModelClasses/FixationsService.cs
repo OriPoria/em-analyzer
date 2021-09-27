@@ -11,14 +11,14 @@ namespace EM_Analyzer.ModelClasses
     public class CountedAOIFixations
     {
         public List<Fixation> Fixations { get; set; }
-        public int AOI_Group { get; set; }
+        public string AOI_Group { get; set; }
         public int Count { get; set; }
     }
     class FixationsService
     {
         // fixationSetToFixationListDictionary is the main dictionary that holds all the fixations
         public static Dictionary<string, List<Fixation>> fixationSetToFixationListDictionary = new Dictionary<string, List<Fixation>>();
-        public static Dictionary<string, int> minimumAOIGroupOfFixationSet = new Dictionary<string, int>();
+        public static Dictionary<string, int> minimumAOINameOfFixationSet = new Dictionary<string, int>();
 
         public static int Preview_Limit = int.Parse(ConfigurationService.PreviewLimit);
         public static double Fixed_Time = double.Parse(ConfigurationService.FixedTimeInSec);
@@ -85,7 +85,7 @@ namespace EM_Analyzer.ModelClasses
         {
             List<CountedAOIFixations> countedAOIFixations = new List<CountedAOIFixations>();
             Fixation prevFixation = fixations.First();
-            CountedAOIFixations currentCountedAOIFixations = new CountedAOIFixations() { AOI_Group = fixations.First().Word_Index, Count = 0, Fixations = new List<Fixation>() };
+            CountedAOIFixations currentCountedAOIFixations = new CountedAOIFixations() { AOI_Group = fixations.First().Word_Index.ToString(), Count = 0, Fixations = new List<Fixation>() };
             countedAOIFixations.Add(currentCountedAOIFixations);
             foreach (Fixation fixation in fixations)
             {
@@ -95,7 +95,7 @@ namespace EM_Analyzer.ModelClasses
                 }
                 else
                 {
-                    currentCountedAOIFixations = new CountedAOIFixations() { AOI_Group = fixation.Word_Index, Count = 1, Fixations = new List<Fixation>() };
+                    currentCountedAOIFixations = new CountedAOIFixations() { AOI_Group = fixation.Word_Index.ToString(), Count = 1, Fixations = new List<Fixation>() };
                     countedAOIFixations.Add(currentCountedAOIFixations);
                 }
                 currentCountedAOIFixations.Fixations.Add(fixation);
@@ -125,8 +125,8 @@ namespace EM_Analyzer.ModelClasses
                     if (fixationPhrase[i].Index != fixationWord[i].Index)
                         MessageBox.Show($"error in sort of fixation by index at line {i} at key {key}");
 
-                    // if this is a fixation on figure -> if we set the figure fixation to 0.
-                    if (fixationPhrase[i].AOI_Group_Before_Change == 0)
+                    // if this is StringAOI ->No Word Index.
+                    if (fixationPhrase[i].IsStringAOI)
                         fixationPhrase[i].Word_Index = 0;
                     else 
                         fixationPhrase[i].Word_Index = fixationWord[i].Group;
@@ -135,7 +135,7 @@ namespace EM_Analyzer.ModelClasses
                     // check if AOI details objcets exist. actually verfy match of stimulus name in texts and excels inputs
                     try
                     {
-                        if (fixationPhrase[i].AOI_Group_After_Change > 0)
+                        if (!fixationPhrase[i].IsStringAOI && fixationPhrase[i].AOI_Name != -1)
                             _ = fixationPhrase[i].AOI_Phrase_Details;
                         if (fixationPhrase[i].Word_Index > 0)
                             _ = fixationPhrase[i].AOI_Word_Details;                            
@@ -184,15 +184,15 @@ namespace EM_Analyzer.ModelClasses
         public static void CleanAllFixationBeforeFirstAOIInText()
         {
             List<Fixation>[] values = fixationSetToFixationListDictionary.Values.ToArray();
-            var x = minimumAOIGroupOfFixationSet;
+            var x = minimumAOINameOfFixationSet;
             foreach (KeyValuePair<string,List<Fixation>> keyValuePair in fixationSetToFixationListDictionary)
             {
                 string participantKey = keyValuePair.Key;
                 List<Fixation> fixationList = keyValuePair.Value;
-                int firstAOI = minimumAOIGroupOfFixationSet[participantKey];
+                int firstAOI = minimumAOINameOfFixationSet[participantKey];
                 if (fixationList[0].Trial.EndsWith("001") && fixationList.Count > minimumFixationsInTrialToRemoveFixation)
                 {
-                    int firstFixaitionAtFirstAOI = fixationList.FindIndex(fix => fix.AOI_Group_Before_Change == firstAOI);
+                    int firstFixaitionAtFirstAOI = fixationList.FindIndex(fix => fix.AOI_Name == firstAOI);
                     if (firstFixaitionAtFirstAOI > 0)
                         fixationList.RemoveRange(0, Math.Min(firstFixaitionAtFirstAOI, Number_Of_Fixations_To_Remove_Before_First_AOI));
 
@@ -209,11 +209,11 @@ namespace EM_Analyzer.ModelClasses
                 HashSet<int> seenPages = new HashSet<int>();
                 foreach (KeyValuePair<string, List<Fixation>> fixationsPair in participantFixations)
                 {
-                    int firstAOI = minimumAOIGroupOfFixationSet[fixationsPair.Key];
+                    int firstAOI = minimumAOINameOfFixationSet[fixationsPair.Key];
                     if (!seenPages.Contains(fixationsPair.Value[0].Page) &&
                         fixationsPair.Value.Count > minimumFixationsInTrialToRemoveFixation)
                     {
-                        int firstFixaitionAtFirstAOI = fixationsPair.Value.FindIndex(fix => fix.AOI_Group_Before_Change == firstAOI);
+                        int firstFixaitionAtFirstAOI = fixationsPair.Value.FindIndex(fix => fix.AOI_Name == firstAOI);
                         if (firstFixaitionAtFirstAOI > 0)
                             fixationsPair.Value.RemoveRange(0, Math.Min(firstFixaitionAtFirstAOI, Number_Of_Fixations_To_Remove_Before_First_AOI));
                     }
@@ -389,8 +389,8 @@ namespace EM_Analyzer.ModelClasses
         private static int ChangeAOIGroupOfCountedAOIFixations(List<CountedAOIFixations> countedAOIFixationsArray, int index)
         {
             CountedAOIFixations currrentCountedAOIFixations = countedAOIFixationsArray[index];
-            bool needsToAddToPrevAOI = index > 0 && countedAOIFixationsArray[index - 1].Count >= Number_Of_Fixations_In_Of_AOI_For_Exception && countedAOIFixationsArray[index - 1].AOI_Group!=-1;
-            bool needsToAddToNextAOI = index < countedAOIFixationsArray.Count - 1 && countedAOIFixationsArray[index + 1].Count >= Number_Of_Fixations_In_Of_AOI_For_Exception && countedAOIFixationsArray[index + 1].AOI_Group != -1;
+            bool needsToAddToPrevAOI = index > 0 && countedAOIFixationsArray[index - 1].Count >= Number_Of_Fixations_In_Of_AOI_For_Exception && countedAOIFixationsArray[index - 1].AOI_Group!="-1";
+            bool needsToAddToNextAOI = index < countedAOIFixationsArray.Count - 1 && countedAOIFixationsArray[index + 1].Count >= Number_Of_Fixations_In_Of_AOI_For_Exception && countedAOIFixationsArray[index + 1].AOI_Group != "-1";
             if (needsToAddToPrevAOI || needsToAddToNextAOI)
                 currrentCountedAOIFixations.Fixations.ForEach(fix => fix.IsException = true);
             // TODO: Dealing With Exceptional limits !

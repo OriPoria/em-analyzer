@@ -10,7 +10,7 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
     {
         public double AOI_Coverage_In_Percents { get; set; }
         public double AOI_Size_X { get; set; }
-        public int Group { get; set; }
+        public string Group { get; set; }
         public string SpecialNmae { get; set; }
 
         private List<IAOI> AOIs = new List<IAOI>();

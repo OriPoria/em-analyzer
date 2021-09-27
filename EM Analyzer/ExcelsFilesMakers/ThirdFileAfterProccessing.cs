@@ -320,10 +320,10 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 this.Participant = Participant;
 
                 /*
-                 Critical Point: Removes all the fixations with no AOI Group (after dealing with exceptions) !
+                 Critical Point: Removes all the fixations with no String AOI (after dealing with exceptions) !
                  */
                 this.Fixations = FixationsService.fixationSetToFixationListDictionary[this.Participant + '\t' + this.Trial + '\t' + this.Stimulus];
-                this.Fixations.RemoveAll(fix => fix.AOI_Group_After_Change < 1);
+                this.Fixations.RemoveAll(fix => fix.IsStringAOI);
 
                 this.m_Total_Fixation_Number = -1;
                 this.m_Mean_Fixation_Duration = -1;

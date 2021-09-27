@@ -31,9 +31,11 @@ namespace EM_Analyzer.ModelClasses
         [Description("AOI Name")]
         public int AOI_Name { get; set; }
         [Description("AOI Group Before Change")]
-        public int AOI_Group_Before_Change { get; set; }
+        public string AOI_Group_Before_Change { get; set; }
         [Description("AOI Group After Change")]
-        public int AOI_Group_After_Change { get; set; }
+        public string AOI_Group_After_Change { get; set; }
+        [EpplusIgnore]
+        public bool IsStringAOI { get; set; }
         [Description("Is Exceptional")]
         public bool IsException { get; set; }
         [EpplusIgnore]
@@ -125,10 +127,21 @@ namespace EM_Analyzer.ModelClasses
 
             try
             {
-                if (arr[TextFileColumnIndexes.AOI_Group] == "figure")
-                    newFixation.AOI_Group_After_Change = newFixation.AOI_Group_Before_Change = 0;
+                int result;
+                if (int.TryParse(arr[TextFileColumnIndexes.AOI_Group], out result))
+                {
+                    newFixation.AOI_Group_After_Change = newFixation.AOI_Group_Before_Change = result.ToString();
+                    newFixation.IsStringAOI = false;
+                }
+                else if (arr[TextFileColumnIndexes.AOI_Group] == "")
+                {
+                    newFixation.IsStringAOI = false;
+                }
                 else
-                    newFixation.AOI_Group_After_Change = newFixation.AOI_Group_Before_Change = int.Parse(arr[TextFileColumnIndexes.AOI_Group]);
+                {
+                    newFixation.AOI_Group_After_Change = newFixation.AOI_Group_Before_Change = arr[TextFileColumnIndexes.AOI_Group];
+                    newFixation.IsStringAOI = true;
+                }
             }
             catch
             {
@@ -137,10 +150,9 @@ namespace EM_Analyzer.ModelClasses
 
             try
             {
-                if (arr[TextFileColumnIndexes.AOI_Name] == "figure")
-                    newFixation.AOI_Name = 0;
-                else
+                if (!newFixation.IsStringAOI)
                     newFixation.AOI_Name = int.Parse(arr[TextFileColumnIndexes.AOI_Name]);
+                
 
             }
             catch
@@ -164,7 +176,7 @@ namespace EM_Analyzer.ModelClasses
 
             if (!isAOIValid)
             {
-                newFixation.AOI_Group_After_Change = newFixation.AOI_Group_Before_Change = -1;
+                newFixation.AOI_Group_After_Change = newFixation.AOI_Group_Before_Change = "-1";
                 newFixation.AOI_Name = -1;
                 newFixation.AOI_Phrase_Size = -1;
             }
@@ -202,7 +214,7 @@ namespace EM_Analyzer.ModelClasses
             try
             {
                 newFixation.AOI_Coverage_In_Percents = double.Parse(arr[TextFileColumnIndexes.AOI_Coverage]);
-                if (newFixation.AOI_Name != 0 && newFixation.AOI_Name != -1 && newFixation.AOI_Phrase_Details.AOI_Coverage_In_Percents < 0)
+                if (!newFixation.IsStringAOI && newFixation.AOI_Name != -1 && newFixation.AOI_Phrase_Details.AOI_Coverage_In_Percents < 0)
                 {
                     newFixation.AOI_Phrase_Details.AOI_Coverage_In_Percents = newFixation.AOI_Coverage_In_Percents;
                 }
@@ -236,10 +248,10 @@ namespace EM_Analyzer.ModelClasses
             FixationsService.fixationSetToFixationListDictionary[dictionatyKey].Add(newFixation);
 
             // set the minimum AOI name of every Fixations Set
-            if (!FixationsService.minimumAOIGroupOfFixationSet.ContainsKey(dictionatyKey))
-                FixationsService.minimumAOIGroupOfFixationSet[dictionatyKey] = int.MaxValue;
-            if (newFixation.AOI_Group_Before_Change > 0 && newFixation.AOI_Group_Before_Change < FixationsService.minimumAOIGroupOfFixationSet[dictionatyKey])
-                FixationsService.minimumAOIGroupOfFixationSet[dictionatyKey] = newFixation.AOI_Group_Before_Change;
+            if (!FixationsService.minimumAOINameOfFixationSet.ContainsKey(dictionatyKey))
+                FixationsService.minimumAOINameOfFixationSet[dictionatyKey] = int.MaxValue;
+            if (newFixation.AOI_Name > 0 && newFixation.AOI_Name < FixationsService.minimumAOINameOfFixationSet[dictionatyKey])
+                FixationsService.minimumAOINameOfFixationSet[dictionatyKey] = newFixation.AOI_Name;
 
 
             return newFixation;
