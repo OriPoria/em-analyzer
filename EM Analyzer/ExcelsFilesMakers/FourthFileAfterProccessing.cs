@@ -371,10 +371,10 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 this.Participant = Participant;
                 
                 // All fixation, include first fixation in every trial is Only for the calculation 
-                // of the other fixations as progressive and regressiv
+                // of the other fixations as progressive and regressive
                 this.All_Fixations = fixations;
                 
-                // all fixations of text without the first one (and all the aoi's > 0)
+                // all fixations of text without the first one in every trial (and all the aoi's > 0)
                 this.m_fixations_text = new List<Fixation>();
                 List<IGrouping<string, Fixation>> groupingTrials = All_Fixations.GroupBy(x => x.Trial).ToList();
                 foreach (IGrouping<string, Fixation>  item in groupingTrials)
