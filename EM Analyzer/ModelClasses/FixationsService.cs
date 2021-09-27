@@ -372,7 +372,7 @@ namespace EM_Analyzer.ModelClasses
 
         private static void AddCountedAOIToAnother(List<CountedAOIFixations> countedAOIFixationsArray, int FromIndex, int ToIndex)
         {
-            IAOI aoiAddingTo = countedAOIFixationsArray[ToIndex].Fixations.First().AOI_Details;
+            IAOI aoiAddingTo = countedAOIFixationsArray[ToIndex].Fixations.First().AOI_Phrase_Details;
             countedAOIFixationsArray[FromIndex].Fixations.ForEach(fix =>
             {
                 fix.IsInExceptionBounds = countedAOIFixationsArray[ToIndex].Fixations.First().AOI_Name > 0 && (aoiAddingTo.DistanceToAOI(fix) <= exceptionsLimit);
