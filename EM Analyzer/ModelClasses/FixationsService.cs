@@ -308,7 +308,7 @@ namespace EM_Analyzer.ModelClasses
                 foreach (List<Fixation> fixationList in values)
                 {
                     lastFixationsQueue.Clear();
-                    List<Fixation> notExceptionalFixations = fixationList.Where(fix => !fix.IsException || (fix.IsInExceptionBounds && dealingWithInsideExceptions == DealingWithExceptionsEnum.Change_AOI_Group)).ToList();
+                    List<Fixation> notExceptionalFixations = fixationList.Where(fix => !fix.IsStringAOI && (!fix.IsException || (fix.IsInExceptionBounds && dealingWithInsideExceptions == DealingWithExceptionsEnum.Change_AOI_Group))).ToList();
                     foreach (Fixation fixation in notExceptionalFixations)
                     {
 
