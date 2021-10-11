@@ -51,12 +51,14 @@ namespace EM_Analyzer.Services
                 ExcelWorksheet ws = wb.Workbook.Worksheets.Add("Inserting Tables");
 
                 string islogs = "Logs";
-                string isFiltered = "AOI - Filtered";
+                string isAOIFiltered = "AOI - Filtered";
+                string isPageFiltered = "Page - Filtered";
+                string isTextFiltered = "Text - Filtered";
                 if (!fileName.Contains(islogs))
                 {
                     ws.View.FreezePanes(2, 4);
                 }  
-                if (fileName.Contains(isFiltered))
+                if (fileName.Contains(isAOIFiltered))
                 {
                     ws.View.FreezePanes(2, 6);
                 }
@@ -73,7 +75,7 @@ namespace EM_Analyzer.Services
                 {
                     try
                     {
-                        if (fileName.Contains(isFiltered))
+                        if (fileName.Contains(isAOIFiltered) || fileName.Contains(isPageFiltered) || fileName.Contains(isTextFiltered))
                         {
                             string path = FixationsService.outputPath + "/" + FixationsService.outputTextString + " - Filters";
                             if (!Directory.Exists(path))

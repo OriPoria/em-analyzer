@@ -181,7 +181,7 @@ namespace EM_Analyzer.ModelClasses
             }
             RemoveEmptyValuesFromFixationSetDictionary();
         }
-        public static void CleanAllFixationBeforeFirstAOIInText()
+        public static void CleanAllFixationBeforeFirstAOIInFirstPage()
         {
             List<Fixation>[] values = fixationSetToFixationListDictionary.Values.ToArray();
             var x = minimumAOIGroupOfFixationSet;
@@ -309,6 +309,7 @@ namespace EM_Analyzer.ModelClasses
                 {
                     lastFixationsQueue.Clear();
                     List<Fixation> notExceptionalFixations = fixationList.Where(fix => !fix.IsException || (fix.IsInExceptionBounds && dealingWithInsideExceptions == DealingWithExceptionsEnum.Change_AOI_Group)).ToList();
+                    notExceptionalFixations.RemoveAll(fix => fix.AOI_Name == 0); // remove "figure" aoi
                     foreach (Fixation fixation in notExceptionalFixations)
                     {
 
@@ -346,7 +347,7 @@ namespace EM_Analyzer.ModelClasses
             foreach (List<Fixation> fixationList in values)
             {
                 List<Fixation> notExceptionalFixations = fixationList.Where(fix => !fix.IsException || (fix.IsInExceptionBounds && dealingWithInsideExceptions == DealingWithExceptionsEnum.Change_AOI_Group)).ToList();
-                //fixationList.RemoveAll(fix => fix.IsException);
+                notExceptionalFixations.RemoveAll(fix => fix.AOI_Name == 0); // remove "figure" aoi
                 List<CountedAOIFixations> countedAOIFixationsArray = ConvertFixationListToCoutedListByPhrase(notExceptionalFixations).ToList();
                 for (int i = 0 ; i < countedAOIFixationsArray.Count ; i++)
                 {
@@ -372,7 +373,6 @@ namespace EM_Analyzer.ModelClasses
 
         private static void AddCountedAOIToAnother(List<CountedAOIFixations> countedAOIFixationsArray, int FromIndex, int ToIndex)
         {
-            // TODO: compare with old version to check there is no critical change
             Fixation firstFixation = countedAOIFixationsArray[ToIndex].Fixations.First();
             IAOI aoiAddingTo = firstFixation.AOI_Name > 0 ? firstFixation.AOI_Phrase_Details : null;
             countedAOIFixationsArray[FromIndex].Fixations.ForEach(fix =>

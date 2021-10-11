@@ -107,12 +107,13 @@
     <Compile Include="ExcelsFilesMakers\Constans.cs" />
     <Compile Include="ExcelsFilesMakers\FirstFileAfterProccessing.cs" />
     <Compile Include="ExcelsFilesMakers\FourthFileAfterProccessing.cs" />
-    <Compile Include="ExcelsFilesMakers\FourthFileConsideringCoverage.cs.cs" />
+    <Compile Include="ExcelsFilesMakers\ThirdFourthFileFilter\FixationsAfterCoverage.cs" />
+    <Compile Include="ExcelsFilesMakers\ThirdFourthFileFilter\FourthFileConsideringCoverage.cs.cs" />
     <Compile Include="ExcelsFilesMakers\ReadingSecondFileAfterProccessing.cs" />
     <Compile Include="ExcelsFilesMakers\SecondFileAfterProccessing.cs" />
     <Compile Include="ExcelsFilesMakers\SecondFileConsideringCoverage.cs" />
     <Compile Include="ExcelsFilesMakers\ThirdFileAfterProccessing.cs" />
-    <Compile Include="ExcelsFilesMakers\ThirdFileConsideringCoverage.cs" />
+    <Compile Include="ExcelsFilesMakers\ThirdFourthFileFilter\ThirdFileConsideringCoverage.cs" />
     <Compile Include="Interfaces\IAOIClassForConsideringCoverage.cs" />
     <Compile Include="Interfaces\ITrialClassForConsideringCoverage.cs" />
     <Compile Include="Math\StandardDevision.cs" />

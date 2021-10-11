@@ -1,5 +1,6 @@
 ﻿using EM_Analyzer.Enums;
 using EM_Analyzer.ExcelsFilesMakers;
+using EM_Analyzer.ExcelsFilesMakers.ThirdFourFilter;
 using EM_Analyzer.ModelClasses;
 using EM_Analyzer.ModelClasses.AOIClasses;
 using EM_Analyzer.Services;
@@ -22,7 +23,7 @@ namespace EM_Analyzer
             int chosenOption = 1;
             string input;
             bool isOptionOK;
-            bool testMode = false;
+            bool testMode = true;
             if (!testMode)
             {
                 do
@@ -148,8 +149,11 @@ namespace EM_Analyzer
             // Test mode- choose ahead the files
             else
             {
-                phrasesTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\20lines_c.txt";
-                wordsTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\20lines_w.txt";
+                phrasesTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\AOI Statistics - all pages_c.txt";
+               wordsTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\AOI Statistics - all pages_w.txt";
+//                phrasesTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\small_20lines_c.txt";
+  //              wordsTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\small_20lines_w.txt";
+
             }
             readingExcelFile.Join();
             FixationsService.phrasesExcelFileName = phrasesExcelFilePath.Substring(phrasesExcelFilePath.LastIndexOf(@"\") + 1);
@@ -183,7 +187,7 @@ namespace EM_Analyzer
             else if (int.Parse(ConfigurationService.AnalyzeExtent) == 2)
             {
                 if (int.Parse(ConfigurationService.RemoveFixationsAppearedBeforeFirstAOI) == 2)
-                    FixationsService.CleanAllFixationBeforeFirstAOIInText();
+                    FixationsService.CleanAllFixationBeforeFirstAOIInFirstPage();
                 else if (int.Parse(ConfigurationService.RemoveFixationsAppearedBeforeFirstAOI) == 3)
                     FixationsService.CleanAllFixationBeforeFirstAOIInPage();
             }
@@ -214,6 +218,12 @@ namespace EM_Analyzer
 
             FourthFileAfterProccessing.MakeExcelFile();
             Console.WriteLine("Fourth File: " + ConfigurationService.ThirdExcelFileName + " Finished!!! ");
+
+            ThirdFourthFilter.CreateDatasetFilterTrialText();
+            ThirdFileConsideringCoverage.MakeExcelFile();
+            FourthFileConsideringCoverage.MakeExcelFile();
+            Console.WriteLine("Third and Fourth Filter File: " + ConfigurationService.ThirdExcelFileName + " Finished!!! ");
+
         }
 
         private static void ReadTextFilePhrase(string phraseFilePath)
