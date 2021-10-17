@@ -20,7 +20,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             foreach (IGrouping<string, KeyValuePair<string, List<Fixation>>> participantFixations in fixationsGroupingByParticipant)
             {
                 List<Fixation> fixationList = participantFixations.SelectMany(list => list.Value).ToList();
-                table.Add(new ParticipantText(participantFixations.Key, fixationList[0].Stimulus_Tokens[0], fixationList));
+                table.Add(new ParticipantText(fixationList[0].Stimulus_Tokens[0], participantFixations.Key, fixationList));
 
             }
             ExcelsService.CreateExcelFromStringTable(ConfigurationService.FourthExcelFileName, table, null);

@@ -84,8 +84,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     return this.m_Total_Fixation_Number;
                 }
             }
-            [Description("Total Filtered Fixation Number")]
-            public int Total_Filtered_Fixation_Number
+            [Description("Total Fixation Filtered")]
+            public int Total_Fixation_Filtered
             {
                 get
                 {
@@ -130,8 +130,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     return this.m_Progressive_Fixations_Duration_Filtered.Count;
                 }
             }
-            [Description("Progressive Fixation Duration Filtered")]
-            public int Progressive_Fixation_Duration_Filtered
+            [Description("Progressive Fixation Filtered")]
+            public int Progressive_Fixation_Filtered
             {
                 get
                 {
@@ -166,8 +166,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     return this.m_SD_Progressive_Saccade_Length;
                 }
             }
-            [Description("Progressive Saccade Length Fixations Filtered")]
-            public double Progressive_Saccade_Length_Fixations_Filtered
+            [Description("Progressive Saccade Length Filtered")]
+            public double Progressive_Saccade_Length_Filtered
             {
                 get
                 {
@@ -203,8 +203,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     return this.m_SD_Progressive_Saccade_Length_X;
                 }
             }
-            [Description("Progressive Saccade Length X Fixations Filtered")]
-            public double Progressive_Saccade_Length_X_Fixations_Filtered
+            [Description("Progressive Saccade Length X Filtered")]
+            public double Progressive_Saccade_Length_X_Filtered
             {
                 get
                 {
@@ -222,8 +222,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_Mean_Regressive_Fixation_Duration == -1)
                     {
-                        double duration_sum = this.m_Regressive_Fixations_Duration_Filtered.Sum(fix => fix.Event_Duration);
-                        this.m_Mean_Regressive_Fixation_Duration = duration_sum / this.m_Regressive_Fixations_Duration_Filtered.Count;
+                        double duration_sum = this.m_Regressive_Fixations_Filtered.Sum(fix => fix.Event_Duration);
+                        this.m_Mean_Regressive_Fixation_Duration = duration_sum / this.m_Regressive_Fixations_Filtered.Count;
                     }
                     return this.m_Mean_Regressive_Fixation_Duration;
                 }
@@ -236,7 +236,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_SD_Regressive_Fixation_Duration == -1)
                     {
-                        IEnumerable<double> durations = this.m_Regressive_Fixations_Duration_Filtered.Select(fix => fix.Event_Duration).ToList();
+                        IEnumerable<double> durations = this.m_Regressive_Fixations_Filtered.Select(fix => fix.Event_Duration).ToList();
                         this.m_SD_Regressive_Fixation_Duration = StandardDevision.ComputeStandardDevision(durations);
                     }
                     return this.m_SD_Regressive_Fixation_Duration;
@@ -247,10 +247,10 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
-                    return this.m_Regressive_Fixations_Duration_Filtered.Count;
+                    return this.m_Regressive_Fixations_Filtered.Count;
                 }
             }
-            [Description("Regressive Fixation Duration Filtered")]
+            [Description("Regressive Fixation Filtered")]
             public int Regressive_Fixation_Duration_Filtered
             {
                 get
@@ -287,8 +287,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     return this.m_SD_Regressive_Saccade_Length;
                 }
             }
-            [Description("Regressive Saccade Length Fixations Filtered")]
-            public double Regressive_Saccade_Length_Fixations_Filtered
+            [Description("Regressive Saccade Length Filtered")]
+            public double Regressive_Saccade_Length_Filtered
             {
                 get
                 {
@@ -324,8 +324,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     return this.m_SD_Regressive_Saccade_Length_X;
                 }
             }
-            [Description("Regressive Saccade Length X Fixations Filtered")]
-            public double Regressive_Saccade_Length_X_Fixations_Filtered
+            [Description("Regressive Saccade Length X Filtered")]
+            public double Regressive_Saccade_Length_X_Filtered
             {
                 get
                 {
@@ -348,8 +348,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     return this.m_Pupil_Diameter;
                 }
             }
-            [Description("Mean Pupil Diameter Fixations Filtered")]
-            public double Mean_Pupil_Diameter_Fixations_Filtered
+            [Description("Pupil Diameter Filtered")]
+            public double Pupil_Diameter_Filtered
             {
                 get
                 {
@@ -366,7 +366,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             private List<Fixation> m_Progressive_Fixations_Saccade_Length_Filtered;
             private List<Fixation> m_Progressive_Fixations_Saccade_Length_X_Filtered;
 
-            private List<Fixation> m_Regressive_Fixations_Duration_Filtered;
+            private List<Fixation> m_Regressive_Fixations_Filtered;
             private List<Fixation> m_Regressive_Fixations_Saccade_Length_Filtered;
             private List<Fixation> m_Regressive_Fixations_Saccade_Length_X_Filtered;
 
@@ -387,7 +387,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 this.m_Progressive_Fixations_Saccade_Length_Filtered = filteredTrialTextPerParticipant.Progressive_Saccade_Length_Filter.Where(fix => fix.Trial == Trial).ToList();
                 this.m_Progressive_Fixations_Saccade_Length_X_Filtered = filteredTrialTextPerParticipant.Progressive_Saccade_Length_X_Filter.Where(fix => fix.Trial == Trial).ToList();
 
-                this.m_Regressive_Fixations_Duration_Filtered = filteredTrialTextPerParticipant.Regressive_Fixations_Duration_Filter.Where(fix => fix.Trial == Trial).ToList();
+                this.m_Regressive_Fixations_Filtered = filteredTrialTextPerParticipant.Regressive_Fixations_Duration_Filter.Where(fix => fix.Trial == Trial).ToList();
                 this.m_Regressive_Fixations_Saccade_Length_Filtered = filteredTrialTextPerParticipant.Regressive_Saccade_Length_Filter.Where(fix => fix.Trial == Trial).ToList();
                 this.m_Regressive_Fixations_Saccade_Length_X_Filtered = filteredTrialTextPerParticipant.Regressive_Saccade_Length_X_Filter.Where(fix => fix.Trial == Trial).ToList();
 

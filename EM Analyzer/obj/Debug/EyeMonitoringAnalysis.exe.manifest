@@ -78,14 +78,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="EyeMonitoringAnalysis.exe" size="142304">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="EyeMonitoringAnalysis.exe" size="146400">
       <assemblyIdentity name="EyeMonitoringAnalysis" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>QnTaJpMyBEVt/wMBSkfGU2srVeDhTSZXCCBbJSzAiXY=</dsig:DigestValue>
+        <dsig:DigestValue>EI0xlnxiXXV6oGJebf+B0foJbXohSgv5aWnyDaQi6vg=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

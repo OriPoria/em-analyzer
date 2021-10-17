@@ -20,7 +20,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
             foreach (FilteredTrialTextPerParticipant item in perParticipants)
             {
-                table.Add(new ParticipantTextAfterFilter(item.All_Fixations_Duration_Filter[0].Stimulus,
+                table.Add(new ParticipantTextAfterFilter(item.All_Fixations_Duration_Filter[0].Stimulus_Tokens[0],
                         item.All_Fixations_Duration_Filter[0].Participant, item));
 
             }
@@ -77,8 +77,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     return this.m_Total_Fixation_Number;
                 }
             }
-            [Description("Total Filtered Fixation Number")]
-            public int Total_Filtered_Fixation_Number
+            [Description("Total Fixation Filtered")]
+            public int Total_Fixation_Filtered
             {
                 get
                 {
@@ -122,8 +122,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     return this.m_Progressive_Fixations_Duration_Filtered.Count;
                 }
             }
-            [Description("Progressive Fixation Duration Filtered")]
-            public int Progressive_Fixation_Duration_Filtered
+            [Description("Progressive Fixation Filtered")]
+            public int Progressive_Fixation_Filtered
             {
                 get
                 {
@@ -157,8 +157,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     return this.m_SD_Progressive_Saccade_Length;
                 }
             }
-            [Description("Progressive Saccade Length Fixations Filtered")]
-            public double Progressive_Saccade_Length_Fixations_Filtered
+            [Description("Progressive Saccade Length Filtered")]
+            public double Progressive_Saccade_Length_Filtered
             {
                 get
                 {
@@ -193,8 +193,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     return this.m_SD_Progressive_Saccade_Length_X;
                 }
             }
-            [Description("Progressive Saccade Length X Fixations Filtered")]
-            public double Progressive_Saccade_Length_X_Fixations_Filtered
+            [Description("Progressive Saccade Length X Filtered")]
+            public double Progressive_Saccade_Length_X_Filtered
             {
                 get
                 {
@@ -239,8 +239,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     return this.m_Regressive_Fixations_Duration_Filtered.Count;
                 }
             }
-            [Description("Regressive Fixation Duration Filtered")]
-            public int Regressive_Fixation_Duration_Filtered
+            [Description("Regressive Fixation Filtered")]
+            public int Regressive_Fixation_Filtered
             {
                 get
                 {
@@ -275,8 +275,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     return this.m_SD_Regressive_Saccade_Length;
                 }
             }
-            [Description("Regressive Saccade Length Fixations Filtered")]
-            public double Regressive_Saccade_Length_Fixations_Filtered
+            [Description("Regressive Saccade Length Filtered")]
+            public double Regressive_Saccade_Length_Filtered
             {
                 get
                 {
@@ -311,8 +311,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     return this.m_SD_Regressive_Saccade_Length_X;
                 }
             }
-            [Description("Regressive Saccade Length X Fixations Filtered")]
-            public double Regressive_Saccade_Length_X_Fixations_Filtered
+            [Description("Regressive Saccade Length X Filtered")]
+            public double Regressive_Saccade_Length_X_Filtered
             {
                 get
                 {
@@ -334,8 +334,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     return this.m_Pupil_Diameter;
                 }
             }
-            [Description("Mean Pupil Diameter Fixations Filtered")]
-            public double Mean_Pupil_Diameter_Fixations_Filtered
+            [Description("Pupil Diameter Filtered")]
+            public double Pupil_Diameter_Filtered
             {
                 get
                 {

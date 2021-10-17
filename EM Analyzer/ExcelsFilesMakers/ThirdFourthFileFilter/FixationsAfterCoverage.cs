@@ -1,9 +1,14 @@
 ﻿using EM_Analyzer.ModelClasses;
+using EM_Analyzer.Services;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using static EM_Analyzer.ExcelsFilesMakers.ThirdFileConsideringCoverage;
 
 namespace EM_Analyzer.ExcelsFilesMakers.ThirdFourFilter
@@ -14,14 +19,17 @@ namespace EM_Analyzer.ExcelsFilesMakers.ThirdFourFilter
         public delegate double NumericExpression(Fixation value);
         public static List<FilteredTrialTextPerParticipant> filteredTrialTextPerParticipants = new List<FilteredTrialTextPerParticipant>();
 
+        /*
+         All the dictionaries in this class are mapping between the trial and number of fixations that 
+         are eliminated by the filter. 
+         */
         public class FilteredTrialTextPerParticipant
         {
             public string Participant { get; set; }
             public string Stimulus { get; set; }
-            public HashSet<string> All_Trials = new HashSet<string>();
-            // all fixations
-            private List<Fixation> allFixations;
-            private List<Fixation> m_Fixations_Text;
+            public HashSet<string> All_Trials = new HashSet<string>(); // all valid trials 
+            private List<Fixation> allFixations; // all fixations, include first in each trial
+            public List<Fixation> m_Fixations_Text;
             private List<Fixation> m_Fixation_Filter_Duration;
             private Dictionary<string, int> m_Trial_Elimination_Fixations_Duration;
             public Dictionary<string, int> Trial_Elimination_Fixations_Duration 
@@ -44,7 +52,7 @@ namespace EM_Analyzer.ExcelsFilesMakers.ThirdFourFilter
             }
             
             // progressive fixations
-            private List<Fixation> m_Progressive_Fixations;
+            public List<Fixation> m_Progressive_Fixations;
             private List<Fixation> m_Progressive_Fixations_Filter_Duration;
             private Dictionary<string, int> m_Trial_Elimination_Progressive_Duration;
             public Dictionary<string, int> Trial_Elimination_Progressive_Duration
@@ -106,7 +114,7 @@ namespace EM_Analyzer.ExcelsFilesMakers.ThirdFourFilter
                 }
             }
             // regressive fixations
-            private List<Fixation> m_Regressive_Fixations;
+            public List<Fixation> m_Regressive_Fixations;
             private List<Fixation> m_Regressive_Fixations_Filter;
             private Dictionary<string, int> m_Trial_Elimination_Regressive_Duration;
             public Dictionary<string, int> Trial_Elimination_Regressive_Duration
@@ -236,7 +244,7 @@ namespace EM_Analyzer.ExcelsFilesMakers.ThirdFourFilter
             }
 
 
-            public FilteredTrialTextPerParticipant (string Stimulus, string Participant, List<Fixation> fixations)
+            public FilteredTrialTextPerParticipant (string Participant, string Stimulus, List<Fixation> fixations)
             {
                 this.Stimulus = Stimulus;
                 this.Participant = Participant;
@@ -301,6 +309,8 @@ namespace EM_Analyzer.ExcelsFilesMakers.ThirdFourFilter
                 dict = new Dictionary<string, int>();
                 List<Fixation> fixationsAfterFilter = new List<Fixation>();
                 IEnumerable<double> valuesForStandardDevision = original.Select(fix => numeric(fix));
+                if (valuesForStandardDevision.Count() == 0)
+                    return fixationsAfterFilter;
                 List<double> listForTest = valuesForStandardDevision.ToList();
                 IEnumerable<double> standardDevisionGrades = StandardDevision.ComputeStandardDevisionGrades(valuesForStandardDevision);
                 List<double> listForTest2 = standardDevisionGrades.ToList();
@@ -326,7 +336,6 @@ namespace EM_Analyzer.ExcelsFilesMakers.ThirdFourFilter
             try
             {
                 standardDevisionAllowed = double.Parse(ConfigurationService.StandardDeviation);
-                standardDevisionAllowed = 1.0;
             }
             catch
             {
@@ -339,8 +348,178 @@ namespace EM_Analyzer.ExcelsFilesMakers.ThirdFourFilter
             foreach (IGrouping<string, KeyValuePair<string, List<Fixation>>> participantFixations in fixationsGroupingByParticipant)
             {
                 List<Fixation> fixationList = participantFixations.SelectMany(list => list.Value).ToList();
+                string s1 = participantFixations.Key;
+                string s2 = fixationList[0].Stimulus_Tokens[0];
                 FilteredTrialTextPerParticipant participantFiltered = new FilteredTrialTextPerParticipant(participantFixations.Key, fixationList[0].Stimulus_Tokens[0], fixationList);
                 filteredTrialTextPerParticipants.Add(participantFiltered);
+            }
+        }
+        /*
+         * Creates files only for test the filter on fixations function
+         */
+        public static void CreateFilesForTest()
+        {
+            foreach (var item in filteredTrialTextPerParticipants)
+            {
+                string participant = item.Participant;
+                List<Fixation> table = new List<Fixation>();
+                List<Fixation> values = item.m_Fixations_Text;
+
+                List<Saccade> saccadeTable = new List<Saccade>();
+                // all fixations
+                table.AddRange(values);
+                CreateExcelFromStringTable(participant, " All fixations", table, null);
+                table.Clear();
+
+                // all fixations after filter
+                values = item.All_Fixations_Duration_Filter;
+                table.AddRange(values);
+                CreateExcelFromStringTable(participant, " All fixations after duration filter", table, null);
+                table.Clear();
+
+                // Progressive fixations:
+
+                values = item.m_Progressive_Fixations;
+                table.AddRange(values);
+                CreateExcelFromStringTable(participant, " All progressive fixations", table, null);
+                table.Clear();
+
+                values = item.Progressive_Fixations_Duration_Filter;
+                table.AddRange(values);
+                CreateExcelFromStringTable(participant, " Progressive fixations after duration filter", table, null);
+                table.Clear();
+
+                values = item.m_Progressive_Fixations;
+                saccadeTable.AddRange(LastFixationsToSaccades(values, fix => fix.DistanceToPreviousFixation()));
+                CreateExcelFromStringTable(participant, " All progressive saccades", saccadeTable, null);
+                saccadeTable.Clear();
+
+                values = item.Progressive_Saccade_Length_Filter;
+                saccadeTable.AddRange(LastFixationsToSaccades(values, fix => fix.DistanceToPreviousFixation()));
+                CreateExcelFromStringTable(participant, " Progressive saccades after filter", saccadeTable, null);
+                saccadeTable.Clear();
+
+                values = item.m_Progressive_Fixations;
+                saccadeTable.AddRange(LastFixationsToSaccades(values, fix => Math.Abs(fix.Fixation_Position_X - fix.Previous_Fixation.Fixation_Position_X)));
+                CreateExcelFromStringTable(participant, " All progressive saccades length X", saccadeTable, null);
+                saccadeTable.Clear();
+
+                values = item.Progressive_Saccade_Length_X_Filter;
+                saccadeTable.AddRange(LastFixationsToSaccades(values, fix => Math.Abs(fix.Fixation_Position_X - fix.Previous_Fixation.Fixation_Position_X)));
+                CreateExcelFromStringTable(participant, " Progressive saccades length X after filter", saccadeTable, null);
+                saccadeTable.Clear();
+
+
+                // Regressive Fixations:
+
+                values = item.m_Regressive_Fixations;
+                table.AddRange(values);
+                CreateExcelFromStringTable(participant, " All Regressive fixations", table, null);
+                table.Clear();
+
+                values = item.Regressive_Fixations_Duration_Filter;
+                table.AddRange(values);
+                CreateExcelFromStringTable(participant, " Regressive fixations after duration filter", table, null);
+                table.Clear();
+
+                values = item.m_Regressive_Fixations;
+                saccadeTable.AddRange(LastFixationsToSaccades(values, fix => fix.DistanceToPreviousFixation()));
+                CreateExcelFromStringTable(participant, " All Regressive saccades", saccadeTable, null);
+                saccadeTable.Clear();
+
+                values = item.Regressive_Saccade_Length_Filter;
+                saccadeTable.AddRange(LastFixationsToSaccades(values, fix => fix.DistanceToPreviousFixation()));
+                CreateExcelFromStringTable(participant, " Regressive saccades after filter", saccadeTable, null);
+                saccadeTable.Clear();
+
+                values = item.m_Regressive_Fixations;
+                saccadeTable.AddRange(LastFixationsToSaccades(values, fix => Math.Abs(fix.Fixation_Position_X - fix.Previous_Fixation.Fixation_Position_X)));
+                CreateExcelFromStringTable(participant, " All Regressive saccades length X", saccadeTable, null);
+                saccadeTable.Clear();
+
+                values = item.Regressive_Saccade_Length_X_Filter;
+                saccadeTable.AddRange(LastFixationsToSaccades(values, fix => Math.Abs(fix.Fixation_Position_X - fix.Previous_Fixation.Fixation_Position_X)));
+                CreateExcelFromStringTable(participant, " Regressive saccades length X after filter", saccadeTable, null);
+                saccadeTable.Clear();
+
+            }
+
+        }
+        public class Saccade
+        {
+            public string Participant { get; set; }
+            public string Trial { get; set; }
+            public string Stimulus { get; set; }
+            [Description("Last Fixation Index")]
+            public long Index { get; set; }
+            [Description("Saccade Length")]
+            public double Saccade_Length { get; set; }
+        }
+        private static List<Saccade> LastFixationsToSaccades(List<Fixation> fixations, Func<Fixation, double> saccadeFunction)
+        {
+            List<Saccade> saccades = new List<Saccade>();
+            fixations.ForEach(fix => saccades.Add( new Saccade
+            {
+                Participant = fix.Participant,
+                Stimulus = fix.Stimulus,
+                Index = fix.Index,
+                Trial = fix.Trial,
+                Saccade_Length = saccadeFunction(fix)
+            }));
+            return saccades;
+        }
+
+
+        public static void CreateExcelFromStringTable<T>(string participant ,string fileName, IEnumerable<T> table, Func<ExcelWorksheet, int> editExcelFunc)
+        {
+            using (var wb = new ExcelPackage())
+            {
+                ExcelWorksheet ws = wb.Workbook.Worksheets.Add("Inserting Tables");
+/*
+                string islogs = "Logs";
+                string isAOIFiltered = "AOI - Filtered";
+                string isPageFiltered = "Page - Filtered";
+                string isTextFiltered = "Text - Filtered";
+                if (!fileName.Contains(islogs))
+                {
+                    ws.View.FreezePanes(2, 4);
+                }
+                if (fileName.Contains(isAOIFiltered))
+                {
+                    ws.View.FreezePanes(2, 6);
+                }
+                if (fileName.Contains(ConfigurationService.FourthExcelFileName))
+                {
+                    ws.View.FreezePanes(2, 3);
+                }
+*/
+                ExcelRangeBase range = ws.Cells[1, 1].LoadFromCollectionFiltered(table);
+
+                ws.Cells[ws.Dimension.Address].AutoFitColumns();
+                editExcelFunc?.Invoke(ws);
+                DialogResult dialogResult; // = DialogResult.Retry;
+                do
+                {
+                    try
+                    {
+                        string path = FixationsService.outputPath + "/" + FixationsService.outputTextString + " - Filters/Test Filters/" + participant;
+                        if (!Directory.Exists(path))
+                        {
+                            DirectoryInfo di = Directory.CreateDirectory(path);
+                        }
+                        wb.SaveAs(new FileInfo(path + "/" + fileName + ConfigurationService.ExcelFilesExtension));
+                    
+                        dialogResult = DialogResult.Abort;
+                    }
+                    catch (InvalidOperationException e)
+                    {
+                        Console.Write(e.InnerException.InnerException.Message);
+                        string errorDescription = "";
+                        errorDescription += e.InnerException?.InnerException?.Message + Environment.NewLine;
+                        errorDescription += "Check If The File We Trying to overwrite is already open!!!";
+                        dialogResult = MessageBox.Show(errorDescription, "Error In Saving File " + fileName, MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
+                    }
+                } while (dialogResult == DialogResult.Retry);
             }
         }
     }

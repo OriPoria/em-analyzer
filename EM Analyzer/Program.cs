@@ -23,7 +23,7 @@ namespace EM_Analyzer
             int chosenOption = 1;
             string input;
             bool isOptionOK;
-            bool testMode = true;
+            bool testMode = false;
             if (!testMode)
             {
                 do
@@ -150,9 +150,12 @@ namespace EM_Analyzer
             else
             {
                 phrasesTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\AOI Statistics - all pages_c.txt";
-               wordsTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\AOI Statistics - all pages_w.txt";
-//                phrasesTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\small_20lines_c.txt";
-  //              wordsTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\small_20lines_w.txt";
+                wordsTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\AOI Statistics - all pages_w.txt";
+              //                  phrasesTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\small_20lines_c.txt";
+                //              wordsTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\small_20lines_w.txt";
+     //           phrasesTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\small_c.txt";
+       //         wordsTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\small_w.txt";
+
 
             }
             readingExcelFile.Join();
@@ -217,9 +220,10 @@ namespace EM_Analyzer
             Console.WriteLine("Third File: " + ConfigurationService.ThirdExcelFileName + " Finished!!! ");
 
             FourthFileAfterProccessing.MakeExcelFile();
-            Console.WriteLine("Fourth File: " + ConfigurationService.ThirdExcelFileName + " Finished!!! ");
+            Console.WriteLine("Fourth File: " + ConfigurationService.FourthExcelFileName + " Finished!!! ");
 
             ThirdFourthFilter.CreateDatasetFilterTrialText();
+            ThirdFourthFilter.CreateFilesForTest();
             ThirdFileConsideringCoverage.MakeExcelFile();
             FourthFileConsideringCoverage.MakeExcelFile();
             Console.WriteLine("Third and Fourth Filter File: " + ConfigurationService.ThirdExcelFileName + " Finished!!! ");
