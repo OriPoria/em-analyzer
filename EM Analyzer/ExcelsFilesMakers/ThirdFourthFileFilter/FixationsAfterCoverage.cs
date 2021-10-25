@@ -343,15 +343,18 @@ namespace EM_Analyzer.ExcelsFilesMakers.ThirdFourFilter
                 standardDevisionAllowed = 2.5;
             }
             // grouping the fixations of each participant from all the trials (pages)
-            IEnumerable<IGrouping<string, KeyValuePair<string, List<Fixation>>>> fixationsGroupingByParticipant = FixationsService.fixationSetToFixationListDictionary.GroupBy(fl => fl.Value[0].Participant);
+            IEnumerable<IGrouping<string, KeyValuePair<string, List<Fixation>>>> fixationsGroupingByParticipant = FixationsService.fixationSetToFixationListDictionary.GroupBy(fl => fl.Key.Split('\t')[0]);
 
             foreach (IGrouping<string, KeyValuePair<string, List<Fixation>>> participantFixations in fixationsGroupingByParticipant)
             {
                 List<Fixation> fixationList = participantFixations.SelectMany(list => list.Value).ToList();
-                string s1 = participantFixations.Key;
-                string s2 = fixationList[0].Stimulus_Tokens[0];
-                FilteredTrialTextPerParticipant participantFiltered = new FilteredTrialTextPerParticipant(participantFixations.Key, fixationList[0].Stimulus_Tokens[0], fixationList);
-                filteredTrialTextPerParticipants.Add(participantFiltered);
+                if (fixationList.Count > 0)
+                {
+                    string s1 = participantFixations.Key;
+                    string s2 = fixationList[0].Stimulus_Tokens[0];
+                    FilteredTrialTextPerParticipant participantFiltered = new FilteredTrialTextPerParticipant(participantFixations.Key, fixationList[0].Stimulus_Tokens[0], fixationList);
+                    filteredTrialTextPerParticipants.Add(participantFiltered);
+                }
             }
         }
         /*
