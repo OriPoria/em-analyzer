@@ -72,7 +72,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_Total_Fixation_Number == -1)
                     {
-                        this.m_Total_Fixation_Number = this.m_Fixations_Duration_Filtered.Count;
+                        this.m_Total_Fixation_Number = this.filteredTrialTextPerParticipant.m_Fixations_Text.Count;
                     }
                     return this.m_Total_Fixation_Number;
                 }
@@ -119,7 +119,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
-                    return this.m_Progressive_Fixations_Duration_Filtered.Count;
+                    return this.filteredTrialTextPerParticipant.m_Progressive_Fixations.Count;
                 }
             }
             [Description("Progressive Fixation Filtered")]
@@ -236,7 +236,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
-                    return this.m_Regressive_Fixations_Duration_Filtered.Count;
+                    return this.filteredTrialTextPerParticipant.m_Regressive_Fixations.Count;
                 }
             }
             [Description("Regressive Fixation Filtered")]

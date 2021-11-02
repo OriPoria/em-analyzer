@@ -23,7 +23,7 @@ namespace EM_Analyzer
             int chosenOption = 1;
             string input;
             bool isOptionOK;
-            bool testMode = false;
+            bool testMode = true;
             if (!testMode)
             {
                 do

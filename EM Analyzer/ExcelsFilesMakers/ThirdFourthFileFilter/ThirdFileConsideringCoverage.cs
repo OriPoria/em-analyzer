@@ -69,7 +69,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 }
             }
 
-
+            private List<Fixation> m_Total_Fixation_Page;
 
             private int m_Total_Fixation_Number;
             [Description("Total Fixation Number")]
@@ -79,7 +79,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_Total_Fixation_Number == -1)
                     {
-                        this.m_Total_Fixation_Number = this.m_Fixations_Duration_Filtered.Count;
+                        this.m_Total_Fixation_Number = this.m_Total_Fixation_Page.Count;
                     }
                     return this.m_Total_Fixation_Number;
                 }
@@ -122,12 +122,13 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     return this.m_SD_Progressive_Fixation_Duration;
                 }
             }
+            private List<Fixation> m_Progressive_Fixations;
             [Description("Progressive Fixation Number")]
             public int Progressive_Fixation_Number
             {
                 get
                 {
-                    return this.m_Progressive_Fixations_Duration_Filtered.Count;
+                    return this.m_Progressive_Fixations.Count;
                 }
             }
             [Description("Progressive Fixation Filtered")]
@@ -242,12 +243,13 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     return this.m_SD_Regressive_Fixation_Duration;
                 }
             }
+            private List<Fixation> m_Regressive_Fixations;
             [Description("Regressive Fixation Number")]
             public int Regressive_Fixation_Number
             {
                 get
                 {
-                    return this.m_Regressive_Fixations_Filtered.Count;
+                    return this.m_Regressive_Fixations.Count;
                 }
             }
             [Description("Regressive Fixation Filtered")]
@@ -382,11 +384,15 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 this.Participant = Participant;
                 this.filteredTrialTextPerParticipant = filteredTrialTextPerParticipant;
 
+                this.m_Total_Fixation_Page = filteredTrialTextPerParticipant.m_Fixations_Text.Where(fix => fix.Trial == Trial).ToList();
                 this.m_Fixations_Duration_Filtered = filteredTrialTextPerParticipant.All_Fixations_Duration_Filter.Where(fix => fix.Trial == Trial).ToList();
+
+                this.m_Progressive_Fixations = filteredTrialTextPerParticipant.m_Progressive_Fixations.Where(fix => fix.Trial == Trial).ToList();
                 this.m_Progressive_Fixations_Duration_Filtered = filteredTrialTextPerParticipant.Progressive_Fixations_Duration_Filter.Where(fix => fix.Trial == Trial).ToList();
                 this.m_Progressive_Fixations_Saccade_Length_Filtered = filteredTrialTextPerParticipant.Progressive_Saccade_Length_Filter.Where(fix => fix.Trial == Trial).ToList();
                 this.m_Progressive_Fixations_Saccade_Length_X_Filtered = filteredTrialTextPerParticipant.Progressive_Saccade_Length_X_Filter.Where(fix => fix.Trial == Trial).ToList();
 
+                this.m_Regressive_Fixations = filteredTrialTextPerParticipant.m_Regressive_Fixations.Where(fix => fix.Trial == Trial).ToList();
                 this.m_Regressive_Fixations_Filtered = filteredTrialTextPerParticipant.Regressive_Fixations_Duration_Filter.Where(fix => fix.Trial == Trial).ToList();
                 this.m_Regressive_Fixations_Saccade_Length_Filtered = filteredTrialTextPerParticipant.Regressive_Saccade_Length_Filter.Where(fix => fix.Trial == Trial).ToList();
                 this.m_Regressive_Fixations_Saccade_Length_X_Filtered = filteredTrialTextPerParticipant.Regressive_Saccade_Length_X_Filter.Where(fix => fix.Trial == Trial).ToList();

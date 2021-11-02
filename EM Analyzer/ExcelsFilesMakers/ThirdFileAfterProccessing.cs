@@ -32,6 +32,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
             [Description("Stimulus")]
             public string Stimulus { get; set; }
 
+            private List<Fixation> m_Fixations_Page;
+
             private double m_Mean_Fixation_Duration;
             [Description("Mean Fixation Duration")]
             public double Mean_Fixation_Duration
@@ -40,8 +42,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_Mean_Fixation_Duration == -1)
                     {
-                        double duration_sum = this.Fixations.Sum(fix => fix.Event_Duration);
-                        this.m_Mean_Fixation_Duration = duration_sum / this.Fixations.Count;
+                        double duration_sum = this.m_Fixations_Page.Sum(fix => fix.Event_Duration);
+                        this.m_Mean_Fixation_Duration = duration_sum / this.All_Fixations.Count;
                     }
                     return this.m_Mean_Fixation_Duration;
                 }
@@ -54,7 +56,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_SD_Fixation_Duration == -1)
                     {
-                        IEnumerable<double> durations = this.Fixations.Select(fix => fix.Event_Duration).ToList();
+                        IEnumerable<double> durations = this.m_Fixations_Page.Select(fix => fix.Event_Duration).ToList();
                         this.m_SD_Fixation_Duration = StandardDevision.ComputeStandardDevision(durations);
                     }
                     return this.m_SD_Fixation_Duration;
@@ -71,7 +73,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_Total_Fixation_Number == -1)
                     {
-                        this.m_Total_Fixation_Number = this.Fixations.Count;
+                        this.m_Total_Fixation_Number = this.m_Fixations_Page.Count;
                     }
                     return this.m_Total_Fixation_Number;
                 }
@@ -273,8 +275,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_Pupil_Diameter == -1)
                     {
-                        double sum = this.Fixations.Sum(fix => fix.Fixation_Average_Pupil_Diameter);
-                        this.m_Pupil_Diameter = sum / this.Fixations.Count;
+                        double sum = this.All_Fixations.Sum(fix => fix.Fixation_Average_Pupil_Diameter);
+                        this.m_Pupil_Diameter = sum / this.All_Fixations.Count;
                     }
                     return this.m_Pupil_Diameter;
                 }
@@ -283,7 +285,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
 
             [EpplusIgnore]
-            public List<Fixation> Fixations { get; set; }
+            public List<Fixation> All_Fixations { get; set; }
 
             private List<Fixation> m_Progressive_Fixations;
             private List<Fixation> Progressive_Fixations
@@ -322,8 +324,10 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 /*
                  Critical Point: Removes all the fixations with no AOI Group (after dealing with exceptions) !
                  */
-                this.Fixations = FixationsService.fixationSetToFixationListDictionary[this.Participant + '\t' + this.Trial + '\t' + this.Stimulus];
-                this.Fixations.RemoveAll(fix => fix.AOI_Group_After_Change < 1);
+                this.All_Fixations = FixationsService.fixationSetToFixationListDictionary[this.Participant + '\t' + this.Trial + '\t' + this.Stimulus];
+                this.All_Fixations.RemoveAll(fix => fix.AOI_Group_After_Change < 1);
+                this.m_Fixations_Page = new List<Fixation>();
+                m_Fixations_Page.AddRange(All_Fixations.Skip(1).ToList());
 
                 this.m_Total_Fixation_Number = -1;
                 this.m_Mean_Fixation_Duration = -1;
@@ -351,7 +355,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 this.m_Progressive_Fixations = new List<Fixation>();
                 this.m_Regressive_Fixations = new List<Fixation>();
-                Fixation[] fixations = this.Fixations.ToArray();
+                Fixation[] fixations = this.All_Fixations.ToArray();
 
                 for (int i = 1; i < fixations.Length; ++i)
                 {
