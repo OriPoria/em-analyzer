@@ -187,7 +187,7 @@ namespace EM_Analyzer
                 FixationsService.CleanFixationsForPreview();
             }
             // if AnalyzeExtent is 2-> create full outputs
-            else if (int.Parse(ConfigurationService.AnalyzeExtent) == 2)
+            else if (int.Parse(ConfigurationService.AnalyzeExtent) == 2) 
             {
                 if (int.Parse(ConfigurationService.RemoveFixationsAppearedBeforeFirstAOI) == 2)
                     FixationsService.CleanAllFixationBeforeFirstAOIInFirstPage();
