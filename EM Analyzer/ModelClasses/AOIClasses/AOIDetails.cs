@@ -154,7 +154,7 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
             }
         }
 
-
+        /*
         public double DistanceToAOI(Fixation fixation)
         {
             double right_border, left_border, upper_border, buttom_border, fixation_X, fixation_Y;
@@ -218,7 +218,9 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
                     return Math.Sqrt(Math.Pow(X_Distance, 2) + Math.Pow(Y_Distance, 2));
                 }
             }
+            
         }
+        */
 
 
         private static Log CreateLogForFieldValidation(string fieldName, string valueFound, uint lineNumber)

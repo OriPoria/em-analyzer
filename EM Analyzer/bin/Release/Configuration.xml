@@ -63,7 +63,7 @@
   </OutputFiles>
   
   <DealingWithExceptions>
-    <Dealing_With_Exceptions_Limit_In_Pixels>20</Dealing_With_Exceptions_Limit_In_Pixels>
+    <Dealing_With_Exceptions_Limit_In_Pixels>80</Dealing_With_Exceptions_Limit_In_Pixels>
 
 
     <!--

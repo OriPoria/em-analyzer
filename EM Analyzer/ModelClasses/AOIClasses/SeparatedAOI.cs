@@ -27,10 +27,11 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
                 this.AOI_Size_X += aoi.AOI_Size_X;
             }
         }
-
+        /*
         public double DistanceToAOI(Fixation fixation)
         {
             return this.AOIs.Min(aoi => aoi.DistanceToAOI(fixation));
         }
+        */
     }
 }

@@ -9,7 +9,7 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
 {
     public interface IAOI
     {
-        double DistanceToAOI(Fixation fixation);
+        //double DistanceToAOI(Fixation fixation);
         double AOI_Coverage_In_Percents { get; set; }
         double AOI_Size_X { get; set; }
         int Group { get; set; }

@@ -172,10 +172,11 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
         {
             return new Log() { FileName = FixationsService.wordsExcelFileName, LineNumber = lineNumber, Description = "The Value Of Field " + fieldName + " Is Not Valid!!!" + Environment.NewLine + "The Value Found Is: " + valueFound };
         }
-
+        /*
         public double DistanceToAOI(Fixation fixation)
         {
             throw new NotImplementedException();
         }
+        */
     }
 }
