@@ -295,6 +295,20 @@ namespace EM_Analyzer.ModelClasses
             }
         }
 
+
+        public static Fixation GetPrevFixationNotException(Fixation fixation, List<Fixation> fixationList)
+        {
+            int index = fixationList.FindIndex(fix => fix.Index == fixation.Index);
+            if (index == 0)
+                return fixationList[index];
+            int prevIndex = index - 1;
+            while (prevIndex > 0 && fixationList[prevIndex].IsException )
+                prevIndex--;
+            if (fixationList[prevIndex].IsException)
+                return fixationList[index];
+            return fixationList[prevIndex];
+        }
+
         public static void SearchForExceptions()
         {
             List<Fixation>[] values = fixationSetToFixationListDictionary.Values.ToArray(); // all fixations per participent 
@@ -326,10 +340,11 @@ namespace EM_Analyzer.ModelClasses
                                     notAOIEqualsFixations.ForEach(exceptionalFix =>
                                     {
                                         exceptionalFix.IsException = true;
+                                        // prev fixation
+                                        Fixation prevFix = GetPrevFixationNotException(exceptionalFix, notExceptionalFixations);
                                         exceptionalFix.IsInExceptionBounds = fixation.AOI_Name != -1 && (fixation.DistanceTo(exceptionalFix) <= exceptionsLimit);
                                         if (exceptionalFix.IsInExceptionBounds && dealingWithInsideExceptions == DealingWithExceptionsEnum.Change_AOI_Group)
                                             exceptionalFix.AOI_Group_After_Change = fixation.AOI_Group_After_Change;
-                                        // fix.IsInExceptionBounds = (fix.DistanceToAOI(AOIDetails.nameToAOIDetailsDictionary[fixation.AOI_Name+ fixation.Stimulus]) <= exceptionsLimit);
                                     });
                                     lastFixationsQueue = new Queue<Fixation>(lastFixationsQueue.Where(fix => !fix.IsException));
                                 }
@@ -363,7 +378,7 @@ namespace EM_Analyzer.ModelClasses
                     {
                         if (currrentCountedAOIFixations.Count <= Number_Of_Fixations_Out_AOI_For_Exception)
                         {
-                            i = ChangeAOIGroupOfCountedAOIFixations(countedAOIFixationsArray, i);
+                            i = ChangeAOIGroupOfCountedAOIFixations(countedAOIFixationsArray, i, notExceptionalFixations);
                          
                         }
                     }
@@ -371,13 +386,15 @@ namespace EM_Analyzer.ModelClasses
             }
         }
 
-        private static void AddCountedAOIToAnother(List<CountedAOIFixations> countedAOIFixationsArray, int FromIndex, int ToIndex)
+        private static void AddCountedAOIToAnother(List<CountedAOIFixations> countedAOIFixationsArray, int FromIndex, int ToIndex, List<Fixation> notExceptionalFixations)
         {
             Fixation firstFixation = countedAOIFixationsArray[ToIndex].Fixations.First();
           //  IAOI aoiAddingTo = firstFixation.AOI_Phrase_Details;
             countedAOIFixationsArray[FromIndex].Fixations.ForEach(fix =>
             {
-                fix.IsInExceptionBounds = countedAOIFixationsArray[ToIndex].Fixations.First().AOI_Name > 0 && (firstFixation.DistanceTo(fix) <= exceptionsLimit);
+                // prev fixation
+                Fixation prevFixation = GetPrevFixationNotException(fix, notExceptionalFixations);
+                fix.IsInExceptionBounds = countedAOIFixationsArray[ToIndex].Fixations.First().AOI_Name > 0 && (prevFixation.DistanceTo(fix) <= exceptionsLimit);
                 if (fix.IsInExceptionBounds && dealingWithInsideExceptions == DealingWithExceptionsEnum.Change_AOI_Group)
                     fix.AOI_Group_After_Change = countedAOIFixationsArray[ToIndex].AOI_Group;
             });
@@ -386,7 +403,7 @@ namespace EM_Analyzer.ModelClasses
             countedAOIFixationsArray.RemoveAt(FromIndex);
         }
 
-        private static int ChangeAOIGroupOfCountedAOIFixations(List<CountedAOIFixations> countedAOIFixationsArray, int index)
+        private static int ChangeAOIGroupOfCountedAOIFixations(List<CountedAOIFixations> countedAOIFixationsArray, int index, List<Fixation> notExceptionalFixations)
         {
             CountedAOIFixations currrentCountedAOIFixations = countedAOIFixationsArray[index];
             bool needsToAddToPrevAOI = index > 0 && countedAOIFixationsArray[index - 1].Count >= Number_Of_Fixations_In_Of_AOI_For_Exception && countedAOIFixationsArray[index - 1].AOI_Group!=-1;
@@ -397,15 +414,15 @@ namespace EM_Analyzer.ModelClasses
             if (needsToAddToPrevAOI && needsToAddToNextAOI)
             {
                 CountedAOIFixations prev = countedAOIFixationsArray[index - 1], next = countedAOIFixationsArray[index + 1];
-                int firstClosedToNext = currrentCountedAOIFixations.Fixations.FindIndex(fixation => prev.Fixations.First().DistanceTo(fixation) >= next.Fixations.First().DistanceTo(fixation));
+                int firstClosedToNext = currrentCountedAOIFixations.Fixations.FindIndex(fixation => prev.Fixations.Last().DistanceTo(fixation) >= next.Fixations.First().DistanceTo(fixation));
 
                 if (firstClosedToNext < 0)
                 {
                     //  IAOI aoiAddingTo = prev.Fixations.First().AOI_Phrase_Details;
-                    Fixation prevFix = prev.Fixations.First();
                     currrentCountedAOIFixations.Fixations.ForEach(fix =>
                     {
-                        
+                        // prev fixation
+                        Fixation prevFix = GetPrevFixationNotException(fix, notExceptionalFixations);
                         fix.IsInExceptionBounds = prev.Fixations.First().AOI_Name != -1 && (prevFix.DistanceTo(fix) <= exceptionsLimit);
                         if (fix.IsInExceptionBounds && dealingWithInsideExceptions == DealingWithExceptionsEnum.Change_AOI_Group)
                             fix.AOI_Group_After_Change = prev.AOI_Group;
@@ -428,9 +445,10 @@ namespace EM_Analyzer.ModelClasses
                     next.Fixations.AddRange(fixationsAddToNextAOI);
 
                     IEnumerable<Fixation> fixationsAddToPrevAOI = currrentCountedAOIFixations.Fixations.GetRange(0, firstClosedToNext);
-                    Fixation prevFix = prev.Fixations.First();
                     foreach (var fix in fixationsAddToPrevAOI)
                     {
+                        // prev fixation
+                        Fixation prevFix = GetPrevFixationNotException(fix, notExceptionalFixations);
                         fix.IsInExceptionBounds = prev.Fixations.First().AOI_Name != -1 && (prevFix.DistanceTo(fix) <= exceptionsLimit);
                         if (fix.IsInExceptionBounds && dealingWithInsideExceptions == DealingWithExceptionsEnum.Change_AOI_Group)
                             fix.AOI_Group_After_Change = prev.AOI_Group;
@@ -444,14 +462,14 @@ namespace EM_Analyzer.ModelClasses
             {
                 if (needsToAddToPrevAOI)
                 {
-                    AddCountedAOIToAnother(countedAOIFixationsArray, index, index - 1);
+                    AddCountedAOIToAnother(countedAOIFixationsArray, index, index - 1, notExceptionalFixations);
                     index--;
                 }
                 else
                 {
                     if (needsToAddToNextAOI)
                     {
-                        AddCountedAOIToAnother(countedAOIFixationsArray, index, index + 1);
+                        AddCountedAOIToAnother(countedAOIFixationsArray, index, index + 1, notExceptionalFixations);
                     }
                 }
             }
