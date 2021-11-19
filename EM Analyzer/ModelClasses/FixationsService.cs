@@ -342,7 +342,7 @@ namespace EM_Analyzer.ModelClasses
                                         exceptionalFix.IsException = true;
                                         // prev fixation
                                         Fixation prevFix = GetPrevFixationNotException(exceptionalFix, notExceptionalFixations);
-                                        exceptionalFix.IsInExceptionBounds = fixation.AOI_Name != -1 && (fixation.DistanceTo(exceptionalFix) <= exceptionsLimit);
+                                        exceptionalFix.IsInExceptionBounds = fixation.AOI_Name != -1 && (prevFix.DistanceTo(exceptionalFix) <= exceptionsLimit);
                                         if (exceptionalFix.IsInExceptionBounds && dealingWithInsideExceptions == DealingWithExceptionsEnum.Change_AOI_Group)
                                             exceptionalFix.AOI_Group_After_Change = fixation.AOI_Group_After_Change;
                                     });
