@@ -308,6 +308,20 @@ namespace EM_Analyzer.ModelClasses
                 return fixationList[index];
             return fixationList[prevIndex];
         }
+        public static Fixation GetNextFixationNotException(Fixation fixation, List<Fixation> fixationList)
+        {
+            int index = fixationList.FindIndex(fix => fix.Index == fixation.Index);
+            if (index == 0)
+                return fixationList[index];
+            int nextIndex = index + 1;
+            while (nextIndex > fixationList.Count && fixationList[nextIndex].IsException)
+                nextIndex++;
+            if (fixationList[nextIndex].IsException)
+                return fixationList[index];
+            return fixationList[nextIndex];
+
+        }
+
 
         public static void SearchForExceptions()
         {
@@ -392,9 +406,19 @@ namespace EM_Analyzer.ModelClasses
           //  IAOI aoiAddingTo = firstFixation.AOI_Phrase_Details;
             countedAOIFixationsArray[FromIndex].Fixations.ForEach(fix =>
             {
-                // prev fixation
-                Fixation prevFixation = GetPrevFixationNotException(fix, notExceptionalFixations);
-                fix.IsInExceptionBounds = countedAOIFixationsArray[ToIndex].Fixations.First().AOI_Name > 0 && (prevFixation.DistanceTo(fix) <= exceptionsLimit);
+                // prev or next fixation, depends on if the exception fixation attached to next or prev fixations set
+                Fixation measureDistanceFix = null;
+                // to prev AOI
+                if (FromIndex > ToIndex)
+                {
+                    measureDistanceFix = GetPrevFixationNotException(fix, notExceptionalFixations);
+                }
+                // to next AOI
+                else
+                {
+                    measureDistanceFix = GetNextFixationNotException(fix, notExceptionalFixations);
+                }
+                fix.IsInExceptionBounds = countedAOIFixationsArray[ToIndex].Fixations.First().AOI_Name > 0 && (measureDistanceFix.DistanceTo(fix) <= exceptionsLimit);
                 if (fix.IsInExceptionBounds && dealingWithInsideExceptions == DealingWithExceptionsEnum.Change_AOI_Group)
                     fix.AOI_Group_After_Change = countedAOIFixationsArray[ToIndex].AOI_Group;
             });
