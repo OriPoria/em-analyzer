@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static EM_Analyzer.ExcelsFilesMakers.ThirdFileConsideringCoverage;
@@ -357,95 +358,155 @@ namespace EM_Analyzer.ExcelsFilesMakers.ThirdFourFilter
                 }
             }
         }
+        private static void CreateFile(FilteredTrialTextPerParticipant item)
+        {
+            string participant = item.Participant;
+            List<Fixation> table = new List<Fixation>();
+            List<Fixation> values = item.m_Fixations_Text;
+
+            List<Saccade> saccadeTable = new List<Saccade>();
+            // all fixations
+            table.AddRange(values);
+            CreateExcelFromStringTable(participant, " All fixations", table, null);
+            table.Clear();
+
+            // all fixations after filter
+            values = item.All_Fixations_Duration_Filter;
+            table.AddRange(values);
+            CreateExcelFromStringTable(participant, " All fixations after duration filter", table, null);
+            table.Clear();
+
+            // Progressive fixations:
+
+            values = item.m_Progressive_Fixations;
+            table.AddRange(values);
+            CreateExcelFromStringTable(participant, " All progressive fixations", table, null);
+            table.Clear();
+
+            values = item.Progressive_Fixations_Duration_Filter;
+            table.AddRange(values);
+            CreateExcelFromStringTable(participant, " Progressive fixations after duration filter", table, null);
+            table.Clear();
+
+            values = item.m_Progressive_Fixations;
+            saccadeTable.AddRange(LastFixationsToSaccades(values, fix => fix.DistanceToPreviousFixation()));
+            CreateExcelFromStringTable(participant, " All progressive saccades", saccadeTable, null);
+            saccadeTable.Clear();
+
+            values = item.Progressive_Saccade_Length_Filter;
+            saccadeTable.AddRange(LastFixationsToSaccades(values, fix => fix.DistanceToPreviousFixation()));
+            CreateExcelFromStringTable(participant, " Progressive saccades after filter", saccadeTable, null);
+            saccadeTable.Clear();
+
+            values = item.m_Progressive_Fixations;
+            saccadeTable.AddRange(LastFixationsToSaccades(values, fix => Math.Abs(fix.Fixation_Position_X - fix.Previous_Fixation.Fixation_Position_X)));
+            CreateExcelFromStringTable(participant, " All progressive saccades length X", saccadeTable, null);
+            saccadeTable.Clear();
+
+            values = item.Progressive_Saccade_Length_X_Filter;
+            saccadeTable.AddRange(LastFixationsToSaccades(values, fix => Math.Abs(fix.Fixation_Position_X - fix.Previous_Fixation.Fixation_Position_X)));
+            CreateExcelFromStringTable(participant, " Progressive saccades length X after filter", saccadeTable, null);
+            saccadeTable.Clear();
+
+
+            // Regressive Fixations:
+
+            values = item.m_Regressive_Fixations;
+            table.AddRange(values);
+            CreateExcelFromStringTable(participant, " All Regressive fixations", table, null);
+            table.Clear();
+
+            values = item.Regressive_Fixations_Duration_Filter;
+            table.AddRange(values);
+            CreateExcelFromStringTable(participant, " Regressive fixations after duration filter", table, null);
+            table.Clear();
+
+            values = item.m_Regressive_Fixations;
+            saccadeTable.AddRange(LastFixationsToSaccades(values, fix => fix.DistanceToPreviousFixation()));
+            CreateExcelFromStringTable(participant, " All Regressive saccades", saccadeTable, null);
+            saccadeTable.Clear();
+
+            values = item.Regressive_Saccade_Length_Filter;
+            saccadeTable.AddRange(LastFixationsToSaccades(values, fix => fix.DistanceToPreviousFixation()));
+            CreateExcelFromStringTable(participant, " Regressive saccades after filter", saccadeTable, null);
+            saccadeTable.Clear();
+
+            values = item.m_Regressive_Fixations;
+            saccadeTable.AddRange(LastFixationsToSaccades(values, fix => Math.Abs(fix.Fixation_Position_X - fix.Previous_Fixation.Fixation_Position_X)));
+            CreateExcelFromStringTable(participant, " All Regressive saccades length X", saccadeTable, null);
+            saccadeTable.Clear();
+
+            values = item.Regressive_Saccade_Length_X_Filter;
+            saccadeTable.AddRange(LastFixationsToSaccades(values, fix => Math.Abs(fix.Fixation_Position_X - fix.Previous_Fixation.Fixation_Position_X)));
+            CreateExcelFromStringTable(participant, " Regressive saccades length X after filter", saccadeTable, null);
+            saccadeTable.Clear();
+
+
+        }
         /*
          * Creates files only for test the filter on fixations function
          */
         public static void CreateFilesForTest()
         {
-            foreach (var item in filteredTrialTextPerParticipants)
+            int total = filteredTrialTextPerParticipants.Count();
+            int lasts = total % 10;
+            int i = 0;
+            for(i = 0; i < total - lasts; i+=10)
             {
-                string participant = item.Participant;
-                List<Fixation> table = new List<Fixation>();
-                List<Fixation> values = item.m_Fixations_Text;
 
-                List<Saccade> saccadeTable = new List<Saccade>();
-                // all fixations
-                table.AddRange(values);
-                CreateExcelFromStringTable(participant, " All fixations", table, null);
-                table.Clear();
+                FilteredTrialTextPerParticipant item1 = filteredTrialTextPerParticipants[i];
+                FilteredTrialTextPerParticipant item2 = filteredTrialTextPerParticipants[i + 1];
+                FilteredTrialTextPerParticipant item3 = filteredTrialTextPerParticipants[i + 2];
+                FilteredTrialTextPerParticipant item4 = filteredTrialTextPerParticipants[i + 3];
+                FilteredTrialTextPerParticipant item5 = filteredTrialTextPerParticipants[i + 4];
+                FilteredTrialTextPerParticipant item6 = filteredTrialTextPerParticipants[i + 5];
+                FilteredTrialTextPerParticipant item7 = filteredTrialTextPerParticipants[i + 6];
+                FilteredTrialTextPerParticipant item8 = filteredTrialTextPerParticipants[i + 7];
+                FilteredTrialTextPerParticipant item9 = filteredTrialTextPerParticipants[i + 8];
+                FilteredTrialTextPerParticipant item10 = filteredTrialTextPerParticipants[i + 9];
 
-                // all fixations after filter
-                values = item.All_Fixations_Duration_Filter;
-                table.AddRange(values);
-                CreateExcelFromStringTable(participant, " All fixations after duration filter", table, null);
-                table.Clear();
+                var t1 = new Thread(() => CreateFile(item1));
+                t1.Start();
+                var t2 = new Thread(() => CreateFile(item2));
+                t2.Start();
+                var t3 = new Thread(() => CreateFile(item3));
+                t3.Start();
+                var t4 = new Thread(() => CreateFile(item4));
+                t4.Start();
+                var t5 = new Thread(() => CreateFile(item5));
+                t5.Start();
+                var t6 = new Thread(() => CreateFile(item6));
+                t6.Start();
+                var t7 = new Thread(() => CreateFile(item7));
+                t7.Start();
+                var t8 = new Thread(() => CreateFile(item8));
+                t8.Start();
+                var t9 = new Thread(() => CreateFile(item9));
+                t9.Start();
+                var t10 = new Thread(() => CreateFile(item10));
+                t10.Start();
 
-                // Progressive fixations:
+                t1.Join();
+                t2.Join();
+                t3.Join();
+                t4.Join();
+                t5.Join();
+                t6.Join();
+                t7.Join();
+                t8.Join();
+                t9.Join();
+                t10.Join();
+                Console.WriteLine("Completed " + i.ToString() + " filter files out of " + total.ToString());
 
-                values = item.m_Progressive_Fixations;
-                table.AddRange(values);
-                CreateExcelFromStringTable(participant, " All progressive fixations", table, null);
-                table.Clear();
-
-                values = item.Progressive_Fixations_Duration_Filter;
-                table.AddRange(values);
-                CreateExcelFromStringTable(participant, " Progressive fixations after duration filter", table, null);
-                table.Clear();
-
-                values = item.m_Progressive_Fixations;
-                saccadeTable.AddRange(LastFixationsToSaccades(values, fix => fix.DistanceToPreviousFixation()));
-                CreateExcelFromStringTable(participant, " All progressive saccades", saccadeTable, null);
-                saccadeTable.Clear();
-
-                values = item.Progressive_Saccade_Length_Filter;
-                saccadeTable.AddRange(LastFixationsToSaccades(values, fix => fix.DistanceToPreviousFixation()));
-                CreateExcelFromStringTable(participant, " Progressive saccades after filter", saccadeTable, null);
-                saccadeTable.Clear();
-
-                values = item.m_Progressive_Fixations;
-                saccadeTable.AddRange(LastFixationsToSaccades(values, fix => Math.Abs(fix.Fixation_Position_X - fix.Previous_Fixation.Fixation_Position_X)));
-                CreateExcelFromStringTable(participant, " All progressive saccades length X", saccadeTable, null);
-                saccadeTable.Clear();
-
-                values = item.Progressive_Saccade_Length_X_Filter;
-                saccadeTable.AddRange(LastFixationsToSaccades(values, fix => Math.Abs(fix.Fixation_Position_X - fix.Previous_Fixation.Fixation_Position_X)));
-                CreateExcelFromStringTable(participant, " Progressive saccades length X after filter", saccadeTable, null);
-                saccadeTable.Clear();
-
-
-                // Regressive Fixations:
-
-                values = item.m_Regressive_Fixations;
-                table.AddRange(values);
-                CreateExcelFromStringTable(participant, " All Regressive fixations", table, null);
-                table.Clear();
-
-                values = item.Regressive_Fixations_Duration_Filter;
-                table.AddRange(values);
-                CreateExcelFromStringTable(participant, " Regressive fixations after duration filter", table, null);
-                table.Clear();
-
-                values = item.m_Regressive_Fixations;
-                saccadeTable.AddRange(LastFixationsToSaccades(values, fix => fix.DistanceToPreviousFixation()));
-                CreateExcelFromStringTable(participant, " All Regressive saccades", saccadeTable, null);
-                saccadeTable.Clear();
-
-                values = item.Regressive_Saccade_Length_Filter;
-                saccadeTable.AddRange(LastFixationsToSaccades(values, fix => fix.DistanceToPreviousFixation()));
-                CreateExcelFromStringTable(participant, " Regressive saccades after filter", saccadeTable, null);
-                saccadeTable.Clear();
-
-                values = item.m_Regressive_Fixations;
-                saccadeTable.AddRange(LastFixationsToSaccades(values, fix => Math.Abs(fix.Fixation_Position_X - fix.Previous_Fixation.Fixation_Position_X)));
-                CreateExcelFromStringTable(participant, " All Regressive saccades length X", saccadeTable, null);
-                saccadeTable.Clear();
-
-                values = item.Regressive_Saccade_Length_X_Filter;
-                saccadeTable.AddRange(LastFixationsToSaccades(values, fix => Math.Abs(fix.Fixation_Position_X - fix.Previous_Fixation.Fixation_Position_X)));
-                CreateExcelFromStringTable(participant, " Regressive saccades length X after filter", saccadeTable, null);
-                saccadeTable.Clear();
 
             }
+
+            for (int j = i; j < total; j++)
+            {
+                FilteredTrialTextPerParticipant item1 = filteredTrialTextPerParticipants[j];
+                CreateFile(item1);
+            }
+            Console.WriteLine("Completed filter files");
 
         }
         public class Saccade

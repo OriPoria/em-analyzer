@@ -54,10 +54,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>0545C0BF324D31A3872C982A8063D81B57B0A12C</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>5BF02A8DE2805352D40E2DCFEBAA06815422DE9D</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>EM Analyzer_1_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>EM Analyzer_2_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -133,6 +133,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="EM Analyzer_1_TemporaryKey.pfx" />
+    <None Include="EM Analyzer_2_TemporaryKey.pfx" />
     <None Include="EM Analyzer_TemporaryKey.pfx" />
     <None Include="packages.config" />
   </ItemGroup>

@@ -656,13 +656,14 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 this.Stimulus = Stimulus;
                 this.Participant = Participant;
                 this.AOI_Group = AOI_Group;
+                string key = Stimulus.Split(' ')[0] + "$" + AOI_Group.ToString();
                 if (type == AOITypes.Phrases)
-                    this.AOI_Target = AOIDetails.groupPhraseToSpecialName.ContainsKey(AOI_Group) ? AOIDetails.groupPhraseToSpecialName[AOI_Group] : null;
+                    this.AOI_Target = AOIDetails.groupPhraseToSpecialName.ContainsKey(key) ? AOIDetails.groupPhraseToSpecialName[key] : null;
                 else
-                    this.AOI_Target = AOIWordDetails.groupWordToSpecialName.ContainsKey(AOI_Group) ? AOIWordDetails.groupWordToSpecialName[AOI_Group] : null;
+                    this.AOI_Target = AOIWordDetails.groupWordToSpecialName.ContainsKey(key) ? AOIWordDetails.groupWordToSpecialName[key] : null;
                 if (this.AOI_Target != null)
                 {
-                    List<string> sNames = Constans.parseSpecialName(AOI_Target);
+                    List<string> sNames = Constans.parseSpecialName(AOI_Target);    
                     if (sNames.Count > maxConditions)
                         maxConditions = sNames.Count;
                 }
