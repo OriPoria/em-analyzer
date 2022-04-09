@@ -120,10 +120,15 @@ namespace EM_Analyzer.ModelClasses
             {
                 var fixationPhrase = fixationSetToFixationListDictionary[key];
                 var fixationWord = wordIndexSetToFixationListDictionary[key];
+
                 for (int i = 0; i < fixationPhrase.Count; i++)
                 {
                     if (fixationPhrase[i].Index != fixationWord[i].Index)
+                    {
+                        var x = 3;
                         MessageBox.Show($"error in sort of fixation by index at line {i} at key {key}");
+
+                    }
 
                     // if this is a fixation on figure -> if we set the figure fixation to 0.
                     if (fixationPhrase[i].AOI_Group_Before_Change == 0)

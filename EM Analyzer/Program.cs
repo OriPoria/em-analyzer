@@ -1,4 +1,6 @@
-﻿using EM_Analyzer.Enums;
+﻿using OfficeOpenXml;
+using OfficeOpenXml.Table;
+using EM_Analyzer.Enums;
 using EM_Analyzer.ExcelsFilesMakers;
 using EM_Analyzer.ExcelsFilesMakers.ThirdFourFilter;
 using EM_Analyzer.ModelClasses;
@@ -20,6 +22,7 @@ namespace EM_Analyzer
         [STAThread]
         static void Main(string[] args)
         {
+            ExcelWorkbook ws2 = new ExcelPackage(new FileInfo(@"C:\Users\oripo\Downloads\AOI_boundaries-ELIZABETH_1_L_QA+E_P1_1_TEXT_w.xlsx")).Workbook;
             int chosenOption = 1;
             string input;
             bool isOptionOK;
@@ -252,7 +255,21 @@ namespace EM_Analyzer
                 {
                     MessageBox.Show("There is a problem with the Text File In Line: " + j + "\n Content: \"" + lines[j] + "\"");
                 }
+                if (j % 1000 == 0)
+                {
+                    Console.Write("\rCompleted process of {0} fixations out of {1} from closure file", j, lines.Length);
+                }
             }
+            IEnumerable<string> participants = FixationsService.fixationSetToFixationListDictionary.Keys.ToList();
+            foreach (string participant in participants)
+            {
+                FixationsService.fixationSetToFixationListDictionary[participant] = FixationsService.fixationSetToFixationListDictionary[participant].GroupBy(fix => fix.Index).Select(g => g.First()).ToList();
+            }
+            Console.Write("\r");
+            Console.Write(new string(' ', Console.BufferWidth));
+            Console.SetCursorPosition(0, Console.CursorTop - 1);
+
+            Console.WriteLine("\rCompleted process of fixations from closure file");
         }
 
         private static void ReadTextFileWord(string wordFilePath)
@@ -265,11 +282,24 @@ namespace EM_Analyzer
             {
                 string[] columns = wordsLines[j].Split('\t');
                 WordIndex.CreateWordIndexFromStringArray(columns, j);
+                if (j % 1000 == 0)
+                {
+                    Console.Write("\rCompleted process of {0} fixations out of {1} from words file", j, wordsLines.Length);
+                }
+
             }
+
             foreach (string participant in participants)
             {
                 FixationsService.wordIndexSetToFixationListDictionary[participant] = FixationsService.wordIndexSetToFixationListDictionary[participant].GroupBy(fix => fix.Index).Select(g => g.First()).ToList();
             }
+
+            Console.Write("\r");
+            Console.Write(new string(' ', Console.BufferWidth));
+            Console.SetCursorPosition(0, Console.CursorTop - 1);
+
+            Console.WriteLine("\rCompleted process of fixations from words file");
+
         }
 
 

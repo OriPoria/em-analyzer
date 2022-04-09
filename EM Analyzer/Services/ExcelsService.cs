@@ -106,6 +106,8 @@ namespace EM_Analyzer.Services
             List<IEnumerable<T>> table = new List<IEnumerable<T>>();
             using (var wb = new ExcelPackage(new FileInfo(fileName)))
             {
+                ExcelWorkbook ws2 = wb.Workbook;
+                ExcelWorksheets ws1 = wb.Workbook.Worksheets;
                 ExcelWorksheet ws = wb.Workbook.Worksheets.First();
                 int firstRowUsed = ws.Dimension.Start.Row;
                 int lastColUsed = ws.Dimension.End.Column;
