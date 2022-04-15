@@ -260,11 +260,6 @@ namespace EM_Analyzer
                     Console.Write("\rCompleted process of {0} fixations out of {1} from closure file", j, lines.Length);
                 }
             }
-            IEnumerable<string> participants = FixationsService.fixationSetToFixationListDictionary.Keys.ToList();
-            foreach (string participant in participants)
-            {
-                FixationsService.fixationSetToFixationListDictionary[participant] = FixationsService.fixationSetToFixationListDictionary[participant].GroupBy(fix => fix.Index).Select(g => g.First()).ToList();
-            }
             Console.Write("\r");
             Console.Write(new string(' ', Console.BufferWidth));
             Console.SetCursorPosition(0, Console.CursorTop - 1);
