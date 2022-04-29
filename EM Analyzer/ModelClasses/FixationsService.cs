@@ -382,6 +382,8 @@ namespace EM_Analyzer.ModelClasses
             {
                 List<Fixation> notExceptionalFixations = fixationList.Where(fix => !fix.IsException || (fix.IsInExceptionBounds && dealingWithInsideExceptions == DealingWithExceptionsEnum.Change_AOI_Group)).ToList();
                 notExceptionalFixations.RemoveAll(fix => fix.AOI_Name == 0); // remove "figure" aoi
+                if (notExceptionalFixations.Count() == 0)
+                    continue;
                 List<CountedAOIFixations> countedAOIFixationsArray = ConvertFixationListToCoutedListByPhrase(notExceptionalFixations).ToList();
                 for (int i = 0 ; i < countedAOIFixationsArray.Count ; i++)
                 {
