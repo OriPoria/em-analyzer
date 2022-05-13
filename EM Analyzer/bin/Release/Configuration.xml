@@ -1,51 +1,69 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Configuration>
-  
-    <Minimum_Number_Of_Fixations_For_Regression>2</Minimum_Number_Of_Fixations_For_Regression>
-
-  
+    
   <Minimum_Event_Duration_In_ms>50</Minimum_Event_Duration_In_ms>
   
-  <Maximum_Event_Duration_In_ms>1000</Maximum_Event_Duration_In_ms>
+  <Maximum_Event_Duration_In_ms>4000</Maximum_Event_Duration_In_ms>
   
-  <Minimum_Number_Of_Fixations_In_A_Regression>2</Minimum_Number_Of_Fixations_In_A_Regression>
+  <Minimum_Number_Of_Fixations_For_Regression>2</Minimum_Number_Of_Fixations_For_Regression>
+    <Minimum_Duration_Of_Fixation_For_Regression>150</Minimum_Duration_Of_Fixation_For_Regression>
   
-  <Minimum_Number_Of_Fixations_For_First_Pass>4</Minimum_Number_Of_Fixations_For_First_Pass>
-  <Minimum_Duration_Of_Fixation_For_First_Pass>300</Minimum_Duration_Of_Fixation_For_First_Pass>
+  <Minimum_Number_Of_Fixations_For_First_Pass>2</Minimum_Number_Of_Fixations_For_First_Pass>
+  <Minimum_Duration_Of_Fixation_For_First_Pass>150</Minimum_Duration_Of_Fixation_For_First_Pass>
   
-  <Number_Of_Fixations_In_AOI_For_Exception>2</Number_Of_Fixations_In_AOI_For_Exception>
+  <Minimum_Number_Of_Fixations_For_Skip>2</Minimum_Number_Of_Fixations_For_Skip>
+  <Minimum_Duration_Of_Fixation_For_Skip>150</Minimum_Duration_Of_Fixation_For_Skip>
   
-  <Number_Of_Fixations_Out_Of_AOI_For_Exception>3</Number_Of_Fixations_Out_Of_AOI_For_Exception>
+  <Minimum_Number_Of_Fixations_For_Page_Visit>2</Minimum_Number_Of_Fixations_For_Page_Visit>
+  <Minimum_Duration_Of_Fixation_For_Page_Visit>150</Minimum_Duration_Of_Fixation_For_Page_Visit>
+  
+  <Number_Of_Fixations_In_AOI_For_Exception>3</Number_Of_Fixations_In_AOI_For_Exception>
+  
+  <Number_Of_Fixations_Out_Of_AOI_For_Exception>1</Number_Of_Fixations_Out_Of_AOI_For_Exception>
   
   <!-- Second_File_Filtering_denominator :enter the value-denominator-  with nothing = 0 ,Mean_AOI_Size = 1,Mean_AOI_Coverage = 2-->
-  <Second_File_Filtering_denominator>2</Second_File_Filtering_denominator>
+  <Second_File_Filtering_denominator>1</Second_File_Filtering_denominator>
 
+  <!--
+    Analyze_Extent:
+      Preview = 1,
+      Full = 2
+  -->
+  <Analyze_Extent>2</Analyze_Extent>
+  
+  <!--
+  Preview_Limit:
+	Fixed_Time_In_sec = 1,
+	Percentage_of_Participant_Time = 2
+  -->
+  <Preview_Limit>1</Preview_Limit>
+	<Fixed_Time_In_sec>5.1</Fixed_Time_In_sec>
+	<Percentage_of_Participant_Time>20</Percentage_of_Participant_Time>
 
   <!--
     Remove_Fixations_Appeared_Before_First_AOI:
-      No = 0,
-      Yes = 1
+      No = 1,
+      First Page = 2,
+	  Every Page = 3
   -->
-  <Remove_Fixations_Appeared_Before_First_AOI>1</Remove_Fixations_Appeared_Before_First_AOI>
-  
-  <!-- <Minimum_Event_Duration_In_For_Skip_In_ms>100</Minimum_Event_Duration_In_For_Skip_In_ms> -->
-  
-  <Minimum_Number_Of_Fixations_For_Skip>4</Minimum_Number_Of_Fixations_For_Skip>
+  <Remove_Fixations_Appeared_Before_First_AOI>3</Remove_Fixations_Appeared_Before_First_AOI>
+  <Number_Of_Fixations_To_Remove_Before_First_AOI>3</Number_Of_Fixations_To_Remove_Before_First_AOI>
 
-  <Standard_Deviation>1</Standard_Deviation>
+  <Standard_Deviation>2.5</Standard_Deviation>
   
   <OutputFiles>
-    <First_Excel_File_Name>First</First_Excel_File_Name>
-    <Second_Excel_File_Name>Second</Second_Excel_File_Name>
-    <Considered_Second_Excel_File_Name>Second - Filtered</Considered_Second_Excel_File_Name>
-    <Third_Excel_File_Name>Third</Third_Excel_File_Name>
+    <First_Excel_File_Name>Fixation</First_Excel_File_Name>
+    <Second_Excel_File_Name>AOI</Second_Excel_File_Name>
+    <Considered_Second_Excel_File_Name>AOI - Filtered</Considered_Second_Excel_File_Name>
+    <Third_Excel_File_Name>Page</Third_Excel_File_Name>
+	<Fourth_Excel_File_Name>Text</Fourth_Excel_File_Name>
 
     <Logs_Excel_File_Name>Logs</Logs_Excel_File_Name>
     <Excel_Files_Extension>.xlsx</Excel_Files_Extension>
   </OutputFiles>
   
   <DealingWithExceptions>
-    <Dealing_With_Exceptions_Limit_In_Pixels>20</Dealing_With_Exceptions_Limit_In_Pixels>
+    <Dealing_With_Exceptions_Limit_In_Pixels>120</Dealing_With_Exceptions_Limit_In_Pixels>
 
 
     <!--
@@ -67,3 +85,5 @@
   </DealingWithExceptions>
   
 </Configuration>
+
+

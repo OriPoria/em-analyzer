@@ -11,6 +11,8 @@ namespace EM_Analyzer
     {
         public static double ComputeStandardDevision(IEnumerable<double> values)
         {
+            if (values.Count() == 0)
+                return 0;
             double average = values.Average();
             int n = values.Count()-1;
             double standardDevision = Math.Sqrt(values.Sum(val => Math.Pow((val - average), 2)) / n);

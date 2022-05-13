@@ -10,6 +10,7 @@ using EM_Analyzer.Enums;
 using EM_Analyzer.Services;
 using System.Threading;
 using EM_Analyzer.ExcelLogger;
+using OfficeOpenXml;
 
 namespace EM_Analyzer.ExcelsFilesMakers
 {
@@ -25,17 +26,35 @@ namespace EM_Analyzer.ExcelsFilesMakers
             uint lineNumber = 1;
             foreach (Fixation fixation in table)
             {
-                if (fixation.AOI_Name != -1)
+                if (fixation.AOI_Name > 0)
                 {
-                    if (fixation.AOI_Details.DistanceToAOI(fixation) != 0)
-                    {
-                        ExcelLoggerService.AddLog(new Log() { FileName = ConfigurationService.FirstExcelFileName, LineNumber = lineNumber+1, Description = "The Fixation Is Not Inside The AOI Name: " + fixation.AOI_Name });
-                    }
+          //          if (fixation.AOI_Phrase_Details.DistanceToAOI(fixation) != 0)
+            //        {
+              //          ExcelLoggerService.AddLog(new Log() { FileName = ConfigurationService.FirstExcelFileName, LineNumber = lineNumber+1, Description = "The Fixation Is Not Inside The AOI Name: " + fixation.AOI_Name });
+                //    }
                 }
                 lineNumber++;
             }
 
-            ExcelsService.CreateExcelFromStringTable(ConfigurationService.FirstExcelFileName, table, null);
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.FirstExcelFileName, table, EditExcelForFirstFile);
+        }
+        public static int EditExcelForFirstFile(ExcelWorksheet ws)
+        {
+
+            for (int i = 2; i <= ws.Dimension.Rows; i++)
+            {
+                // change figure AOI group label from 0 to "figure"
+                if (ws.Cells[i, Constans.firstFileWordIndexCol].Value.ToString() == "0")
+                {
+                    ws.Cells[i, Constans.firstFileWordIndexCol].Value = "figure";
+                    ws.Cells[i, Constans.firstFileAOINameCol].Value = "figure";
+                    ws.Cells[i, Constans.firstFileAOIGroupBeforeChangeCol].Value = "figure";
+                }
+                if (ws.Cells[i, Constans.firstFileAOIGroupAfterChangeCol].Value.ToString() == "0")
+                    ws.Cells[i, Constans.firstFileAOIGroupAfterChangeCol].Value = "figure";
+
+            }
+            return 0;
         }
     }
 }

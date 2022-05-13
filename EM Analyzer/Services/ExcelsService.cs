@@ -7,11 +7,7 @@ using OfficeOpenXml.Table;
 using System;
 using System.Reflection;
 using System.Windows.Forms;
-using System.Diagnostics;
-using System.ComponentModel;
-using System.Threading;
 using EM_Analyzer.ExcelsFilesMakers;
-using System.Text.RegularExpressions;
 
 namespace EM_Analyzer.Services
 {
@@ -46,22 +42,29 @@ namespace EM_Analyzer.Services
 
     public class ExcelsService
     {
+        // params:
+        // file name - The type of the excel file, come from the configuration xml file parameter.
         public static void CreateExcelFromStringTable<T>(string fileName, IEnumerable<T> table, Func<ExcelWorksheet, int> editExcelFunc)
         {
             using (var wb = new ExcelPackage())
             {
-                //var ws = wb.Worksheets.Add("Inserting Tables");
                 ExcelWorksheet ws = wb.Workbook.Worksheets.Add("Inserting Tables");
-                String nameFile = fileName;
-                String islogs = "Logs";
-                String isFiltered = "Second - Filtered";
-                if (!nameFile.Contains(islogs))
+
+                string islogs = "Logs";
+                string isAOIFiltered = "AOI - Filtered";
+                string isPageFiltered = "Page - Filtered";
+                string isTextFiltered = "Text - Filtered";
+                if (!fileName.Contains(islogs))
                 {
                     ws.View.FreezePanes(2, 4);
                 }  
-                if (nameFile.Contains(isFiltered))
+                if (fileName.Contains(isAOIFiltered))
                 {
                     ws.View.FreezePanes(2, 6);
+                }
+                if (fileName.Contains(ConfigurationService.FourthExcelFileName))
+                {
+                    ws.View.FreezePanes(2, 3);
                 }
                 ExcelRangeBase range = ws.Cells[1, 1].LoadFromCollectionFiltered(table);
 
@@ -72,7 +75,18 @@ namespace EM_Analyzer.Services
                 {
                     try
                     {
-                        wb.SaveAs(new FileInfo(FixationsService.outputPath + "/" + FixationsService.textFileName.Substring(0, FixationsService.textFileName.IndexOf('.')) + " - " + fileName + ConfigurationService.ExcelFilesExtension));
+                        if (fileName.Contains(isAOIFiltered) || fileName.Contains(isPageFiltered) || fileName.Contains(isTextFiltered))
+                        {
+                            string path = FixationsService.outputPath + "/" + FixationsService.outputTextString + " - Filters";
+                            if (!Directory.Exists(path))
+                            {
+                                DirectoryInfo di = Directory.CreateDirectory(path);
+                            }
+                            wb.SaveAs(new FileInfo(path + "/" + fileName + ConfigurationService.ExcelFilesExtension));
+                        }
+                        else
+                            wb.SaveAs(new FileInfo(FixationsService.outputPath + "/" + FixationsService.outputTextString
+                                + " - " + fileName + ConfigurationService.ExcelFilesExtension));
                         dialogResult = DialogResult.Abort;
                     }
                     catch (InvalidOperationException e)
@@ -92,6 +106,8 @@ namespace EM_Analyzer.Services
             List<IEnumerable<T>> table = new List<IEnumerable<T>>();
             using (var wb = new ExcelPackage(new FileInfo(fileName)))
             {
+                ExcelWorkbook ws2 = wb.Workbook;
+                ExcelWorksheets ws1 = wb.Workbook.Worksheets;
                 ExcelWorksheet ws = wb.Workbook.Worksheets.First();
                 int firstRowUsed = ws.Dimension.Start.Row;
                 int lastColUsed = ws.Dimension.End.Column;
@@ -99,7 +115,7 @@ namespace EM_Analyzer.Services
 
 
                 // Move to the next row (it now has the titles)
-                for (int currentRow = firstRowUsed + 1 ; currentRow < ws.Dimension.End.Row ; currentRow++)
+                for (int currentRow = firstRowUsed ; currentRow <= ws.Dimension.End.Row ; currentRow++)
                 {
                     ExcelRow row = ws.Row(currentRow);
                     ExcelRange range = ws.Cells[currentRow, 1, currentRow, lastColUsed];

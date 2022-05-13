@@ -16,11 +16,18 @@ namespace EM_Analyzer.ModelClasses
         public string Trial { get; set; }
         [Description("Stimulus")]
         public string Stimulus { get; set; }
+        [EpplusIgnore]
+        public string[] Stimulus_Tokens { get; set; }
+        [EpplusIgnore]
+        public int Page { get; set; }
+
         //[XLColumn(Ignore = true)]
         [EpplusIgnore]
         public Fixation Previous_Fixation { get; set; }
         [Description("Participant")]
         public string Participant { get; set; }
+        [Description("Word Index")]
+        public int Word_Index { get; set; }
         [Description("AOI Name")]
         public int AOI_Name { get; set; }
         [Description("AOI Group Before Change")]
@@ -30,12 +37,16 @@ namespace EM_Analyzer.ModelClasses
         [Description("Is Exceptional")]
         public bool IsException { get; set; }
         [EpplusIgnore]
-        public long AOI_Size { get; set; }
+        public long AOI_Phrase_Size { get; set; }
+        [EpplusIgnore]
+        public long AOI_Word_Size { get; set; }
         [Description("AOI Coverage In Percents")]
         public double AOI_Coverage_In_Percents { get; set; }
         [Description("Index")]
         public long Index { get; set; }
         [Description("Event Duration")]
+        [EpplusIgnore]
+        public long Text_Index { get; set; }
         public double Event_Duration { get; set; }
         [Description("Position X")]
         public double Fixation_Position_X { get; set; }
@@ -43,15 +54,22 @@ namespace EM_Analyzer.ModelClasses
         public double Fixation_Position_Y { get; set; }
         [Description("Average Pupil Diameter")]
         public double Fixation_Average_Pupil_Diameter { get; set; }
+
         [EpplusIgnore]
-        public IAOI AOI_Details
+        public IAOI AOI_Phrase_Details
         {
             get
             {
-//                if (AOIDetails.isAOIIncludeStimulus)
-                    return AOIsService.nameToAOIDictionary[AOI_Name + Stimulus];
-//                else
-//                    return AOIsService.nameToAOIDictionary[AOI_Name + ""];
+                return AOIsService.nameToAOIPhrasesDictionary[AOI_Name + Stimulus_Tokens[0]];
+            }
+        }
+        [EpplusIgnore]
+        public AOIWordDetails AOI_Word_Details
+        {
+            get
+            {
+                return AOIWordDetails.nameToAOIWordsDetailsDictionary[Word_Index + Stimulus_Tokens[0]];
+
             }
         }
 
@@ -71,8 +89,26 @@ namespace EM_Analyzer.ModelClasses
             {
                 Trial = arr[TextFileColumnIndexes.Trial].Trim(),
                 Stimulus = arr[TextFileColumnIndexes.Stimulus].Trim(),
-                Participant = arr[TextFileColumnIndexes.Participant].Trim()
+                Participant = arr[TextFileColumnIndexes.Participant].Trim(),
             };
+            try
+            {
+                newFixation.Stimulus_Tokens = newFixation.Stimulus.Split(' ');
+            }
+            catch
+            {
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Page Tokens", arr[TextFileColumnIndexes.Event_Duration], lineNumber));
+                isFixationValid = false;
+            }
+            try
+            {
+                newFixation.Page = int.Parse(newFixation.Stimulus_Tokens[newFixation.Stimulus_Tokens.Length - 1]);
+            }
+            catch
+            {
+                ExcelLoggerService.AddLog(CreateLogForFieldValidation("Page", arr[TextFileColumnIndexes.Event_Duration], lineNumber));
+                isFixationValid = false;
+            }
 
             try
             {
@@ -89,46 +125,48 @@ namespace EM_Analyzer.ModelClasses
 
             try
             {
-                newFixation.AOI_Group_After_Change = newFixation.AOI_Group_Before_Change = int.Parse(arr[TextFileColumnIndexes.AOI_Group]);
+                if (arr[TextFileColumnIndexes.AOI_Group] == "figure" || arr[TextFileColumnIndexes.AOI_Group] == "Figure" || arr[TextFileColumnIndexes.AOI_Name] == "figure" || arr[TextFileColumnIndexes.AOI_Name] == "Figure")
+                    newFixation.AOI_Group_After_Change = newFixation.AOI_Group_Before_Change = 0;
+                else
+                    newFixation.AOI_Group_After_Change = newFixation.AOI_Group_Before_Change = int.Parse(arr[TextFileColumnIndexes.AOI_Group]);
             }
             catch
             {
                 isAOIValid = false;
-                //Console.Write("not valid");
-                //ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI Group", arr[TextFileColumnIndexes.AOI_Group], lineNumber + 1));
             }
 
             try
             {
-                newFixation.AOI_Name = int.Parse(arr[TextFileColumnIndexes.AOI_Name]);
+                if (arr[TextFileColumnIndexes.AOI_Group] == "figure" || arr[TextFileColumnIndexes.AOI_Group] == "Figure" || arr[TextFileColumnIndexes.AOI_Name] == "figure" || arr[TextFileColumnIndexes.AOI_Name] == "Figure")
+                    newFixation.AOI_Name = 0;
+                else
+                    newFixation.AOI_Name = int.Parse(arr[TextFileColumnIndexes.AOI_Name]);
+
             }
             catch
             {
                 isAOIValid = false;
-                //Console.Write("not valid");
-                //ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI Name", arr[TextFileColumnIndexes.AOI_Name], lineNumber + 1));
             }
 
             try
             {
-                newFixation.AOI_Size = long.Parse(arr[TextFileColumnIndexes.AOI_Size]);
-                if (newFixation.AOI_Name != -1 && newFixation.AOI_Details.AOI_Size_X < 0)
+                newFixation.AOI_Phrase_Size = long.Parse(arr[TextFileColumnIndexes.AOI_Size]);
+                if (newFixation.AOI_Name > 0 && newFixation.AOI_Phrase_Details.AOI_Size_X < 0)
                 {
-                    newFixation.AOI_Details.AOI_Size_X = newFixation.AOI_Size;
+                    newFixation.AOI_Phrase_Details.AOI_Size_X = newFixation.AOI_Phrase_Size;
                 }
             }
             catch
             {
                 isAOIValid = false;
-                //Console.Write("not valid");
-                //ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI Size", arr[TextFileColumnIndexes.AOI_Size], lineNumber + 1));
             }
+
 
             if (!isAOIValid)
             {
                 newFixation.AOI_Group_After_Change = newFixation.AOI_Group_Before_Change = -1;
                 newFixation.AOI_Name = -1;
-                newFixation.AOI_Size = -1;
+                newFixation.AOI_Phrase_Size = -1;
             }
 
 
@@ -161,13 +199,12 @@ namespace EM_Analyzer.ModelClasses
                 ExcelLoggerService.AddLog(CreateLogForFieldValidation("Fixation Average Pupil Diameter", arr[TextFileColumnIndexes.Fixation_Average_Pupil_Diameter], lineNumber));
                 isFixationValid = false;
             }
-
             try
             {
                 newFixation.AOI_Coverage_In_Percents = double.Parse(arr[TextFileColumnIndexes.AOI_Coverage]);
-                if (newFixation.AOI_Name != -1 && newFixation.AOI_Details.AOI_Coverage_In_Percents < 0)
+                if (newFixation.AOI_Name != 0 && newFixation.AOI_Name != -1 && newFixation.AOI_Phrase_Details.AOI_Coverage_In_Percents < 0)
                 {
-                    newFixation.AOI_Details.AOI_Coverage_In_Percents = newFixation.AOI_Coverage_In_Percents;
+                    newFixation.AOI_Phrase_Details.AOI_Coverage_In_Percents = newFixation.AOI_Coverage_In_Percents;
                 }
             }
             catch
@@ -175,7 +212,6 @@ namespace EM_Analyzer.ModelClasses
                 ExcelLoggerService.AddLog(CreateLogForFieldValidation("AOI_Coverage", arr[TextFileColumnIndexes.AOI_Coverage], lineNumber));
                 isFixationValid = false;
             }
-
             try
             {
                 newFixation.Index = long.Parse(arr[TextFileColumnIndexes.Index]);
@@ -187,44 +223,28 @@ namespace EM_Analyzer.ModelClasses
             }
 
 
-            
             newFixation.IsException = false;
 
-            //write to log considering the Hanaka txt and it's not neccesry 
-
-            //if (newFixation.AOI_Name != -1)
-            //{
-            //    //if (AOIDetails.isAOIIncludeStimulus)
-            //    //    newFixation.AOI_Details = AOIDetails.nameToAOIDetailsDictionary[newFixation.AOI_Name + newFixation.Stimulus];
-            //    //else
-            //    //    newFixation.AOI_Details = AOIDetails.nameToAOIDetailsDictionary[newFixation.AOI_Name + ""];
-
-            //    //if (newFixation.AOI_Details.AOI_Coverage_In_Percents < 0)
-            //    //{
-            //    //    newFixation.AOI_Details.AOI_Coverage_In_Percents = newFixation.AOI_Coverage_In_Percents;
-            //    //}
-
-            //    //if (newFixation.AOI_Details.IsProper && newFixation.AOI_Details.DistanceToAOI(newFixation) != 0)
-            //    if (newFixation.AOI_Details.DistanceToAOI(newFixation) != 0)
-            //    {
-            //        //newFixation.AOI_Details.IsProper = false;
-            //        ExcelLoggerService.AddLog(new Log() { FileName = FixationsService.textFileName, LineNumber = lineNumber, Description = "The Fixation Is Not Inside The AOI Name" + newFixation.AOI_Name });
-            //        //new Task(() => MessageBox.Show("There is a problem with the AOI " + newFixation.AOI_Name + " In Stimulus " + newFixation.Stimulus)).Start();
-            //    }
-            //}
 
             if (!isFixationValid)
                 return null;
+
 
             string dictionatyKey = newFixation.GetDictionaryKey();
             if (!FixationsService.fixationSetToFixationListDictionary.ContainsKey(dictionatyKey))
                 FixationsService.fixationSetToFixationListDictionary[dictionatyKey] = new List<Fixation>();
             FixationsService.fixationSetToFixationListDictionary[dictionatyKey].Add(newFixation);
 
+            // set the minimum AOI name of every Fixations Set
+            if (!FixationsService.minimumAOIGroupOfFixationSet.ContainsKey(dictionatyKey))
+                FixationsService.minimumAOIGroupOfFixationSet[dictionatyKey] = int.MaxValue;
+            if (newFixation.AOI_Group_Before_Change > 0 && newFixation.AOI_Group_Before_Change < FixationsService.minimumAOIGroupOfFixationSet[dictionatyKey])
+                FixationsService.minimumAOIGroupOfFixationSet[dictionatyKey] = newFixation.AOI_Group_Before_Change;
+
+
             return newFixation;
 
         }
-
         public string GetDictionaryKey()
         {
             return this.Participant + '\t' + this.Trial + '\t' + this.Stimulus;
@@ -276,7 +296,7 @@ namespace EM_Analyzer.ModelClasses
 
         private static Log CreateLogForFieldValidation(string fieldName, string valueFound, uint lineNumber)
         {
-            return new Log() { FileName = FixationsService.textFileName, LineNumber = lineNumber, Description = "The Value Of Field " + fieldName + " Is Not Valid!!! " + Environment.NewLine + "The Value Found Is: " + valueFound };
+            return new Log() { FileName = FixationsService.phrasesTextFileName, LineNumber = lineNumber, Description = "The Value Of Field " + fieldName + " Is Not Valid!!! " + Environment.NewLine + "The Value Found Is: " + valueFound };
         }
     }
 }

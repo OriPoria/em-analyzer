@@ -1,38 +1,37 @@
-﻿using EM_Analyzer.Interfaces;
-using EM_Analyzer.ModelClasses;
+﻿using EM_Analyzer.ModelClasses;
 using EM_Analyzer.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using static EM_Analyzer.ExcelsFilesMakers.ThirdFourFilter.ThirdFourthFilter;
 
 namespace EM_Analyzer.ExcelsFilesMakers
 {
-    class ThirdFileAfterProccessing
+    class FourthFileConsideringCoverage
     {
         public static void MakeExcelFile()
         {
-            List<Fixation>[] fixationsLists = FixationsService.fixationSetToFixationListDictionary.Values.ToArray();
-            List<ParticipantTrial> table = new List<ParticipantTrial>();
-            
-            foreach(List<Fixation> fixations in fixationsLists)
+            // grouping the fixations of each participant from all the trials (pages)
+            List<FilteredTrialTextPerParticipant> perParticipants = filteredTrialTextPerParticipants;
+            List<ParticipantTextAfterFilter> table = new List<ParticipantTextAfterFilter>();
+
+            foreach (FilteredTrialTextPerParticipant item in perParticipants)
             {
-                table.Add(new ParticipantTrial(fixations[0].Trial, fixations[0].Stimulus, fixations[0].Participant));
+                table.Add(new ParticipantTextAfterFilter(item.All_Fixations_Duration_Filter[0].Stimulus_Tokens[0],
+                        item.All_Fixations_Duration_Filter[0].Participant, item));
+
             }
-            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ThirdExcelFileName, table, null);
+            ExcelsService.CreateExcelFromStringTable("Text - Filtered By Participant", table, null);
         }
-
-
-        private class ParticipantTrial : ITrialClassForConsideringCoverage
+        private class ParticipantTextAfterFilter
         {
             [Description("Participant")]
             public string Participant { get; set; }
-            [Description("Trial")]
-            public string Trial { get; set; }
             [Description("Stimulus")]
             public string Stimulus { get; set; }
-
-            private List<Fixation> m_Fixations_Page;
 
             private double m_Mean_Fixation_Duration;
             [Description("Mean Fixation Duration")]
@@ -42,8 +41,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_Mean_Fixation_Duration == -1)
                     {
-                        double duration_sum = this.m_Fixations_Page.Sum(fix => fix.Event_Duration);
-                        this.m_Mean_Fixation_Duration = duration_sum / this.m_Fixations_Page.Count;
+                        double duration_sum = this.m_Fixations_Duration_Filtered.Sum(fix => fix.Event_Duration);
+                        this.m_Mean_Fixation_Duration = duration_sum / this.m_Fixations_Duration_Filtered.Count;
                     }
                     return this.m_Mean_Fixation_Duration;
                 }
@@ -56,7 +55,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_SD_Fixation_Duration == -1)
                     {
-                        IEnumerable<double> durations = this.m_Fixations_Page.Select(fix => fix.Event_Duration).ToList();
+                        IEnumerable<double> durations = this.m_Fixations_Duration_Filtered.Select(fix => fix.Event_Duration).ToList();
                         this.m_SD_Fixation_Duration = StandardDevision.ComputeStandardDevision(durations);
                     }
                     return this.m_SD_Fixation_Duration;
@@ -73,12 +72,19 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_Total_Fixation_Number == -1)
                     {
-                        this.m_Total_Fixation_Number = this.m_Fixations_Page.Count;
+                        this.m_Total_Fixation_Number = this.filteredTrialTextPerParticipant.m_Fixations_Text.Count;
                     }
                     return this.m_Total_Fixation_Number;
                 }
             }
-
+            [Description("Total Fixation Filtered")]
+            public int Total_Fixation_Filtered
+            {
+                get
+                {
+                    return filteredTrialTextPerParticipant.Trial_Elimination_Fixations_Duration.Values.Sum();
+                }
+            }
 
             private double m_Mean_Progressive_Fixation_Duration;
             [Description("Mean Progressive Fixation Duration")]
@@ -88,8 +94,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_Mean_Progressive_Fixation_Duration == -1)
                     {
-                        double duration_sum = this.Progressive_Fixations.Sum(fix => fix.Event_Duration);
-                        this.m_Mean_Progressive_Fixation_Duration = duration_sum / this.Progressive_Fixations.Count;
+                        double duration_sum = this.m_Progressive_Fixations_Duration_Filtered.Sum(fix => fix.Event_Duration);
+                        this.m_Mean_Progressive_Fixation_Duration = duration_sum / this.m_Progressive_Fixations_Duration_Filtered.Count;
                     }
                     return this.m_Mean_Progressive_Fixation_Duration;
                 }
@@ -102,7 +108,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_SD_Progressive_Fixation_Duration == -1)
                     {
-                        IEnumerable<double> durations = this.Progressive_Fixations.Select(fix => fix.Event_Duration).ToList();
+                        IEnumerable<double> durations = this.m_Progressive_Fixations_Duration_Filtered.Select(fix => fix.Event_Duration).ToList();
                         this.m_SD_Progressive_Fixation_Duration = StandardDevision.ComputeStandardDevision(durations);
                     }
                     return this.m_SD_Progressive_Fixation_Duration;
@@ -113,10 +119,17 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
-                    return this.Progressive_Fixations.Count;
+                    return this.filteredTrialTextPerParticipant.m_Progressive_Fixations.Count;
                 }
             }
-
+            [Description("Progressive Fixation Filtered")]
+            public int Progressive_Fixation_Filtered
+            {
+                get
+                {
+                    return filteredTrialTextPerParticipant.Trial_Elimination_Progressive_Duration.Values.Sum();
+                }
+            }
             private double m_Mean_Progressive_Saccade_Length;
             [Description("Mean Progressive Saccade Length")]
             public double Mean_Progressive_Saccade_Length
@@ -125,7 +138,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_Mean_Progressive_Saccade_Length == -1)
                     {
-                        this.m_Mean_Progressive_Saccade_Length = this.Progressive_Fixations.Sum(fix => fix.DistanceToPreviousFixation()) / this.Progressive_Fixations.Count;
+                        this.m_Mean_Progressive_Saccade_Length = this.m_Progressive_Fixations_Saccade_Length_Filtered.Sum(fix => fix.DistanceToPreviousFixation()) / this.m_Progressive_Fixations_Saccade_Length_Filtered.Count;
                     }
                     return this.m_Mean_Progressive_Saccade_Length;
                 }
@@ -138,10 +151,18 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_SD_Progressive_Saccade_Length == -1)
                     {
-                        IEnumerable<double> distances = this.Progressive_Fixations.Select(fix => fix.DistanceToPreviousFixation()).ToList();
+                        IEnumerable<double> distances = this.m_Progressive_Fixations_Saccade_Length_Filtered.Select(fix => fix.DistanceToPreviousFixation()).ToList();
                         this.m_SD_Progressive_Saccade_Length = StandardDevision.ComputeStandardDevision(distances);
                     }
                     return this.m_SD_Progressive_Saccade_Length;
+                }
+            }
+            [Description("Progressive Saccade Length Filtered")]
+            public double Progressive_Saccade_Length_Filtered
+            {
+                get
+                {
+                    return filteredTrialTextPerParticipant.Trial_Elimination_Prog_Saccade_Length.Values.Sum();
                 }
             }
 
@@ -153,7 +174,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_Mean_Progressive_Saccade_Length_X == -1)
                     {
-                        this.m_Mean_Progressive_Saccade_Length_X = this.Progressive_Fixations.Sum(fix => Math.Abs(fix.Fixation_Position_X - fix.Previous_Fixation.Fixation_Position_X)) / this.Progressive_Fixations.Count;
+                        this.m_Mean_Progressive_Saccade_Length_X = this.m_Progressive_Fixations_Saccade_Length_X_Filtered.Sum(fix => Math.Abs(fix.Fixation_Position_X - fix.Previous_Fixation.Fixation_Position_X)) / this.m_Progressive_Fixations_Saccade_Length_X_Filtered.Count;
                     }
                     return this.m_Mean_Progressive_Saccade_Length_X;
                 }
@@ -166,10 +187,18 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_SD_Progressive_Saccade_Length_X == -1)
                     {
-                        IEnumerable<double> distances = this.Progressive_Fixations.Select(fix => Math.Abs(fix.Fixation_Position_X - fix.Previous_Fixation.Fixation_Position_X)).ToList();
+                        IEnumerable<double> distances = this.m_Progressive_Fixations_Saccade_Length_X_Filtered.Select(fix => Math.Abs(fix.Fixation_Position_X - fix.Previous_Fixation.Fixation_Position_X)).ToList();
                         this.m_SD_Progressive_Saccade_Length_X = StandardDevision.ComputeStandardDevision(distances);
                     }
                     return this.m_SD_Progressive_Saccade_Length_X;
+                }
+            }
+            [Description("Progressive Saccade Length X Filtered")]
+            public double Progressive_Saccade_Length_X_Filtered
+            {
+                get
+                {
+                    return filteredTrialTextPerParticipant.Trial_Elimination_Prog_Saccade_X_Length.Values.Sum();
                 }
             }
 
@@ -182,8 +211,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_Mean_Regressive_Fixation_Duration == -1)
                     {
-                        double duration_sum = this.Regressive_Fixations.Sum(fix => fix.Event_Duration);
-                        this.m_Mean_Regressive_Fixation_Duration = duration_sum / this.Regressive_Fixations.Count;
+                        double duration_sum = this.m_Regressive_Fixations_Duration_Filtered.Sum(fix => fix.Event_Duration);
+                        this.m_Mean_Regressive_Fixation_Duration = duration_sum / this.m_Regressive_Fixations_Duration_Filtered.Count;
                     }
                     return this.m_Mean_Regressive_Fixation_Duration;
                 }
@@ -196,7 +225,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_SD_Regressive_Fixation_Duration == -1)
                     {
-                        IEnumerable<double> durations = this.Regressive_Fixations.Select(fix => fix.Event_Duration).ToList();
+                        IEnumerable<double> durations = this.m_Regressive_Fixations_Duration_Filtered.Select(fix => fix.Event_Duration).ToList();
                         this.m_SD_Regressive_Fixation_Duration = StandardDevision.ComputeStandardDevision(durations);
                     }
                     return this.m_SD_Regressive_Fixation_Duration;
@@ -207,7 +236,15 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
-                    return this.Regressive_Fixations.Count;
+                    return this.filteredTrialTextPerParticipant.m_Regressive_Fixations.Count;
+                }
+            }
+            [Description("Regressive Fixation Filtered")]
+            public int Regressive_Fixation_Filtered
+            {
+                get
+                {
+                    return filteredTrialTextPerParticipant.Trial_Elimination_Regressive_Duration.Values.Sum();
                 }
             }
 
@@ -219,7 +256,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_Mean_Regressive_Saccade_Length == -1)
                     {
-                        this.m_Mean_Regressive_Saccade_Length = this.Regressive_Fixations.Sum(fix => fix.DistanceToPreviousFixation()) / this.Regressive_Fixations.Count;
+                        this.m_Mean_Regressive_Saccade_Length = this.m_Regressive_Fixations_Saccade_Length_Filtered.Sum(fix => fix.DistanceToPreviousFixation()) / this.m_Regressive_Fixations_Saccade_Length_Filtered.Count;
                     }
                     return this.m_Mean_Regressive_Saccade_Length;
                 }
@@ -232,10 +269,18 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_SD_Regressive_Saccade_Length == -1)
                     {
-                        IEnumerable<double> distances = this.Regressive_Fixations.Select(fix => fix.DistanceToPreviousFixation()).ToList();
+                        IEnumerable<double> distances = this.m_Regressive_Fixations_Saccade_Length_Filtered.Select(fix => fix.DistanceToPreviousFixation()).ToList();
                         this.m_SD_Regressive_Saccade_Length = StandardDevision.ComputeStandardDevision(distances);
                     }
                     return this.m_SD_Regressive_Saccade_Length;
+                }
+            }
+            [Description("Regressive Saccade Length Filtered")]
+            public double Regressive_Saccade_Length_Filtered
+            {
+                get
+                {
+                    return filteredTrialTextPerParticipant.Trial_Elimination_Reg_Saccade_Length.Values.Sum();
                 }
             }
 
@@ -247,7 +292,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_Mean_Regressive_Saccade_Length_X == -1)
                     {
-                        this.m_Mean_Regressive_Saccade_Length_X = this.Regressive_Fixations.Sum(fix => Math.Abs(fix.Fixation_Position_X - fix.Previous_Fixation.Fixation_Position_X)) / this.Regressive_Fixations.Count;
+                        this.m_Mean_Regressive_Saccade_Length_X = this.m_Regressive_Fixations_Saccade_Length_X_Filtered.Sum(fix => Math.Abs(fix.Fixation_Position_X - fix.Previous_Fixation.Fixation_Position_X)) / this.m_Regressive_Fixations_Saccade_Length_X_Filtered.Count;
                     }
                     return this.m_Mean_Regressive_Saccade_Length_X;
                 }
@@ -260,10 +305,18 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_SD_Regressive_Saccade_Length_X == -1)
                     {
-                        IEnumerable<double> distances = this.Regressive_Fixations.Select(fix => Math.Abs(fix.Fixation_Position_X - fix.Previous_Fixation.Fixation_Position_X)).ToList();
+                        IEnumerable<double> distances = this.m_Regressive_Fixations_Saccade_Length_X_Filtered.Select(fix => Math.Abs(fix.Fixation_Position_X - fix.Previous_Fixation.Fixation_Position_X)).ToList();
                         this.m_SD_Regressive_Saccade_Length_X = StandardDevision.ComputeStandardDevision(distances);
                     }
                     return this.m_SD_Regressive_Saccade_Length_X;
+                }
+            }
+            [Description("Regressive Saccade Length X Filtered")]
+            public double Regressive_Saccade_Length_X_Filtered
+            {
+                get
+                {
+                    return filteredTrialTextPerParticipant.Trial_Elimination_Reg_Saccade_X_Length.Values.Sum();
                 }
             }
             private double m_Pupil_Diameter;
@@ -275,98 +328,108 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_Pupil_Diameter == -1)
                     {
-                        double sum = this.All_Fixations.Sum(fix => fix.Fixation_Average_Pupil_Diameter);
-                        this.m_Pupil_Diameter = sum / this.All_Fixations.Count;
+                        double sum = this.m_Fixations_Average_Pupil_Filtered.Sum(fix => fix.Fixation_Average_Pupil_Diameter);
+                        this.m_Pupil_Diameter = sum / this.m_Fixations_Average_Pupil_Filtered.Count;
                     }
                     return this.m_Pupil_Diameter;
                 }
             }
-
-
-
-            [EpplusIgnore]
-            public List<Fixation> All_Fixations { get; set; }
-
-            private List<Fixation> m_Progressive_Fixations;
-            private List<Fixation> Progressive_Fixations
+            [Description("Pupil Diameter Filtered")]
+            public double Pupil_Diameter_Filtered
             {
                 get
                 {
-                    if (this.m_Progressive_Fixations == null)
-                    {
-                        this.InitializeProgressiveAndRegressiveFixationsList();
-                    }
-
-                    return this.m_Progressive_Fixations;
+                    return filteredTrialTextPerParticipant.Trial_Elimination_Avg_Pupil_Diameter.Values.Sum();
                 }
             }
-
-            private List<Fixation> m_Regressive_Fixations;
-            private List<Fixation> Regressive_Fixations
+            [Description("Page Moves")]
+            public int Page_Moves
             {
                 get
                 {
-                    if (this.m_Regressive_Fixations == null)
-                    {
-                        this.InitializeProgressiveAndRegressiveFixationsList();
-                    }
-                    return this.m_Regressive_Fixations;
+                    return filteredTrialTextPerParticipant.Page_Moves;
+                }
+            }
+            [Description("Page Regressions")]
+            public int Page_Regressions
+            {
+                get
+                {
+                    return filteredTrialTextPerParticipant.Page_Regressions;
+                }
+            }
+            [Description("Page Visits")]
+            public int Page_Visits
+            {
+                get
+                {
+                    return filteredTrialTextPerParticipant.Page_Visits;
                 }
             }
 
 
-            public ParticipantTrial(string Trial, string Stimulus, string Participant)
+            private List<Fixation> m_Fixations_Duration_Filtered;
+
+            private List<Fixation> m_Progressive_Fixations_Duration_Filtered;
+            private List<Fixation> m_Progressive_Fixations_Saccade_Length_Filtered;
+            private List<Fixation> m_Progressive_Fixations_Saccade_Length_X_Filtered;
+
+            private List<Fixation> m_Regressive_Fixations_Duration_Filtered;
+            private List<Fixation> m_Regressive_Fixations_Saccade_Length_Filtered;
+            private List<Fixation> m_Regressive_Fixations_Saccade_Length_X_Filtered;
+
+            private List<Fixation> m_Fixations_Average_Pupil_Filtered;
+
+            private FilteredTrialTextPerParticipant filteredTrialTextPerParticipant;
+
+            public ParticipantTextAfterFilter(string Stimulus, string Participant,
+                FilteredTrialTextPerParticipant filteredTrialTextPerParticipant)
             {
-                this.Trial = Trial;
                 this.Stimulus = Stimulus;
                 this.Participant = Participant;
+                this.filteredTrialTextPerParticipant = filteredTrialTextPerParticipant;
 
-                /*
-                 Critical Point: Removes all the fixations with no AOI Group (after dealing with exceptions) !
-                 */
-                this.All_Fixations = FixationsService.fixationSetToFixationListDictionary[this.Participant + '\t' + this.Trial + '\t' + this.Stimulus];
-                this.All_Fixations.RemoveAll(fix => fix.AOI_Group_After_Change < 1);
-                this.m_Fixations_Page = new List<Fixation>();
-                m_Fixations_Page.AddRange(All_Fixations.Skip(1).ToList());
+                this.m_Fixations_Duration_Filtered = filteredTrialTextPerParticipant.All_Fixations_Duration_Filter;
+                this.m_Progressive_Fixations_Duration_Filtered = filteredTrialTextPerParticipant.Progressive_Fixations_Duration_Filter;
+                this.m_Progressive_Fixations_Saccade_Length_Filtered = filteredTrialTextPerParticipant.Progressive_Saccade_Length_Filter;
+                this.m_Progressive_Fixations_Saccade_Length_X_Filtered = filteredTrialTextPerParticipant.Progressive_Saccade_Length_X_Filter;
+
+                this.m_Regressive_Fixations_Duration_Filtered = filteredTrialTextPerParticipant.Regressive_Fixations_Duration_Filter;
+                this.m_Regressive_Fixations_Saccade_Length_Filtered = filteredTrialTextPerParticipant.Regressive_Saccade_Length_Filter;
+                this.m_Regressive_Fixations_Saccade_Length_X_Filtered = filteredTrialTextPerParticipant.Regressive_Saccade_Length_X_Filter;
+
+                this.m_Fixations_Average_Pupil_Filtered = filteredTrialTextPerParticipant.Fixations_Average_Pupil_Diameter_Filter;
 
                 this.m_Total_Fixation_Number = -1;
                 this.m_Mean_Fixation_Duration = -1;
                 this.m_SD_Fixation_Duration = -1;
+
                 this.m_Mean_Progressive_Fixation_Duration = -1;
                 this.m_SD_Progressive_Fixation_Duration = -1;
+
                 this.m_Mean_Progressive_Saccade_Length = -1;
                 this.m_SD_Progressive_Saccade_Length = -1;
+
                 this.m_Mean_Progressive_Saccade_Length_X = -1;
                 this.m_SD_Progressive_Saccade_Length_X = -1;
-                this.m_Progressive_Fixations = null;
+
                 this.m_Mean_Regressive_Fixation_Duration = -1;
                 this.m_SD_Regressive_Fixation_Duration = -1;
+
                 this.m_Mean_Regressive_Saccade_Length = -1;
                 this.m_SD_Regressive_Saccade_Length = -1;
+
                 this.m_Mean_Regressive_Saccade_Length_X = -1;
                 this.m_SD_Regressive_Saccade_Length_X = -1;
+
                 this.m_Pupil_Diameter = -1;
-                this.m_Regressive_Fixations = null;
 
             }
-            
 
-            private void InitializeProgressiveAndRegressiveFixationsList()
-            {
-                this.m_Progressive_Fixations = new List<Fixation>();
-                this.m_Regressive_Fixations = new List<Fixation>();
-                Fixation[] fixations = this.All_Fixations.ToArray();
 
-                for (int i = 1; i < fixations.Length; ++i)
-                {
-                    fixations[i].Previous_Fixation = fixations[i - 1];
-                    if (fixations[i - 1].IsBeforeThan(fixations[i]))
-                        this.m_Progressive_Fixations.Add(fixations[i]);
-                    else
-                        this.m_Regressive_Fixations.Add(fixations[i]);
-                }
-            }
+
 
         }
+
     }
 }

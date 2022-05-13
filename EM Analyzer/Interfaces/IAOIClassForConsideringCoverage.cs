@@ -11,8 +11,7 @@ namespace EM_Analyzer.Interfaces
     {
         [Description("Participant")]
         string Participant { get; }
-        [Description("Trial")]
-        string Trial { get; }
+
         [Description("Stimulus")]
         string Stimulus { get; }
         [Description("Text Name")]
@@ -65,5 +64,7 @@ namespace EM_Analyzer.Interfaces
         double Mean_AOI_Size { get; }
         [Description("AOI Coverage [%]")]
         double Mean_AOI_Coverage { get; }
+        int Length { get; }
+        int Frequency { get; }
     }
 }

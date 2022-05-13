@@ -9,7 +9,8 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
 {
     public static class AOIsService
     {
-        public static Dictionary<string, IAOI> nameToAOIDictionary = new Dictionary<string, IAOI>();
+        public static Dictionary<string, IAOI> nameToAOIPhrasesDictionary = new Dictionary<string, IAOI>();
+        public static Dictionary<string, IAOI> nameToAOIWordsDictionary = new Dictionary<string, IAOI>();
         public static bool isAOIIncludeStimulus = false;
         
     }

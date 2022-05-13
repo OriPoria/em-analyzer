@@ -8,17 +8,19 @@ using System.ComponentModel;
 using EM_Analyzer.Interfaces;
 using System.Globalization;
 using OfficeOpenXml;
+using EM_Analyzer.Enums;
 
 namespace EM_Analyzer.ExcelsFilesMakers
 {
     public class SecondFileConsideringCoverage
     {
         private delegate double NumericExpression(AIOClassAfterCoverage value);
-        //private delegate void SettingValue(AIOClassAfterCoverageForExcel AOI, double value);
         private delegate void SettingValue(AIOClassAfterCoverageForExcel AOI, string value);
+        public static AOITypes currentType;
 
         private static List<NumericExpression> GetNumericExpressions()
         {
+            // list of functions that get AIOClassAfterCoverage as parameter and return double
             List<NumericExpression> filteringsExpressions = new List<NumericExpression>
             {
                 aoi => aoi.Total_Fixation_Duration,
@@ -50,7 +52,6 @@ namespace EM_Analyzer.ExcelsFilesMakers
             List<SettingValue> settingExpressions = new List<SettingValue>
             {
                 (aoi, value) => aoi.Total_Fixation_Duration = value,
-                //(aoi, value) => aoi.Total_Fixation_Duration = String.Format("{0:0.0000000000000}", value),
                 (aoi, value) => aoi.Total_Fixation_Number = value,
                 (aoi, value) => aoi.First_Fixation_Duration = value,
                 (aoi, value) => aoi.First_Pass_Duration = value,
@@ -68,9 +69,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 (aoi, value) => aoi.Regression_Number = value,
                 (aoi, value) => aoi.Regression_Duration = value,
                 (aoi, value) => aoi.First_Regression_Duration = value,
-                (aoi, value) => aoi.Pupil_Diameter = value,
-                //(aoi, value) => aoi.Mean_AOI_Size = value
-             
+                (aoi, value) => aoi.Pupil_Diameter = value,             
             };
             return settingExpressions;
         }
@@ -97,7 +96,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 settingExpressions,
                 standardDevisionAllowed,
                 aoi => aoi.AOI_Group == -1);
-            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By Participant", byParticipant, editExcel);
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By Participant" + "_" + Constans.GetEndOfFileNameByType(currentType), byParticipant, EditExcel);
 
             List<AIOClassAfterCoverageForExcel> byAOIGroup = DeleteOutOfStdValues(
                 aoi => aoi.Stimulus + aoi.AOI_Group,
@@ -105,18 +104,15 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 settingExpressions,
                 standardDevisionAllowed,
                 aoi => aoi.AOI_Group == -1);
-            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI", byAOIGroup, editExcel);
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI" + "_" + Constans.GetEndOfFileNameByType(currentType), byAOIGroup, EditExcel);
 
 
-            //List<AIOClassAfterCoverageForExcel> by_AIO_And_Participant = new List<AIOClassAfterCoverageForExcel>(byParticipant.Count + byAOIGroup.Count);
             HashSet<AIOClassAfterCoverageForExcel> by_AIO_And_Participant = new HashSet<AIOClassAfterCoverageForExcel>();
-            //by_AIO_And_Participant.AddRange(byParticipant);
-            //by_AIO_And_Participant.AddRange(byAOIGroup);
             by_AIO_And_Participant.UnionWith(byParticipant);
             by_AIO_And_Participant.UnionWith(byAOIGroup);
-            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI and Participant", by_AIO_And_Participant, editExcel);
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI and Participant" + "_" + Constans.GetEndOfFileNameByType(currentType), by_AIO_And_Participant, EditExcel);
 
-
+            
             List<AIOClassAfterCoverageForExcel> by_AIO_Or_Participant = new List<AIOClassAfterCoverageForExcel>(Math.Min(byParticipant.Count, byAOIGroup.Count));
             foreach(AIOClassAfterCoverageForExcel group in byAOIGroup)
             {
@@ -128,29 +124,37 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     }
                 }
             }
-            //List<AIOClassAfterCoverageForExcel> by_AIO_and_Participant = (List<AIOClassAfterCoverageForExcel>)and;
-            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI or Participant", by_AIO_Or_Participant, editExcel);
-            
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI or Participant" + "_" + Constans.GetEndOfFileNameByType(currentType), by_AIO_Or_Participant, EditExcel);
+           
         }
-        public static int editExcel(ExcelWorksheet ws)
+        public static int EditExcel(ExcelWorksheet ws)
         {
-            ws.InsertColumn(Constans.startCondsInx, AOIClass.maxConditions);
-            for (int i = Constans.startCondsInx; i < Constans.startCondsInx + AOIClass.maxConditions; i++)
-                ws.Cells[1, i].Value = $"Cond{i - 6}";
+            ws.InsertColumn(Constans.secondFileStartCondsInx, AOIClass.maxConditions);
+            for (int i = Constans.secondFileStartCondsInx; i < Constans.secondFileStartCondsInx + AOIClass.maxConditions; i++)
+                ws.Cells[1, i].Value = $"Cond{i - Constans.secondFileStartCondsInx + 1}";
             for (int i = 2; i <= ws.Dimension.Rows; i++)
             {
-                if (ws.Cells[i, Constans.aoiTargetCol].Value != null)
+                if (ws.Cells[i, Constans.secondFileAoiTargetCol].Value != null)
                 {
-                    List<string> sNames = Constans.parseSpecialName(ws.Cells[i, Constans.aoiTargetCol].Value.ToString());
+                    List<string> sNames = Constans.parseSpecialName(ws.Cells[i, Constans.secondFileAoiTargetCol].Value.ToString());
                     int k = 0;
-                    for (int j = Constans.startCondsInx; j < sNames.Count + Constans.startCondsInx; j++)
+                    for (int j = Constans.secondFileStartCondsInx; j < sNames.Count + Constans.secondFileStartCondsInx; j++)
                     {
                         ws.Cells[i, j].Value = sNames[k];
                         k++;
                     }
-
                 }
+                // change figure AOI group label from 0 to "figure"
+                if (ws.Cells[i, Constans.secondFileAoiGroupCol].Value.ToString() == "0")
+                    ws.Cells[i, Constans.secondFileAoiGroupCol].Value = "figure";
 
+            }
+            // removes frequency and length column
+            if (currentType == AOITypes.Phrases)
+            {
+                int numberCols = ws.Dimension.Columns;
+                ws.DeleteColumn(numberCols);
+                ws.DeleteColumn(numberCols - 1);
             }
             return 0;
         }
@@ -174,7 +178,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
             for (int fieldIndex = 0 ; fieldIndex < filteringsExpressions.Count ; fieldIndex++)
             {
-                NumericExpression currentFilter = filteringsExpressions[fieldIndex];
+                    NumericExpression currentFilter = filteringsExpressions[fieldIndex];
                 SettingValue currentSetter = settingExpressions[fieldIndex];
                 foreach (string key in dict.Keys)
                 {
@@ -215,8 +219,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
             [Description("Participant")]
             public string Participant { get => AOI.Participant; }
-            [Description("Trial")]
-            public string Trial { get => AOI.Trial; }
+
             [Description("Stimulus")]
             public string Stimulus { get => AOI.Stimulus; }
             [Description("Text Name")]
@@ -489,7 +492,20 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     return AOI.Mean_AOI_Coverage;
                 }
             }
-
+            public int Length
+            {
+                get
+                {
+                    return AOI.Length;
+                }
+            }
+            public int Frequency
+            {
+                get
+                {
+                    return AOI.Frequency;
+                }
+            }
             public AIOClassAfterCoverage(IAOIClassForConsideringCoverage AOI)
             {
                 this.AOI = AOI;
@@ -507,8 +523,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
             [Description("Participant")]
             public string Participant { get => AOIAfterCoverage.Participant; }
-            [Description("Trial")]
-            public string Trial { get => AOIAfterCoverage.Trial; }
+
             [Description("Stimulus")]
             public string Stimulus { get => AOIAfterCoverage.Stimulus; }
             [Description("Text Name")]
@@ -578,7 +593,10 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
             [Description("Pupil Diameter [mm]")]
             public string Pupil_Diameter { get; set; }
-
+            [Description("Length")]
+            public int Length { get => AOIAfterCoverage.Length; }
+            [Description("Frequency")]
+            public int Frequency { get => AOIAfterCoverage.Frequency; }
             public AIOClassAfterCoverageForExcel(AIOClassAfterCoverage AOIClassAfterCoverage)
             {
                 this.AOIAfterCoverage = AOIClassAfterCoverage;
@@ -586,7 +604,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
             public static bool operator == (AIOClassAfterCoverageForExcel lhs, AIOClassAfterCoverageForExcel rhs)
             {
-                if (lhs.Participant == rhs.Participant && lhs.Trial == rhs.Trial && lhs.Stimulus == rhs.Stimulus
+                if (lhs.Participant == rhs.Participant && lhs.Stimulus == rhs.Stimulus
                     && lhs.Text_Name == rhs.Text_Name && lhs.AOI_Group == rhs.AOI_Group && lhs.Total_Fixation_Duration == rhs.Total_Fixation_Duration &&
                     lhs.Total_Fixation_Number == rhs.Total_Fixation_Number && lhs.First_Fixation_Duration == rhs.First_Fixation_Duration && lhs.First_Pass_Duration == rhs.First_Pass_Duration
                         && lhs.First_Pass_Number == rhs.First_Pass_Number && lhs.First_Pass_Progressive_Duration == rhs.First_Pass_Progressive_Duration && lhs.First_Pass_Progressive_Number == rhs.First_Pass_Progressive_Number &&
@@ -601,7 +619,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             }
             public static bool operator != (AIOClassAfterCoverageForExcel lhs, AIOClassAfterCoverageForExcel rhs)
             {
-                if (lhs.Participant == rhs.Participant && lhs.Trial == rhs.Trial && lhs.Stimulus == rhs.Stimulus
+                if (lhs.Participant == rhs.Participant  && lhs.Stimulus == rhs.Stimulus
                    && lhs.Text_Name == rhs.Text_Name && lhs.AOI_Group == rhs.AOI_Group && lhs.Total_Fixation_Duration == rhs.Total_Fixation_Duration &&
                    lhs.Total_Fixation_Number == rhs.Total_Fixation_Number && lhs.First_Fixation_Duration == rhs.First_Fixation_Duration && lhs.First_Pass_Duration == rhs.First_Pass_Duration
                        && lhs.First_Pass_Number == rhs.First_Pass_Number && lhs.First_Pass_Progressive_Duration == rhs.First_Pass_Progressive_Duration && lhs.First_Pass_Progressive_Number == rhs.First_Pass_Progressive_Number &&

@@ -1,38 +1,47 @@
-﻿using EM_Analyzer.Interfaces;
-using EM_Analyzer.ModelClasses;
+﻿using EM_Analyzer.ModelClasses;
 using EM_Analyzer.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace EM_Analyzer.ExcelsFilesMakers
 {
-    class ThirdFileAfterProccessing
+    class FourthFileAfterProccessing
     {
         public static void MakeExcelFile()
         {
-            List<Fixation>[] fixationsLists = FixationsService.fixationSetToFixationListDictionary.Values.ToArray();
-            List<ParticipantTrial> table = new List<ParticipantTrial>();
-            
-            foreach(List<Fixation> fixations in fixationsLists)
+            // grouping the fixations of each participant from all the trials (pages)
+            IEnumerable<IGrouping<string, KeyValuePair<string, List<Fixation>>>> fixationsGroupingByParticipant = FixationsService.fixationSetToFixationListDictionary.GroupBy(fl => fl.Key.Split('\t')[0]);
+            List<ParticipantText> table = new List<ParticipantText>();
+
+            foreach (IGrouping<string, KeyValuePair<string, List<Fixation>>> participantFixations in fixationsGroupingByParticipant)
             {
-                table.Add(new ParticipantTrial(fixations[0].Trial, fixations[0].Stimulus, fixations[0].Participant));
+                List<Fixation> fixationListPerParticipant = participantFixations.SelectMany(list => list.Value).ToList();
+
+                IEnumerable<IGrouping<string, Fixation>> fixationsGroupingByStimulus = fixationListPerParticipant.GroupBy(fl => fl.Stimulus_Tokens[0]);
+
+                foreach (IGrouping<string, Fixation> participantFixationsInStimulus in fixationsGroupingByStimulus)
+                {
+                    List<Fixation> fixationListPerParticipantPerStimulus = participantFixationsInStimulus.ToList();
+                    if (fixationListPerParticipantPerStimulus.Count > 0)
+                        table.Add(new ParticipantText(participantFixationsInStimulus.Key, participantFixations.Key, fixationListPerParticipantPerStimulus));
+
+                }
+
             }
-            ExcelsService.CreateExcelFromStringTable(ConfigurationService.ThirdExcelFileName, table, null);
+            ExcelsService.CreateExcelFromStringTable(ConfigurationService.FourthExcelFileName, table, null);
         }
-
-
-        private class ParticipantTrial : ITrialClassForConsideringCoverage
+        private class ParticipantText
         {
             [Description("Participant")]
             public string Participant { get; set; }
-            [Description("Trial")]
-            public string Trial { get; set; }
             [Description("Stimulus")]
             public string Stimulus { get; set; }
 
-            private List<Fixation> m_Fixations_Page;
+            private List<Fixation> m_fixations_text;
 
             private double m_Mean_Fixation_Duration;
             [Description("Mean Fixation Duration")]
@@ -42,8 +51,8 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_Mean_Fixation_Duration == -1)
                     {
-                        double duration_sum = this.m_Fixations_Page.Sum(fix => fix.Event_Duration);
-                        this.m_Mean_Fixation_Duration = duration_sum / this.m_Fixations_Page.Count;
+                        double duration_sum = this.m_fixations_text.Sum(fix => fix.Event_Duration);
+                        this.m_Mean_Fixation_Duration = duration_sum / this.m_fixations_text.Count;
                     }
                     return this.m_Mean_Fixation_Duration;
                 }
@@ -56,7 +65,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_SD_Fixation_Duration == -1)
                     {
-                        IEnumerable<double> durations = this.m_Fixations_Page.Select(fix => fix.Event_Duration).ToList();
+                        IEnumerable<double> durations = this.m_fixations_text.Select(fix => fix.Event_Duration).ToList();
                         this.m_SD_Fixation_Duration = StandardDevision.ComputeStandardDevision(durations);
                     }
                     return this.m_SD_Fixation_Duration;
@@ -73,7 +82,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_Total_Fixation_Number == -1)
                     {
-                        this.m_Total_Fixation_Number = this.m_Fixations_Page.Count;
+                        this.m_Total_Fixation_Number = this.m_fixations_text.Count;
                     }
                     return this.m_Total_Fixation_Number;
                 }
@@ -275,10 +284,58 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 {
                     if (this.m_Pupil_Diameter == -1)
                     {
-                        double sum = this.All_Fixations.Sum(fix => fix.Fixation_Average_Pupil_Diameter);
-                        this.m_Pupil_Diameter = sum / this.All_Fixations.Count;
+                        double sum = this.m_fixations_text.Sum(fix => fix.Fixation_Average_Pupil_Diameter);
+                        this.m_Pupil_Diameter = sum / this.m_fixations_text.Count;
                     }
                     return this.m_Pupil_Diameter;
+                }
+            }
+
+            private List<int> m_Pages_Sequence;
+
+            [Description("Page Moves")]
+            public int Page_Moves
+            {
+                get
+                {
+                    if (this.m_Pages_Sequence == null)
+                    {
+                        InitializePagesSequence();
+                    }
+                    return this.m_Pages_Sequence.Count - 1;
+                }
+            }
+            [Description("Page Regressions")]
+            public int Page_Regressions
+            {
+                get
+                {
+                    if (this.m_Pages_Sequence == null)
+                    {
+                        InitializePagesSequence();
+                    }
+                    int pageRegressions = 0;
+                    int[] pages = this.m_Pages_Sequence.ToArray();
+                    int prevPage = pages[0];
+                    for (int i = 1; i < pages.Length; i++)
+                    {
+                        if (pages[i] < prevPage)
+                            pageRegressions++;
+                        prevPage = pages[i];
+                    }
+                    return pageRegressions;
+                }
+            }
+            [Description("Page Visits")]
+            public int Page_Visits
+            {
+                get
+                {
+                    if (this.m_Pages_Sequence == null)
+                    {
+                        InitializePagesSequence();
+                    }
+                    return this.m_Pages_Sequence.Distinct().ToList().Count;
                 }
             }
 
@@ -286,7 +343,6 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
             [EpplusIgnore]
             public List<Fixation> All_Fixations { get; set; }
-
             private List<Fixation> m_Progressive_Fixations;
             private List<Fixation> Progressive_Fixations
             {
@@ -315,20 +371,23 @@ namespace EM_Analyzer.ExcelsFilesMakers
             }
 
 
-            public ParticipantTrial(string Trial, string Stimulus, string Participant)
+
+
+            public ParticipantText(string Stimulus, string Participant, List<Fixation> fixations)
             {
-                this.Trial = Trial;
+
                 this.Stimulus = Stimulus;
                 this.Participant = Participant;
-
-                /*
-                 Critical Point: Removes all the fixations with no AOI Group (after dealing with exceptions) !
-                 */
-                this.All_Fixations = FixationsService.fixationSetToFixationListDictionary[this.Participant + '\t' + this.Trial + '\t' + this.Stimulus];
-                this.All_Fixations.RemoveAll(fix => fix.AOI_Group_After_Change < 1);
-                this.m_Fixations_Page = new List<Fixation>();
-                m_Fixations_Page.AddRange(All_Fixations.Skip(1).ToList());
-
+                
+                // All fixation, include first fixation in every trial is Only for the calculation 
+                // of the other fixations as progressive and regressive
+                this.All_Fixations = fixations;
+                
+                // all fixations of text without the first one in every trial (and all the aoi's > 0)
+                this.m_fixations_text = new List<Fixation>();
+                List<IGrouping<string, Fixation>> groupingTrials = All_Fixations.GroupBy(x => x.Trial).ToList();
+                foreach (IGrouping<string, Fixation>  item in groupingTrials)
+                    m_fixations_text.AddRange(item.Skip(1).ToList());
                 this.m_Total_Fixation_Number = -1;
                 this.m_Mean_Fixation_Duration = -1;
                 this.m_SD_Fixation_Duration = -1;
@@ -347,18 +406,49 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 this.m_SD_Regressive_Saccade_Length_X = -1;
                 this.m_Pupil_Diameter = -1;
                 this.m_Regressive_Fixations = null;
+                this.m_Pages_Sequence = null;
+
+
+
 
             }
-            
+            private void InitializePagesSequence()
+            {
+                this.m_Pages_Sequence = new List<int>();
+                Fixation[] fixations = m_fixations_text.ToArray();
+                for (int i = 0; i < fixations.Length; i++)
+                {
+                    string currentTrial = fixations[i].Trial;
+                    int currentPage = fixations[i].Page;
+                    List<Fixation> pagefixations = new List<Fixation>();
+                    while (i < fixations.Length && fixations[i].Trial == currentTrial)
+                    {
+                        pagefixations.Add(fixations[i]);
+                        i++;
+                    }
+                    i--;
+                    if (FixationsService.IsLeagalPageVistFixations(pagefixations))
+                    {
+                        this.m_Pages_Sequence.Add(currentPage);
+                    }
 
+
+                }
+            }
             private void InitializeProgressiveAndRegressiveFixationsList()
             {
                 this.m_Progressive_Fixations = new List<Fixation>();
                 this.m_Regressive_Fixations = new List<Fixation>();
                 Fixation[] fixations = this.All_Fixations.ToArray();
-
+                int currentPage = fixations[0].Page;
                 for (int i = 1; i < fixations.Length; ++i)
                 {
+                    if (currentPage != fixations[i].Page)
+                    {
+                        currentPage = fixations[i].Page;
+                        continue;
+                    }
+
                     fixations[i].Previous_Fixation = fixations[i - 1];
                     if (fixations[i - 1].IsBeforeThan(fixations[i]))
                         this.m_Progressive_Fixations.Add(fixations[i]);
@@ -366,7 +456,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                         this.m_Regressive_Fixations.Add(fixations[i]);
                 }
             }
-
         }
+
     }
 }

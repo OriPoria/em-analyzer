@@ -13,9 +13,9 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
 {
     public class AOIDetails : IAOI
     {
-        public static Dictionary<string, AOIDetails> nameToAOIDetailsDictionary = new Dictionary<string, AOIDetails>();
-        public static Dictionary<int, string> groupToSpecialName = new Dictionary<int, string>();
-//        public static bool isAOIIncludeStimulus = false;
+        public static Dictionary<string, AOIDetails> nameToAOIPhrasesDetailsDictionary = new Dictionary<string, AOIDetails>();
+        public static Dictionary<string, string> groupPhraseToSpecialName = new Dictionary<string, string>();
+       
         public string Stimulus { get; set; }
         public int Name { get; set; }
         public int Group { get; set; }
@@ -35,7 +35,6 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
             AOI_Size_X = -1;
             IsProper = true;
             IEnumerator<string> enumerator = details.GetEnumerator();
-            //string dictionaryKey = "";
 
             enumerator.MoveNext();
             int count = details.Count();
@@ -112,35 +111,50 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
             // to add AOI with special name
             if (count >= 8 && enumerator.Current != null) 
             {
+                
                 SpecialNmae = enumerator.Current;
-                groupToSpecialName[Group] = SpecialNmae;
+                groupPhraseToSpecialName[Stimulus + "$"+ Group.ToString()] = SpecialNmae;
+
             }
 
             if (IsProper)
             {
                 DictionaryKey = Name + DictionaryKey;
-                AOIsService.nameToAOIDictionary[DictionaryKey] = this;
-                AOIDetails.nameToAOIDetailsDictionary[DictionaryKey] = this;
+                AOIsService.nameToAOIPhrasesDictionary[DictionaryKey] = this;
+                nameToAOIPhrasesDetailsDictionary[DictionaryKey] = this;
             }
             
 
         }
 
-        public static void LoadAllAOIFromFile(string fileName)
+        public static void LoadAllAOIPhraseFromFile(string fileName)
         {
             List<IEnumerable<string>> table = ExcelsService.ReadExcelFile<string>(fileName);
-//            isAOIIncludeStimulus = false;
-            IEnumerable<string> first = table.FirstOrDefault();
-//            if (first.Count() >= 7)
-//                isAOIIncludeStimulus = true;
-            uint lineNumber = 1;
+            uint lineNumber = 0;
             foreach (IEnumerable<string> details in table)
             {
-                new AOIDetails(details, lineNumber);
+                if (lineNumber != 0)
+                    new AOIDetails(details, lineNumber);
                 lineNumber++;
             }
         }
+        public static void LoadAllAOIWordFromFile(string fileName)
+        {
+            List<IEnumerable<string>> table = ExcelsService.ReadExcelFile<string>(fileName);
+            IEnumerable<string> first = table.FirstOrDefault();
 
+            uint lineNumber = 1;
+            foreach (IEnumerable<string> details in table)
+            {
+                List<string> detailsStr = details.ToList();
+                new AOIDetails(detailsStr, lineNumber);
+                lineNumber++;
+                var T = AOIsService.nameToAOIWordsDictionary;
+
+            }
+        }
+
+        /*
         public double DistanceToAOI(Fixation fixation)
         {
             double right_border, left_border, upper_border, buttom_border, fixation_X, fixation_Y;
@@ -204,12 +218,14 @@ namespace EM_Analyzer.ModelClasses.AOIClasses
                     return Math.Sqrt(Math.Pow(X_Distance, 2) + Math.Pow(Y_Distance, 2));
                 }
             }
+            
         }
+        */
 
 
         private static Log CreateLogForFieldValidation(string fieldName, string valueFound, uint lineNumber)
         {
-            return new Log() { FileName = FixationsService.excelFileName, LineNumber = lineNumber, Description = "The Value Of Field " + fieldName + " Is Not Valid!!!" + Environment.NewLine + "The Value Found Is: " + valueFound };
+            return new Log() { FileName = FixationsService.phrasesExcelFileName, LineNumber = lineNumber, Description = "The Value Of Field " + fieldName + " Is Not Valid!!!" + Environment.NewLine + "The Value Found Is: " + valueFound };
         }
     }
 }

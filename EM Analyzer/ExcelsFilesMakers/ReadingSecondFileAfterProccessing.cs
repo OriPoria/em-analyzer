@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static EM_Analyzer.ExcelsFilesMakers.SecondFileConsideringCoverage;
 using EM_Analyzer.Interfaces;
 
@@ -90,17 +86,13 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
         [Description("AOI Coverage [%]")]
         public double Mean_AOI_Coverage { get; set; }
-
-
+        public int Length { get; }
+        public int Frequency { get; }
         public void CreateAIOClassAfterCoverage()
         {
             new AIOClassAfterCoverage(this);
         }
 
-        public AIOClassFromExcel()
-        {
-
-        }
 
     }
 }

@@ -78,14 +78,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="EyeMonitoringAnalysis.exe" size="89056">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="EyeMonitoringAnalysis.exe" size="150496">
       <assemblyIdentity name="EyeMonitoringAnalysis" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>AlwWI/sbUc3BrQjsPXUzYZcPHQEv8fmeDOp6eMLLrrY=</dsig:DigestValue>
+        <dsig:DigestValue>hYIV+RIyWr+PKC/TZgW27Grpk7kloCWA/3vXf6DcW3Y=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -125,15 +125,6 @@
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="Configuration.xml" size="1455" writeableType="applicationData">
-    <hash>
-      <dsig:Transforms>
-        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
-      </dsig:Transforms>
-      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>eUg2qPXyMjIv6qreUl8ye1wNhbnju+vtH/EhwLD2+QQ=</dsig:DigestValue>
-    </hash>
-  </file>
   <file name="EyeMonitoringAnalysis.exe.config" size="790">
     <hash>
       <dsig:Transforms>
