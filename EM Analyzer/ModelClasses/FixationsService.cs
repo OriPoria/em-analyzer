@@ -205,24 +205,28 @@ namespace EM_Analyzer.ModelClasses
             }
         }
 
+        private static string CreateKeyForPagesSeenInTextPool(Fixation fix)
+        {
+            return fix.Stimulus_Tokens[0] + '\t' + fix.Page;
+        }
         public static void CleanAllFixationBeforeFirstAOIInPage()
         {
             IEnumerable<IGrouping<string, KeyValuePair<string, List<Fixation>>>> fixationsGroupingByParticipant = fixationSetToFixationListDictionary.GroupBy(x => x.Value[0].Participant);
             foreach (IGrouping<string, KeyValuePair<string, List<Fixation>>> participantFixations in fixationsGroupingByParticipant)
             {
-                string singleParticipantKey = participantFixations.Key;
-                HashSet<int> seenPages = new HashSet<int>();
+                HashSet<string> seenPagesPerText = new HashSet<string>();
                 foreach (KeyValuePair<string, List<Fixation>> fixationsPair in participantFixations)
                 {
                     int firstAOI = minimumAOIGroupOfFixationSet[fixationsPair.Key];
-                    if (!seenPages.Contains(fixationsPair.Value[0].Page) &&
+                    // if this is not a page that we saw in that specific text
+                    if (!seenPagesPerText.Contains(CreateKeyForPagesSeenInTextPool(fixationsPair.Value[0])) &&
                         fixationsPair.Value.Count > minimumFixationsInTrialToRemoveFixation)
                     {
                         int firstFixaitionAtFirstAOI = fixationsPair.Value.FindIndex(fix => fix.AOI_Group_Before_Change == firstAOI);
                         if (firstFixaitionAtFirstAOI > 0)
                             fixationsPair.Value.RemoveRange(0, Math.Min(firstFixaitionAtFirstAOI, Number_Of_Fixations_To_Remove_Before_First_AOI));
                     }
-                    seenPages.Add(fixationsPair.Value[0].Page);
+                    seenPagesPerText.Add(CreateKeyForPagesSeenInTextPool(fixationsPair.Value[0]));
                 }
             }
             var y = fixationSetToFixationListDictionary;

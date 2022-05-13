@@ -186,6 +186,7 @@ namespace EM_Analyzer
              */
 
             // if AnalyzeExtent is 1-> create only preview of fixations
+
             if (int.Parse(ConfigurationService.AnalyzeExtent) == 1)
             {
                 FixationsService.outputTextString += " - Preview";
@@ -227,11 +228,12 @@ namespace EM_Analyzer
             FourthFileAfterProccessing.MakeExcelFile();
             Console.WriteLine("Fourth File: " + ConfigurationService.FourthExcelFileName + " Finished!!! ");
 
-            ThirdFourthFilter.CreateDatasetFilterTrialText();
-            ThirdFourthFilter.CreateFilesForTest();
-            ThirdFileConsideringCoverage.MakeExcelFile();
-            FourthFileConsideringCoverage.MakeExcelFile();
-            Console.WriteLine("Third and Fourth Filter File: " + ConfigurationService.ThirdExcelFileName + " Finished!!! ");
+        // filter per participant
+           // ThirdFourthFilter.CreateDatasetFilterTrialText();
+           // ThirdFourthFilter.CreateFilesForTest();
+           // ThirdFileConsideringCoverage.MakeExcelFile();
+           // FourthFileConsideringCoverage.MakeExcelFile();
+           // Console.WriteLine("Third and Fourth Filter File: " + ConfigurationService.ThirdExcelFileName + " Finished!!! ");
 
         }
 

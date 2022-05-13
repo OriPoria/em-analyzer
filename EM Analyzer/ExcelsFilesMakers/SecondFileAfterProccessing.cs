@@ -29,111 +29,123 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 string participantKey = participantFixations.Key;
                 // Gets the current fixations list
-                List<Fixation> fixations = participantFixations.SelectMany(x => x.Value).ToList();
+                List<Fixation> fixationListPerParticipant = participantFixations.SelectMany(x => x.Value).ToList();
+                IEnumerable<IGrouping<string, Fixation>> fixationsGroupingByText = fixationListPerParticipant.GroupBy(fl => fl.Stimulus_Tokens[0]);
 
-                // remove the fixations in figure object?
-                List<Fixation> fixationsForFirstPass = fixations.ToList();
-                // Make filter per fixation
-                fixationsForFirstPass.RemoveAll(fix => fix.ShouldBeSkippedInFirstPass());
-                List<CountedAOIFixations> countedAOIFixationsForFirstPass;
-                if (currentType == AOITypes.Phrases)
-                    countedAOIFixationsForFirstPass = FixationsService.ConvertFixationListToCoutedListByPhrase(fixationsForFirstPass);
-                else
-                    countedAOIFixationsForFirstPass = FixationsService.ConvertFixationListToCoutedListByWords(fixationsForFirstPass);
-
-                #region First_Pass
-                // For The First Pass Fixations
-                foreach (CountedAOIFixations countedAOIFixations in countedAOIFixationsForFirstPass)
+                foreach (IGrouping<string, Fixation> participantFixationsInText in fixationsGroupingByText)
                 {
-                    // First try with first pass
-                    if (!FixationsService.IsLeagalFirstPassFixations(countedAOIFixations) && currentType == AOITypes.Phrases)
-                        continue;
-                    // End
 
-                    dictionatyKey = participantKey + '\t' + countedAOIFixations.AOI_Group;
-                    if (!AOIClass.instancesDictionary.ContainsKey(dictionatyKey))
+                    List<Fixation> fixations = participantFixationsInText.ToList();
+
+                    string StimulusKey = fixations[0].Stimulus_Tokens[0];
+
+                    // remove the fixations in figure object?
+                    List<Fixation> fixationsForFirstPass = fixations.ToList();
+                    // Make filter per fixation
+                    fixationsForFirstPass.RemoveAll(fix => fix.ShouldBeSkippedInFirstPass());
+                    List<CountedAOIFixations> countedAOIFixationsForFirstPass;
+                    if (currentType == AOITypes.Phrases)
+                        countedAOIFixationsForFirstPass = FixationsService.ConvertFixationListToCoutedListByPhrase(fixationsForFirstPass);
+                    else
+                        countedAOIFixationsForFirstPass = FixationsService.ConvertFixationListToCoutedListByWords(fixationsForFirstPass);
+
+                    #region First_Pass
+                    // For The First Pass Fixations
+                    foreach (CountedAOIFixations countedAOIFixations in countedAOIFixationsForFirstPass)
                     {
-                        Fixation fixationInAOI = countedAOIFixations.Fixations.First();
-                        AOIClass.instancesDictionary[dictionatyKey] =
-                            new AOIClass(
-                                fixationInAOI.Stimulus,
-                                fixationInAOI.Participant,
-                                countedAOIFixations.AOI_Group,
-                                false,
-                                currentType
-                                //if the current fixation's AOI is not bigger then all the previous fixations so we skip it
-                                //prevFixationInAOI.AOI_Group_After_Change < maxAOIGroupUntilNow
-                                )
-                            {
+                        // First try with first pass
+                        if (!FixationsService.IsLeagalFirstPassFixations(countedAOIFixations) && currentType == AOITypes.Phrases)
+                            continue;
+                        // End
+
+                        dictionatyKey = participantKey + '\t' + StimulusKey + '\t' + countedAOIFixations.AOI_Group;
+                        if (!AOIClass.instancesDictionary.ContainsKey(dictionatyKey))
+                        {
+                            Fixation fixationInAOI = countedAOIFixations.Fixations.First();
+                            AOIClass.instancesDictionary[dictionatyKey] =
+                                new AOIClass(
+                                    fixationInAOI.Stimulus,
+                                    fixationInAOI.Participant,
+                                    countedAOIFixations.AOI_Group,
+                                    false,
+                                    currentType
+                                    //if the current fixation's AOI is not bigger then all the previous fixations so we skip it
+                                    //prevFixationInAOI.AOI_Group_After_Change < maxAOIGroupUntilNow
+                                    )
+                                {
                                 // maybe here, check the size if the counted aoi fixation, minimum number of fixations for first pass
                                 // and minimum duration of fixation for first pass
                                 First_Pass_Fixations = countedAOIFixations.Fixations
-                            };
-                
+                                };
+
+                        }
                     }
-                }
-                #endregion First_Pass
-                // For All The Rest
-                fixations.Add(new Fixation() { AOI_Group_After_Change = -2 });
-                int lastChangeIndex = 0, currentIndex = 0, last_AOI = GetAOIByType(fixations[0]), maxLeagalAOIGroupUntilNow = -1;
-                Fixation prevFixationInAOI = null;
-                if (currentType == AOITypes.Words)
-                {
-                    // clear previous fixations from the calculations by phrases
-                    FixationsService.ClearPreviousFixation(fixations);
-                }
-                foreach (Fixation fixation in fixations)
-                {
-                    
-                    if (GetAOIByType(fixation) != last_AOI)
+                    #endregion First_Pass
+                    // For All The Rest
+                    fixations.Add(new Fixation() { AOI_Group_After_Change = -2 });
+                    int lastChangeIndex = 0, currentIndex = 0, last_AOI = GetAOIByType(fixations[0]), maxLeagalAOIGroupUntilNow = -1;
+                    Fixation prevFixationInAOI = null;
+                    if (currentType == AOITypes.Words)
                     {
-                        // The dictionary key for the current AOI Group for the current Participant
-                        dictionatyKey = participantKey + '\t' + last_AOI;
-                        
+                        // clear previous fixations from the calculations by phrases
+                        FixationsService.ClearPreviousFixation(fixations);
+                    }
+                    foreach (Fixation fixation in fixations)
+                    {
 
-                        List<Fixation> fixationRange = fixations.GetRange(lastChangeIndex, currentIndex - lastChangeIndex);
-
-                        // If the current fixation is the first fixation of the current participant in the AOI so 
-                        // create a new AOI Class for the excel table and add it to the AOIClass dictionary.
-                        if (!AOIClass.instancesDictionary.ContainsKey(dictionatyKey))
+                        if (GetAOIByType(fixation) != last_AOI)
                         {
-                            AOIClass.instancesDictionary[dictionatyKey] =
-                            new AOIClass(
-                                prevFixationInAOI.Stimulus,
-                                prevFixationInAOI.Participant,
-                                GetAOIByType(prevFixationInAOI),
-                                //if the current fixation's AOI is not greater then all the previous fixations so we skip it
-                                GetAOIByType(prevFixationInAOI) < maxLeagalAOIGroupUntilNow,
-                                currentType
-                                );
+                            // The dictionary key for the current AOI Group for the current Participant
+                            dictionatyKey = participantKey + '\t' + StimulusKey + '\t' + last_AOI;
+
+
+                            List<Fixation> fixationRange = fixations.GetRange(lastChangeIndex, currentIndex - lastChangeIndex);
+
+                            // If the current fixation is the first fixation of the current participant in the AOI so 
+                            // create a new AOI Class for the excel table and add it to the AOIClass dictionary.
+                            if (!AOIClass.instancesDictionary.ContainsKey(dictionatyKey))
+                            {
+                                AOIClass.instancesDictionary[dictionatyKey] =
+                                new AOIClass(
+                                    prevFixationInAOI.Stimulus,
+                                    prevFixationInAOI.Participant,
+                                    GetAOIByType(prevFixationInAOI),
+                                    //if the current fixation's AOI is not greater then all the previous fixations so we skip it
+                                    GetAOIByType(prevFixationInAOI) < maxLeagalAOIGroupUntilNow,
+                                    currentType
+                                    );
+                            }
+                            else
+                            {
+                                if (!dictionaryKeysForSorting.Contains(dictionatyKey))
+                                    AOIClass.instancesDictionary[dictionatyKey].Skip = GetAOIByType(prevFixationInAOI) < maxLeagalAOIGroupUntilNow;
+                            }
+                            if (!dictionaryKeysForSorting.Contains(dictionatyKey))
+                                dictionaryKeysForSorting.Add(dictionatyKey);
+
+                            // Adds the new fixation range (with the same AOI Group and the same participant and there is no 
+                            // fixations in this range that have another AOI Group.
+                            AOIClass.instancesDictionary[dictionatyKey].Fixations.Add(fixationRange);
+
+                            if (maxLeagalAOIGroupUntilNow < last_AOI &&
+                                (FixationsService.IsLeagalFixationsForSkip(fixationRange) || currentType == AOITypes.Words))
+                                maxLeagalAOIGroupUntilNow = last_AOI;
+
+                            last_AOI = GetAOIByType(fixation);
+                            lastChangeIndex = currentIndex;
+
                         }
                         else
-                        {
-                            if (!dictionaryKeysForSorting.Contains(dictionatyKey))
-                                AOIClass.instancesDictionary[dictionatyKey].Skip = GetAOIByType(prevFixationInAOI) < maxLeagalAOIGroupUntilNow;
-                        }
-                        if (!dictionaryKeysForSorting.Contains(dictionatyKey))
-                            dictionaryKeysForSorting.Add(dictionatyKey);
-
-                        // Adds the new fixation range (with the same AOI Group and the same participant and there is no 
-                        // fixations in this range that have another AOI Group.
-                        AOIClass.instancesDictionary[dictionatyKey].Fixations.Add(fixationRange);
-
-                        if (maxLeagalAOIGroupUntilNow < last_AOI && 
-                            (FixationsService.IsLeagalFixationsForSkip(fixationRange) || currentType == AOITypes.Words))
-                            maxLeagalAOIGroupUntilNow = last_AOI;
-
-                        last_AOI = GetAOIByType(fixation);
-                        lastChangeIndex = currentIndex;
-
+                            fixation.Previous_Fixation = prevFixationInAOI;
+                        prevFixationInAOI = fixation;
+                        currentIndex++;
                     }
-                    else
-                        fixation.Previous_Fixation = prevFixationInAOI;
-                    prevFixationInAOI = fixation;
-                    currentIndex++;
+                    fixations.RemoveAt(fixations.Count - 1);
                 }
-                fixations.RemoveAt(fixations.Count - 1);
+
             }
+
+            // until here
             List<AOIClass> aoiClasses = dictionaryKeysForSorting.Select(key=> AOIClass.instancesDictionary[key]).ToList();
             
             // not to show the figure in words output
@@ -164,10 +176,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             [Description("Stimulus")]
             public string Stimulus { get; set; }
             [Description("Text Name")]
-            public string Text_Name
-            {
-                get { return FixationsService.phrasesExcelFileName; }
-            }
+            public string Text_Name { get; set; }
             [Description("AOI Group")]
             public int AOI_Group { get; set; }
             [Description("AOI Target")]
@@ -656,6 +665,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 this.Stimulus = Stimulus;
                 this.Participant = Participant;
                 this.AOI_Group = AOI_Group;
+                this.Text_Name = Stimulus.Split(' ')[0];
                 string key = Stimulus.Split(' ')[0] + "$" + AOI_Group.ToString();
                 if (type == AOITypes.Phrases)
                     this.AOI_Target = AOIDetails.groupPhraseToSpecialName.ContainsKey(key) ? AOIDetails.groupPhraseToSpecialName[key] : null;

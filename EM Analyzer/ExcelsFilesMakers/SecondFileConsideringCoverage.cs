@@ -112,7 +112,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             by_AIO_And_Participant.UnionWith(byAOIGroup);
             ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI and Participant" + "_" + Constans.GetEndOfFileNameByType(currentType), by_AIO_And_Participant, EditExcel);
 
-
+            
             List<AIOClassAfterCoverageForExcel> by_AIO_Or_Participant = new List<AIOClassAfterCoverageForExcel>(Math.Min(byParticipant.Count, byAOIGroup.Count));
             foreach(AIOClassAfterCoverageForExcel group in byAOIGroup)
             {
@@ -125,7 +125,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 }
             }
             ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI or Participant" + "_" + Constans.GetEndOfFileNameByType(currentType), by_AIO_Or_Participant, EditExcel);
-            
+           
         }
         public static int EditExcel(ExcelWorksheet ws)
         {
@@ -178,7 +178,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
             for (int fieldIndex = 0 ; fieldIndex < filteringsExpressions.Count ; fieldIndex++)
             {
-                NumericExpression currentFilter = filteringsExpressions[fieldIndex];
+                    NumericExpression currentFilter = filteringsExpressions[fieldIndex];
                 SettingValue currentSetter = settingExpressions[fieldIndex];
                 foreach (string key in dict.Keys)
                 {

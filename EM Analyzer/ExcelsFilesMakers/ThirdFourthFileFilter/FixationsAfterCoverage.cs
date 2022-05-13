@@ -6,11 +6,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using static EM_Analyzer.ExcelsFilesMakers.ThirdFileConsideringCoverage;
 
 namespace EM_Analyzer.ExcelsFilesMakers.ThirdFourFilter
 {
@@ -348,13 +345,20 @@ namespace EM_Analyzer.ExcelsFilesMakers.ThirdFourFilter
 
             foreach (IGrouping<string, KeyValuePair<string, List<Fixation>>> participantFixations in fixationsGroupingByParticipant)
             {
-                List<Fixation> fixationList = participantFixations.SelectMany(list => list.Value).ToList();
-                if (fixationList.Count > 0)
+                List<Fixation> fixationListPerParticipant = participantFixations.SelectMany(list => list.Value).ToList();
+                IEnumerable<IGrouping<string, Fixation>> fixationsGroupingByStimulus = fixationListPerParticipant.GroupBy(fl => fl.Stimulus_Tokens[0]);
+                foreach (IGrouping<string, Fixation> participantFixationsInStimulus in fixationsGroupingByStimulus)
                 {
-                    string s1 = participantFixations.Key;
-                    string s2 = fixationList[0].Stimulus_Tokens[0];
-                    FilteredTrialTextPerParticipant participantFiltered = new FilteredTrialTextPerParticipant(participantFixations.Key, fixationList[0].Stimulus_Tokens[0], fixationList);
-                    filteredTrialTextPerParticipants.Add(participantFiltered);
+                    List<Fixation> fixationListPerParticipantPerStimulus = participantFixationsInStimulus.ToList();
+                    if (fixationListPerParticipantPerStimulus.Count > 0)
+                    {
+                        string s1participant = participantFixations.Key;
+                        string s2stimulus = participantFixationsInStimulus.Key;
+                        FilteredTrialTextPerParticipant participantFiltered = new FilteredTrialTextPerParticipant(participantFixations.Key, participantFixationsInStimulus.Key, fixationListPerParticipantPerStimulus);
+                        filteredTrialTextPerParticipants.Add(participantFiltered);
+
+                    }
+
                 }
             }
         }

@@ -19,9 +19,17 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
             foreach (IGrouping<string, KeyValuePair<string, List<Fixation>>> participantFixations in fixationsGroupingByParticipant)
             {
-                List<Fixation> fixationList = participantFixations.SelectMany(list => list.Value).ToList();
-                if (fixationList.Count > 0)
-                    table.Add(new ParticipantText(fixationList[0].Stimulus_Tokens[0], participantFixations.Key, fixationList));
+                List<Fixation> fixationListPerParticipant = participantFixations.SelectMany(list => list.Value).ToList();
+
+                IEnumerable<IGrouping<string, Fixation>> fixationsGroupingByStimulus = fixationListPerParticipant.GroupBy(fl => fl.Stimulus_Tokens[0]);
+
+                foreach (IGrouping<string, Fixation> participantFixationsInStimulus in fixationsGroupingByStimulus)
+                {
+                    List<Fixation> fixationListPerParticipantPerStimulus = participantFixationsInStimulus.ToList();
+                    if (fixationListPerParticipantPerStimulus.Count > 0)
+                        table.Add(new ParticipantText(participantFixationsInStimulus.Key, participantFixations.Key, fixationListPerParticipantPerStimulus));
+
+                }
 
             }
             ExcelsService.CreateExcelFromStringTable(ConfigurationService.FourthExcelFileName, table, null);

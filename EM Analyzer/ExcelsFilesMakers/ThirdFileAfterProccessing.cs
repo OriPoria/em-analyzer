@@ -43,7 +43,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                     if (this.m_Mean_Fixation_Duration == -1)
                     {
                         double duration_sum = this.m_Fixations_Page.Sum(fix => fix.Event_Duration);
-                        this.m_Mean_Fixation_Duration = duration_sum / this.All_Fixations.Count;
+                        this.m_Mean_Fixation_Duration = duration_sum / this.m_Fixations_Page.Count;
                     }
                     return this.m_Mean_Fixation_Duration;
                 }
