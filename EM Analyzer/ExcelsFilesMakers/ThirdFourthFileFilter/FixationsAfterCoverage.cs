@@ -453,6 +453,13 @@ namespace EM_Analyzer.ExcelsFilesMakers.ThirdFourFilter
         public static void CreateFilesForTest()
         {
             int total = filteredTrialTextPerParticipants.Count();
+            for (int iii = 0; iii < total; iii++)
+            {
+                CreateFile(filteredTrialTextPerParticipants[iii]);
+                Console.WriteLine("Completed " + iii.ToString() + " filter files out of " + total.ToString());
+
+            }
+            return;
             int lasts = total % 10;
             int i = 0;
             for(i = 0; i < total - lasts; i+=10)

@@ -43,6 +43,18 @@ namespace EM_Analyzer
 
 
             }
+            char createPerParticipantFilterFiles = 'y';
+            isOptionOK = false;
+            do
+            {
+                Console.WriteLine("Create output files per participant filer: (Y/N)");
+                input = Console.ReadLine();
+                createPerParticipantFilterFiles = input[0];
+                if (createPerParticipantFilterFiles != 'Y' && createPerParticipantFilterFiles != 'N' && createPerParticipantFilterFiles != 'y' && createPerParticipantFilterFiles != 'n')
+                    Console.WriteLine("Please Choose A Valid Option!!!");
+                else
+                    isOptionOK = true;
+            } while (!isOptionOK);
 
             string phrasesExcelFilePath = "";
             string wordsExcelFilePath = "";
@@ -229,11 +241,12 @@ namespace EM_Analyzer
             Console.WriteLine("Fourth File: " + ConfigurationService.FourthExcelFileName + " Finished!!! ");
 
         // filter per participant
-           // ThirdFourthFilter.CreateDatasetFilterTrialText();
-           // ThirdFourthFilter.CreateFilesForTest();
-           // ThirdFileConsideringCoverage.MakeExcelFile();
-           // FourthFileConsideringCoverage.MakeExcelFile();
-           // Console.WriteLine("Third and Fourth Filter File: " + ConfigurationService.ThirdExcelFileName + " Finished!!! ");
+            ThirdFourthFilter.CreateDatasetFilterTrialText();
+            if (createPerParticipantFilterFiles == 'y' || createPerParticipantFilterFiles == 'Y')
+                ThirdFourthFilter.CreateFilesForTest();
+            ThirdFileConsideringCoverage.MakeExcelFile();
+            FourthFileConsideringCoverage.MakeExcelFile();
+            Console.WriteLine("Third and Fourth Filter File: " + ConfigurationService.ThirdExcelFileName + " Finished!!! ");
 
         }
 
