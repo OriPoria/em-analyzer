@@ -43,8 +43,9 @@ namespace EM_Analyzer
 
 
             }
-            char createPerParticipantFilterFiles = 'y';
+            char createPerParticipantFilterFiles = 'n';
             isOptionOK = false;
+            /*
             do
             {
                 Console.WriteLine("Create output files per participant filer: (Y/N)");
@@ -55,7 +56,7 @@ namespace EM_Analyzer
                 else
                     isOptionOK = true;
             } while (!isOptionOK);
-
+            */
             string phrasesExcelFilePath = "";
             string wordsExcelFilePath = "";
             
