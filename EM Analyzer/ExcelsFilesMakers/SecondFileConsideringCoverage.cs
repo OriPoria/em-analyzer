@@ -461,7 +461,13 @@ namespace EM_Analyzer.ExcelsFilesMakers
             }
 
             [Description("Skip")]
-            public bool Skip { get; set; }
+            public bool Skip
+            { 
+                get
+                {
+                    return AOI.Skip;
+                }
+            }
 
             [Description("Pupil Diameter [mm]")]
             public double Pupil_Diameter
@@ -589,7 +595,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
             public string First_Regression_Duration { get; set; }
 
             [Description("Skip")]
-            public bool Skip { get; set; }
+            public bool Skip { get => AOIAfterCoverage.Skip; }
 
             [Description("Pupil Diameter [mm]")]
             public string Pupil_Diameter { get; set; }
