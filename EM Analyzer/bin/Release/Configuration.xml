@@ -49,7 +49,7 @@
   <Remove_Fixations_Appeared_Before_First_AOI>3</Remove_Fixations_Appeared_Before_First_AOI>
   <Number_Of_Fixations_To_Remove_Before_First_AOI>3</Number_Of_Fixations_To_Remove_Before_First_AOI>
 
-  <Standard_Deviation>2.5</Standard_Deviation>
+  <Standard_Deviation>1.0</Standard_Deviation>
   
   <OutputFiles>
     <First_Excel_File_Name>Fixation</First_Excel_File_Name>

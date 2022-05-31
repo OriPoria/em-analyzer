@@ -21,6 +21,9 @@ namespace EM_Analyzer
 
         public static IEnumerable<double> ComputeStandardDevisionGrades(IEnumerable<double> values)
         {
+            //List<double> list_of_values = values.ToList();
+            //list_of_values.RemoveAll(item => double.IsInfinity(item));
+            //values = list_of_values.AsEnumerable();
             double standardDevision = ComputeStandardDevision(values);
             double average = values.Average();
             IEnumerable<double> grades = values.Select(val => (val - average) / standardDevision);

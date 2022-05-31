@@ -91,11 +91,11 @@ namespace EM_Analyzer.ExcelsFilesMakers
             List<SettingValue> settingExpressions = GetSetters();
 
             List<AIOClassAfterCoverageForExcel> byParticipant = DeleteOutOfStdValues(
-                aoi => aoi.Participant,
+                aoi => aoi.Participant + aoi.Text_Name,
                 filteringsExpressions,
                 settingExpressions,
                 standardDevisionAllowed,
-                aoi => aoi.AOI_Group == -1);
+                aoi => aoi.AOI_Group < 1);
             ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By Participant" + "_" + Constans.GetEndOfFileNameByType(currentType), byParticipant, EditExcel);
 
             List<AIOClassAfterCoverageForExcel> byAOIGroup = DeleteOutOfStdValues(
@@ -103,7 +103,7 @@ namespace EM_Analyzer.ExcelsFilesMakers
                 filteringsExpressions,
                 settingExpressions,
                 standardDevisionAllowed,
-                aoi => aoi.AOI_Group == -1);
+                aoi => aoi.AOI_Group < 1);
             ExcelsService.CreateExcelFromStringTable(ConfigurationService.ConsideredSecondExcelFileName + " By AOI" + "_" + Constans.GetEndOfFileNameByType(currentType), byAOIGroup, EditExcel);
 
 
@@ -178,20 +178,25 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
             for (int fieldIndex = 0 ; fieldIndex < filteringsExpressions.Count ; fieldIndex++)
             {
-                    NumericExpression currentFilter = filteringsExpressions[fieldIndex];
+                NumericExpression currentFilter = filteringsExpressions[fieldIndex];
                 SettingValue currentSetter = settingExpressions[fieldIndex];
                 foreach (string key in dict.Keys)
                 {
                     List<AIOClassAfterCoverage> currentAOIs = dict[key];
                     IEnumerable<double> valuesForStandardDevision = currentAOIs.Select(aoi => currentFilter(aoi));
                     IEnumerable<double> standardDevisionGrades = StandardDevision.ComputeStandardDevisionGrades(valuesForStandardDevision);
+                    List<double> gradesList = standardDevisionGrades.ToList();
                     int length = standardDevisionGrades.Count();
                     double afterFilter;
                     string valueString = " ";
                     for (int i = 0 ; i < length ; ++i)
                     {
+                        double vall = Math.Abs(standardDevisionGrades.ElementAt(i));
                         if (Math.Abs(standardDevisionGrades.ElementAt(i)) > standardDevisionAllowed)
+                        {
                             currentSetter(currentAOIs[i].AOIForExcel, "");
+
+                        }
                         else
                         {
                             afterFilter = currentFilter(currentAOIs[i]);
@@ -234,6 +239,10 @@ namespace EM_Analyzer.ExcelsFilesMakers
             {
                 get
                 {
+                    if (AOI.AOI_Group == 0)
+                    {
+                        var t = 4;
+                    }
                     if(denominator_value == 2)
                         return AOI.Total_Fixation_Duration / AOI.Mean_AOI_Coverage;
                     if(denominator_value == 1)
