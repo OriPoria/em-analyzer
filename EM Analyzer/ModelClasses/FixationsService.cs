@@ -168,21 +168,30 @@ namespace EM_Analyzer.ModelClasses
             foreach (IGrouping<string, KeyValuePair<string, List<Fixation>>> participantFixations in fixationsGroupingByParticipant)
             {
                 List<Fixation> fixationList = participantFixations.SelectMany(x => x.Value).ToList();
-                // timeLimit determains by the Preview_Limit parameter
-                double timeLimit = Preview_Limit == 1 ? (Fixed_Time * 1000) : fixationList.Sum(fix => fix.Event_Duration) * (Proportional_Time / 100);
-                double eventDurationSum = 0;
-                int i = 0;
-                int fixationsNumber = fixationList.Count;
-                for (i = 0; i < fixationsNumber; i++)
+                
+                IEnumerable<IGrouping<string, Fixation>> fixationsOfParticipantPerText = fixationList.GroupBy(fix => fix.Stimulus_Tokens[0]);
+                foreach (var item in fixationsOfParticipantPerText)
                 {
-                    eventDurationSum += fixationList[i].Event_Duration;
-                    if (eventDurationSum > timeLimit)
+                    List<Fixation> fixationsInTextOfEachParticipant = item.ToList();
+                    // timeLimit determains by the Preview_Limit parameter
+                    double timeLimit = Preview_Limit == 1 ? (Fixed_Time * 1000) : fixationsInTextOfEachParticipant.Sum(fix => fix.Event_Duration) * (Proportional_Time / 100);
+                    double eventDurationSum = 0;
+                    int i = 0;
+                    int fixationsNumber = fixationsInTextOfEachParticipant.Count;
+                    for (i = 0; i < fixationsNumber; i++)
                     {
-                        foreach (var item in participantFixations)
-                            item.Value.RemoveAll(fix => fix.Text_Index > i);
-                        break;
+                        eventDurationSum += fixationsInTextOfEachParticipant[i].Event_Duration;
+                        if (eventDurationSum > timeLimit)
+                        {
+                            foreach (var allFixationsOfParticipantInOneText in participantFixations)
+                                allFixationsOfParticipantInOneText.Value.RemoveAll(fix => fix.Text_Index > i && fix.Stimulus_Tokens[0] == fixationsInTextOfEachParticipant[0].Stimulus_Tokens[0]);
+                            break;
+                        }
                     }
+
                 }
+
+
             }
             RemoveEmptyValuesFromFixationSetDictionary();
         }
@@ -517,14 +526,20 @@ namespace EM_Analyzer.ModelClasses
                                 group => {
                                     List<List<Fixation>> values = new List<List<Fixation>>();
                                     var dic = group.ToDictionary(pair => pair.Key, pair => pair.Value);
-                                    long index = 1;
                                     foreach (var item in dic.Values)
                                     {
-                                        foreach (var fixation in item)
+                                        IEnumerable<IGrouping<string, Fixation>> fixationsOfParticipantPerText = item.GroupBy(fix => fix.Stimulus_Tokens[0]);
+                                        foreach (var fixationsPerText in fixationsOfParticipantPerText)
                                         {
-                                            fixation.Text_Index = index;
-                                            index++;
+                                            long index = 1;
+                                            foreach (var fixation in item)
+                                            {
+                                                fixation.Text_Index = index;
+                                                index++;
+                                            }
                                         }
+
+
                                         values.Add(item);
                                     }
                                     return values.SelectMany(fixList => fixList).ToList();
