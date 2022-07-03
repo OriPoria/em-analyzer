@@ -20,8 +20,12 @@ namespace EM_Analyzer.ExcelsFilesMakers
 
             foreach (FilteredTrialTextPerParticipant item in perParticipants)
             {
-                table.Add(new ParticipantTextAfterFilter(item.All_Fixations_Duration_Filter[0].Stimulus_Tokens[0],
-                        item.All_Fixations_Duration_Filter[0].Participant, item));
+                if (item.All_Fixations_Duration_Filter.Count > 0)
+                {
+                    table.Add(new ParticipantTextAfterFilter(item.All_Fixations_Duration_Filter[0].Stimulus_Tokens[0],
+                            item.All_Fixations_Duration_Filter[0].Participant, item));
+
+                }
 
             }
             ExcelsService.CreateExcelFromStringTable("Text - Filtered By Participant", table, null);

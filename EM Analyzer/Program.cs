@@ -96,8 +96,8 @@ namespace EM_Analyzer
             // Test mode- choose ahead the files
             else
             {
-                phrasesExcelFilePath = @"C:\Users\oripo\Desktop\work\EyeTracker\AOI_boundaries-ELIZABETH_1_c.xlsx";
-                wordsExcelFilePath = @"C:\Users\oripo\Desktop\work\EyeTracker\AOI_boundaries-ELIZABETH_1_w.xlsx";
+                phrasesExcelFilePath = @"C:\Users\oripo\Desktop\AOI_EM_c.xlsx";
+                wordsExcelFilePath = @"C:\Users\oripo\Desktop\AOI_EM_w.xlsx";
             }
 
             if (chosenOption == 3)
@@ -167,12 +167,15 @@ namespace EM_Analyzer
             {
     //            phrasesTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\8_trial2_c.txt";
          //       wordsTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\8_trial2_w.txt";
-                phrasesTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\AOI Statistics - all pages_c.txt";
-                wordsTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\AOI Statistics - all pages_w.txt";
+          //     phrasesTextFilePath = @"C: \Users\oripo\Downloads\par25_c.txt";
+            //    wordsTextFilePath = @"C: \Users\oripo\Downloads\par25_w.txt";
+                phrasesTextFilePath = @"C: \Users\oripo\Downloads\EM_c.txt";
+                wordsTextFilePath = @"C: \Users\oripo\Downloads\EN_w.txt";
+
                 //                phrasesTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\small_20lines_c.txt";
-                  //            wordsTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\small_20lines_w.txt";
-     //           phrasesTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\small_c.txt";
-       //         wordsTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\small_w.txt";
+                //            wordsTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\small_20lines_w.txt";
+                //           phrasesTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\small_c.txt";
+                //         wordsTextFilePath = @"C: \Users\oripo\Desktop\work\EyeTracker\small_w.txt";
 
 
             }
@@ -183,8 +186,10 @@ namespace EM_Analyzer
             FixationsService.wordsTextFileName = wordsTextFilePath.Substring(wordsTextFilePath.LastIndexOf(@"\") + 1);
             FixationsService.outputPath = phrasesExcelFilePath.Substring(0, phrasesExcelFilePath.LastIndexOf(@"\"));
             FixationsService.outputTextString = FixationsService.phrasesTextFileName.Substring(0, FixationsService.phrasesTextFileName.Length - 6);
+
             ReadTextFilePhrase(phrasesTextFilePath);
             ReadTextFileWord(wordsTextFilePath);
+
             FixationsService.DealWithSeparatedAOIs();
             FixationsService.SortDictionaryByFixationsIndex();
             FixationsService.SortWordIndexDictionaryByFixationsIndex();

@@ -183,8 +183,21 @@ namespace EM_Analyzer.ModelClasses
                         eventDurationSum += fixationsInTextOfEachParticipant[i].Event_Duration;
                         if (eventDurationSum > timeLimit)
                         {
+                            // i+1 is like the text index
                             foreach (var allFixationsOfParticipantInOneText in participantFixations)
-                                allFixationsOfParticipantInOneText.Value.RemoveAll(fix => fix.Text_Index > i && fix.Stimulus_Tokens[0] == fixationsInTextOfEachParticipant[0].Stimulus_Tokens[0]);
+                            {
+                                List<Fixation> allFixationsInTrial = allFixationsOfParticipantInOneText.Value;
+                                if (allFixationsInTrial.Count > 0) {
+                                    Fixation firstInTrial = allFixationsInTrial[0];
+                                    string firstTrialWhatIsText = firstInTrial.Stimulus_Tokens[0];
+
+                                }
+                                int countBefore = allFixationsOfParticipantInOneText.Value.Count;
+                                string TextTrialOnlyFromHeretToRemove = fixationsInTextOfEachParticipant[0].Stimulus_Tokens[0];
+
+                                allFixationsOfParticipantInOneText.Value.RemoveAll(fix => fix.Text_Index >= i + 1 && fix.Stimulus_Tokens[0] == fixationsInTextOfEachParticipant[0].Stimulus_Tokens[0]);
+                                int count_ = allFixationsOfParticipantInOneText.Value.Count;
+                            }
                             break;
                         }
                     }
@@ -280,6 +293,7 @@ namespace EM_Analyzer.ModelClasses
         }
         public static bool IsLeagalPageVistFixations(List<Fixation> fixations)
         {
+            double d = Minimum_Duration_Of_Fixation_For_Page_Visit;
             int counter = 0;
             foreach (Fixation fixation in fixations)
             {
@@ -521,29 +535,27 @@ namespace EM_Analyzer.ModelClasses
         }
         public static void SetTextIndex()
         {
-            fixationSetToFixationListDictionary.GroupBy(x => x.Value[0].Participant)
-                    .ToDictionary(group => group.Key,
-                                group => {
-                                    List<List<Fixation>> values = new List<List<Fixation>>();
-                                    var dic = group.ToDictionary(pair => pair.Key, pair => pair.Value);
-                                    foreach (var item in dic.Values)
-                                    {
-                                        IEnumerable<IGrouping<string, Fixation>> fixationsOfParticipantPerText = item.GroupBy(fix => fix.Stimulus_Tokens[0]);
-                                        foreach (var fixationsPerText in fixationsOfParticipantPerText)
-                                        {
-                                            long index = 1;
-                                            foreach (var fixation in item)
-                                            {
-                                                fixation.Text_Index = index;
-                                                index++;
-                                            }
-                                        }
-
-
-                                        values.Add(item);
-                                    }
-                                    return values.SelectMany(fixList => fixList).ToList();
-                                });
+            IEnumerable<IGrouping<string, KeyValuePair<string, List<Fixation>>>> fixationsGroupingByParticipant = fixationSetToFixationListDictionary.GroupBy(x => x.Value[0].Participant);
+            foreach (IGrouping<string, KeyValuePair<string, List<Fixation>>> participantFixations in fixationsGroupingByParticipant)
+            {
+                List<Fixation> fixationList = participantFixations.SelectMany(x => x.Value).ToList();
+                IEnumerable <IGrouping<string, Fixation>> fixationsOfParticipantPerText = fixationList.GroupBy(fix => fix.Stimulus_Tokens[0]);
+                foreach (var item in fixationsOfParticipantPerText)
+                {
+                    List<Fixation> fixationsInTextOfEachParticipant = item.ToList();
+                    fixationsInTextOfEachParticipant.Sort((x, y) => {
+                        var ret = x.Trial_Int.CompareTo(y.Trial_Int);
+                        if (ret == 0) ret = x.Index.CompareTo(y.Index);
+                        return ret;
+                    });
+                    string trial = fixationsInTextOfEachParticipant[0].Trial;
+                    string temp = "";
+                    for (int index = 1; index <= fixationsInTextOfEachParticipant.Count; index++)
+                    {
+                        fixationsInTextOfEachParticipant[index - 1].Text_Index = index;
+                    }
+                }
+            }
         }
         // final sort of dictionay of fixations
         public static void SortDictionary()

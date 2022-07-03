@@ -20,6 +20,13 @@ namespace EM_Analyzer.ModelClasses
         public string[] Stimulus_Tokens { get; set; }
         [EpplusIgnore]
         public int Page { get; set; }
+        [EpplusIgnore]
+        public int Trial_Int{ 
+            get {
+                return int.Parse(Trial.Substring(5));
+            }
+        }
+
 
         //[XLColumn(Ignore = true)]
         [EpplusIgnore]

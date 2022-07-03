@@ -301,6 +301,10 @@ namespace EM_Analyzer.ExcelsFilesMakers.ThirdFourFilter
 
 
                 }
+                if (this.m_Pages_Sequence.Count == 0)
+                {
+                    this.m_Pages_Sequence.Add(fixations[0].Page);
+                }
             }
             public static List<Fixation> FilterFunction(List<Fixation> original,out Dictionary<string, int> dict, NumericExpression numeric)
             {

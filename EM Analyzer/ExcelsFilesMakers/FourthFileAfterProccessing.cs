@@ -432,8 +432,28 @@ namespace EM_Analyzer.ExcelsFilesMakers
                         this.m_Pages_Sequence.Add(currentPage);
                     }
 
+                }
+                if (this.m_Pages_Sequence.Count == 0)
+                {
+                    this.m_Pages_Sequence.Add(0);
+                }
+                /*
+                List<int> copy = new List<int>();
+                int prev = this.m_Pages_Sequence[0];
+                copy.Add(prev);
+                for (int i = 1; i < this.m_Pages_Sequence.Count; i++)
+                {
+                    int curr = this.m_Pages_Sequence[i];
+                    if (prev != curr)
+                    {
+                        copy.Add(curr);
+                    }
+                    prev = curr;
+
 
                 }
+                this.m_Pages_Sequence = copy;
+                */
             }
             private void InitializeProgressiveAndRegressiveFixationsList()
             {
